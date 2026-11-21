@@ -4,3 +4,6 @@ fives-phase6-tiled  job 19054751  (part B: tiled SAM test as frozen; overlap on 
 fives-benchmark  job 19054789  (cost table; after A and C)  commit f8a76bb
 fives-report  job 19054790  (Phase 6 tables, statistics, figures; after all)  commit f8a76bb
 fives-benchmark  job 19055019  (rerun after the oracle FLOP-counter fix; job 19054789 failed on the oracle, no table written)  commit cca008f
+fives-sam_lora_tiled-s1  job 19055109  (tiled SAM seed 1: train, val, test once; TEST_AFTER=1)  commit eae5483
+fives-sam_lora_tiled-s2  job 19055110  (tiled SAM seed 2, in parallel)  commit eae5483
+fives-report  job 19055111  (SAM val table + Phase 6 report, tiled SAM 3 seeds; after both)  commit eae5483
