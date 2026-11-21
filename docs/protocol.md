@@ -808,8 +808,109 @@ Status: Phase 1 complete. Sections marked *(Phase N)* are filled in during that 
       The reference is not an upper bound: it bilinearly upsamples block-averaged
       *probabilities*, whereas the model's 256 logits are upsampled in *logit* space
       and are not constrained to block averages, so they can keep thin lines sharper.
+- **Tile-seam check of tiled SAM** (val only, after the pre-test freeze, before any SAM test
+  prediction; `python -m src.analysis seam`; `results/checks/seam_check_summary.json`):
+  - **Why:** the 2×2 tiles meet at x = 1024 and y = 1024 and are stitched without overlap.
+  - **Measures:**
+    1. **Discontinuity:** the mean probability jump across the seam on the model's own
+       output grid, divided by the median jump between other adjacent columns and rows
+       (about 1 means no seam effect).
+    2. **Accuracy near the seam:** Dice and centreline recall in bands of half-width 16,
+       32 and 64 px around the seam lines. All models are somewhat worse along the
+       image's central lines (optic disc, macula), so a seam band alone is confounded.
+       The comparison is therefore a difference-in-differences: (tiled − control) in the
+       seam band minus (tiled − control) in bands around the tile midlines (x, y = 512,
+       1536). The controls are models without seams: U-Net (seeds averaged per image) and
+       whole-image SAM. 95% bootstrap CIs over the 120 val images.
+  - **Result for the frozen tiled SAM: a real but local artifact.**
+    - Jump ratio: 1.43 (U-Net 0.99, whole-image SAM 1.06); tiled − U-Net +0.44
+      [+0.34, +0.56].
+    - Difference-in-differences vs U-Net at ±16 / ±32 / ±64 px:
+      - Dice −0.029 [−0.034, −0.024] / −0.021 / −0.013;
+      - thin recall −0.064 [−0.104, −0.023] / −0.044 / −0.026.
+    - The ±16 px band is about 3% of the image, so the effect on whole-image scores is
+      small.
+  - **User decision (2026-11-21): "frozen main + overlap sensitivity".** The frozen tiled
+    SAM stays the main SAM and goes to test unchanged. An inference-only
+    overlapping-tile variant is added as a secondary (sensitivity) result, reported in
+    its own row.
+- **Overlapping-tile sensitivity variant** (`src/sam_overlap.py`, run name
+  `sam_lora_tiled_overlap`):
+  - **Same model:** the trained tiled SAM (`sam_lora_tiled/seed0/best.pt`); no training
+    of its own. Its training cost is the tiled run's.
+  - **Inference:**
+    - 3×3 tiles of 1024 native px at stride 512 (the 4 main tiles are among them).
+    - Each tile's 256 logits are placed on the same 512 grid as the main variant.
+    - Overlaps are averaged with a separable tent weight per tile,
+      w(i) = 1 − |(i + 0.5)/128 − 1|. With 50% overlap the weights sum to 1 inside the
+      image, so no tile edge produces a hard seam (tested).
+    - Sigmoid of the blended logits → probability map at 512, scored like every other
+      model.
+  - **Threshold:** chosen on val by the same rule (0.55).
+  - **Val results:**
+    - Dice 0.9079, thin recall 0.603, clDice 0.929, NSD 0.894. The frozen tiled SAM
+      had 0.9053, 0.597, 0.926 and 0.889.
+    - Seam check: jump ratio 1.00 (− U-Net: +0.01 [−0.02, +0.04]). Every
+      difference-in-differences CI includes 0 (Dice at ±16 px: −0.001 [−0.004, +0.003]).
+    - So the blending removes the seam effect.
+  - **Test:** predicted once (part C), only after these val checks.
 
-## 13. Known limitations
+## 13. Final test evaluation *(Phase 6)*
+
+- **Order of events (2026-11-21):** pre-test freeze commit pushed (§2) → val seam check
+  → test jobs. Job ids: `results/checks/phase6_jobs.txt`.
+  - **Part A (job 19054745):** the 12 CNN runs (4 models × seeds 0–2), whole-image SAM,
+    oracle-prompted SAM (K = 5, chosen on val) and the two mask-resampling references
+    (`reference_soft_512`, `reference_soft_256`) on the test ground truth.
+  - **Part B (job 19054751):** the frozen tiled SAM on test. Then the overlap variant on
+    val only, the seam-check rerun and the SAM val table.
+  - **Part C (job 19054772):** the overlap variant on test.
+  - **Not predicted on test:** the 1024 pilot (`unet_r1024`), which stays a pilot.
+- **Each run predicts the test split once.** `src.predict`, `src.sam_oracle` and
+  `src.sam_overlap` require `--final-test` and refuse to overwrite an existing test
+  archive (tested).
+  - There is no test-time augmentation and no post-processing.
+  - Each run is scored at its own val-selected threshold, and the full 0.05–0.95 sweep
+    is saved for the secondary analysis.
+- **Provenance:** every prediction and score file records the git commit.
+  - During Phase 6 the "uncommitted changes" flag can be set only by regenerated result
+    files and this document. No file under `src/`, `configs/` or `jobs/` changed between
+    a job's recorded commit and its end.
+- **Analysis** (`python -m src.report --final-test`; CLAUDE.md Phase 6):
+  - **Seeds:**
+    - Model-level numbers: each metric per seed (mean over the 200 images), then mean ±
+      sd across seeds.
+    - Image-level spread: sd and median over the seed-averaged per-image values.
+    - Per-image analyses (Wilcoxon, ablation bootstrap) average each image's metric over
+      the model's seeds first.
+  - **Statistics:** a paired Wilcoxon signed-rank test (two-sided) per metric, each
+    automatic model vs U-Net. Holm correction is applied **within each metric, across
+    all models compared with U-Net**, including the overlap sensitivity variant
+    (conservative).
+  - **Secondary analysis:** every run at a fixed threshold of 0.5, for the
+    threshold-dependent metrics (from the sweeps), as decided in §10.
+  - **Oracle-prompted SAM:** its own table, never tested against or ranked with the
+    automatic models.
+  - **Qualitative figures:** 8 test images, 2 per category, drawn with
+    `RandomState(0)` from each category's sorted ids.
+    - Panels: the image, pixelated outside the FOV; the ground truth; and one error map
+      per seed-0 automatic model at its threshold (TP grey, FP orange, FN blue). An error
+      map also shows the prediction, since TP ∪ FP = prediction.
+    - Each image also gets a native 256×256 crop: the window with the most thin-class
+      skeleton pixels, chosen automatically.
+- **Cost table** (`python -m src.benchmark`, one GPU job on the training GPU type, after
+  all test predictions):
+  - **Inference time:** batch 1 (one image per call) over the 200 test images, after 10
+    warm-up calls, with `torch.cuda.synchronize()` around each call.
+    - Timed span: from the input on the GPU to the probability map at the model's output
+      grid, including tiling, stitching or blending and the sigmoid.
+    - Disk I/O and CPU preprocessing are excluded.
+    - Outputs are discarded, so this is not a second test prediction.
+  - **Other columns:** peak GPU memory at inference, FLOPs per image (PyTorch
+    `FlopCounterMode`), and training time and peak training memory from the seed-0 run
+    summaries.
+
+## 14. Known limitations
 
 - **Patients across splits.** 573 patients, 800 images, no patient IDs, so patient-level
   separation cannot be guaranteed.
@@ -848,6 +949,10 @@ Status: Phase 1 complete. Sections marked *(Phase N)* are filled in during that 
   thin-vessel centreline even with perfect predictions (§10). The main fine-tuned SAM is
   therefore the tiled variant (2×2 native crops, 512 combined grid, as for the CNNs); the
   whole-image variant is reported as a secondary run (§12).
+- **Tile seams in the main tiled SAM.** The frozen 2×2 non-overlapping tiling leaves a
+  probability discontinuity at the seams, which locally lowers Dice and thin recall within
+  roughly ±64 px of x, y = 1024 (§12). The overlapping-tile sensitivity variant (same
+  model) removes it on val and is reported next to the main result.
 - **SAM seeds.** Fine-tuned SAM has one training seed (0); the CNNs have three. SAM's
   seed-to-seed variability is unknown.
 - **Whole-image SAM reached the 150-epoch cap** while still improving slowly (§12).

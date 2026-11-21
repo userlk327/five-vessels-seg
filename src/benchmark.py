@@ -74,7 +74,8 @@ def make_case(kind: str, config_path: str, ids: list[str], device):
         from src.utils import project_path
         cfg = load_config(config_path)
         sam = sam_model_registry["vit_b"](checkpoint=str(project_path(cfg["model"]["checkpoint"]))).to(device).eval()
-        predictor = SamPredictor(sam)
+        sam.requires_grad_(False)     # inference only; the FLOP counter's hooks fail on outputs derived from
+        predictor = SamPredictor(sam)  # trainable parameters (the prompt encoder's no-mask embedding)
         native, size, pc = int(cfg["data"]["native_resolution"]), int(cfg["data"]["sam_resolution"]), cfg["prompts"]
         k = json.loads((project_path("results/eval") / "sam_oracle_choice.json").read_text())["chosen_k"]
 
@@ -148,9 +149,13 @@ def time_case(run, inputs, n: int, device) -> tuple[np.ndarray, float, float]:
     sync = torch.cuda.synchronize if device.type == "cuda" else (lambda: None)
     first = inputs(0)
     with torch.no_grad():
-        with FlopCounterMode(display=False) as fc:
-            run(first)
-        flops = float(fc.get_total_flops())
+        try:
+            with FlopCounterMode(display=False) as fc:
+                run(first)
+            flops = float(fc.get_total_flops())
+        except Exception as e:                     # record as missing rather than lose the timings
+            print(f"[benchmark] FLOP counting failed ({type(e).__name__}: {e}); FLOPs recorded as missing", flush=True)
+            flops = float("nan")
         for _ in range(WARMUP):
             run(first)
         sync()
@@ -183,6 +188,7 @@ def main() -> None:
     ids = split_ids(load_config("configs/base.yaml"), "test")
     n = a.n_images or len(ids)
     rows = []
+    out = project_path("results/tables") / "cost.csv"
     for run_name, label, config_path, kind in MODELS:
         if a.only and run_name not in a.only:
             continue
@@ -205,7 +211,7 @@ def main() -> None:
         del model
         if device.type == "cuda":
             torch.cuda.empty_cache()
-    out = project_path("results/tables") / "cost.csv"
+        pd.DataFrame(rows).to_csv(out, index=False)          # saved after every model
     pd.DataFrame(rows).to_csv(out, index=False)
     info = {"split": "test", "n_images": n, "warmup_calls": WARMUP, "seed_checkpoints": SEED,
             "timed_span": "input on GPU -> probability map at the model's output grid (tiling, stitching/blending, "
