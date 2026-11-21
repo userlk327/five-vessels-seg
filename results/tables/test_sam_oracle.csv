@@ -1,0 +1,12 @@
+run,model,metric,n_seeds,mean,sd_seeds,sd_images,median,n_images
+sam_oracle_k5,"SAM zero-shot, oracle point prompts (K=5)",dice,1,0.1735246936366595,,0.04675447172316718,0.18727281553925218,200
+sam_oracle_k5,"SAM zero-shot, oracle point prompts (K=5)",iou,1,0.095698571087508,,0.02723357112321868,0.10330999743104124,200
+sam_oracle_k5,"SAM zero-shot, oracle point prompts (K=5)",precision,1,0.09602604952531507,,0.027404202529789153,0.10334895709528115,200
+sam_oracle_k5,"SAM zero-shot, oracle point prompts (K=5)",recall,1,0.9750445265464792,,0.057723067096399024,0.9982766910134776,200
+sam_oracle_k5,"SAM zero-shot, oracle point prompts (K=5)",cl_recall_thin,1,0.9758581286292948,,0.047999935068232975,0.9963625568982153,200
+sam_oracle_k5,"SAM zero-shot, oracle point prompts (K=5)",cl_recall_medium,1,0.9798427869780078,,0.04977729562899872,0.9996159642943467,200
+sam_oracle_k5,"SAM zero-shot, oracle point prompts (K=5)",cl_recall_thick,1,0.9769169593675278,,0.06281236391112896,1.0,200
+sam_oracle_k5,"SAM zero-shot, oracle point prompts (K=5)",cldice,1,0.14632654606847692,,0.0637326746691402,0.14574949095430248,200
+sam_oracle_k5,"SAM zero-shot, oracle point prompts (K=5)",nsd,1,0.018287097289691915,,0.02285634710087495,0.007627874662909992,200
+sam_oracle_k5,"SAM zero-shot, oracle point prompts (K=5)",density_pred,1,0.9496179760792525,,0.07716208801885258,0.9805876659190524,200
+sam_oracle_k5,"SAM zero-shot, oracle point prompts (K=5)",density_gt,1,0.0933844588530601,,0.026815248975562197,0.1012194340558871,200

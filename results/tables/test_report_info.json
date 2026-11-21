@@ -1,0 +1,64 @@
+{
+ "runs": {
+  "unet": [
+   0,
+   1,
+   2
+  ],
+  "attention_unet": [
+   0,
+   1,
+   2
+  ],
+  "multiscale_unet": [
+   0,
+   1,
+   2
+  ],
+  "ms_attention_unet": [
+   0,
+   1,
+   2
+  ],
+  "sam_lora_tiled": [
+   0
+  ],
+  "sam_lora_whole": [
+   0
+  ],
+  "sam_lora_tiled_overlap": [
+   0
+  ]
+ },
+ "missing": [],
+ "oracle_k": 5,
+ "qualitative_images": [
+  "test_36_A",
+  "test_20_A",
+  "test_52_D",
+  "test_80_D",
+  "test_108_G",
+  "test_125_G",
+  "test_187_N",
+  "test_163_N"
+ ],
+ "qualitative_figures": [
+  "test_qualitative_test_36_A.png",
+  "test_qualitative_test_20_A.png",
+  "test_qualitative_test_52_D.png",
+  "test_qualitative_test_80_D.png",
+  "test_qualitative_test_108_G.png",
+  "test_qualitative_test_125_G.png",
+  "test_qualitative_test_187_N.png",
+  "test_qualitative_test_163_N.png"
+ ],
+ "environment": {
+  "time": "2026-11-21T15:36:29-06:00",
+  "host": "c1215.swan.hcc.unl.edu",
+  "slurm_job_id": "19054790",
+  "git": {
+   "commit": "f8a76bb72b5cb0c1085b0e5d395226e8a36c0f31",
+   "dirty": true
+  }
+ }
+}

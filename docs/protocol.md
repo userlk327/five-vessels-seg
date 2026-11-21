@@ -872,10 +872,18 @@ Status: Phase 1 complete. Sections marked *(Phase N)* are filled in during that 
   - There is no test-time augmentation and no post-processing.
   - Each run is scored at its own val-selected threshold, and the full 0.05–0.95 sweep
     is saved for the secondary analysis.
-- **Provenance:** every prediction and score file records the git commit.
-  - During Phase 6 the "uncommitted changes" flag can be set only by regenerated result
-    files and this document. No file under `src/`, `configs/` or `jobs/` changed between
-    a job's recorded commit and its end.
+- **Provenance:** every prediction and score file records the git commit current when
+  it was written.
+  - The test files record `ee677cd`, `6f1752e` or `f8a76bb`, because commits were made
+    while part A was running.
+  - The prediction and scoring code is identical in all three: every module those steps
+    import (`src.predict`, `src.evaluate`, `src.sam_oracle`, `src.sam_train`, `src.data`,
+    `src.metrics`, `src.resample`, `src.utils`, `src.models`, `configs/`).
+  - Between those commits, the only code changes were new modules (`src/sam_overlap.py`,
+    `src/benchmark.py`, `src/report.py`), `src/analysis.py` and `jobs/submit_phase6.sh`.
+    The prediction and scoring steps do not import any of them.
+  - The "uncommitted changes" flag was set only by regenerated result files and this
+    document.
 - **Analysis** (`python -m src.report --final-test`; CLAUDE.md Phase 6):
   - **Seeds:**
     - Model-level numbers: each metric per seed (mean over the 200 images), then mean ±

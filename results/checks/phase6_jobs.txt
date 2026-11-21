@@ -1,3 +1,6 @@
 fives-phase6-main  job 19054745  (part A: 12 CNN runs, whole-image SAM, oracle K=5, references; test, once)  commit ee677cd
 fives-phase6-overlap_test  job 19054772  (part C: overlap variant on test, once)  commit 6f1752e
 fives-phase6-tiled  job 19054751  (part B: tiled SAM test as frozen; overlap on val; seam rerun)  commit 6f1752e
+fives-benchmark  job 19054789  (cost table; after A and C)  commit f8a76bb
+fives-report  job 19054790  (Phase 6 tables, statistics, figures; after all)  commit f8a76bb
+fives-benchmark  job 19055019  (rerun after the oracle FLOP-counter fix; job 19054789 failed on the oracle, no table written)  commit cca008f

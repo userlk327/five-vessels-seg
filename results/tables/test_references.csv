@@ -1,0 +1,25 @@
+run,model,metric,n_seeds,mean,sd_seeds,sd_images,median,n_images
+reference_soft_512,reference_soft_512 (context; not an upper bound),dice,1,0.9845777256743916,,0.0026653766493720506,0.9847697479312423,200
+reference_soft_512,reference_soft_512 (context; not an upper bound),iou,1,0.9696373730309589,,0.00515116551826,0.9699964574744729,200
+reference_soft_512,reference_soft_512 (context; not an upper bound),precision,1,0.9856200188553043,,0.0017106091975019754,0.9855758845089521,200
+reference_soft_512,reference_soft_512 (context; not an upper bound),recall,1,0.9835420437845807,,0.003939981284148899,0.9841386696506784,200
+reference_soft_512,reference_soft_512 (context; not an upper bound),cl_recall_thin,1,0.9158791123076929,,0.04002839262691111,0.9243631651225315,200
+reference_soft_512,reference_soft_512 (context; not an upper bound),cl_recall_medium,1,1.0,,0.0,1.0,200
+reference_soft_512,reference_soft_512 (context; not an upper bound),cl_recall_thick,1,1.0,,0.0,1.0,200
+reference_soft_512,reference_soft_512 (context; not an upper bound),cldice,1,0.9904106563259295,,0.005578427069794359,0.9916393960704235,200
+reference_soft_512,reference_soft_512 (context; not an upper bound),nsd,1,0.9955133512445081,,0.003287086996604178,0.9964230843752154,200
+reference_soft_512,reference_soft_512 (context; not an upper bound),cl_recall_thin_r4_8,1,0.9608288276149594,,0.023697431695961738,0.9672167362267212,200
+reference_soft_512,reference_soft_512 (context; not an upper bound),cl_recall_medium_r4_8,1,1.0,,0.0,1.0,200
+reference_soft_512,reference_soft_512 (context; not an upper bound),cl_recall_thick_r4_8,1,1.0,,0.0,1.0,200
+reference_soft_256,reference_soft_256 (context; not an upper bound),dice,1,0.9414792270631857,,0.013874950991664395,0.9421119546504736,200
+reference_soft_256,reference_soft_256 (context; not an upper bound),iou,1,0.8897501752871474,,0.02461974775305736,0.8905592370086093,200
+reference_soft_256,reference_soft_256 (context; not an upper bound),precision,1,0.9668984813162325,,0.0037075603944547535,0.9666253481197469,200
+reference_soft_256,reference_soft_256 (context; not an upper bound),recall,1,0.9176009261304298,,0.023636384283185184,0.9195011057936907,200
+reference_soft_256,reference_soft_256 (context; not an upper bound),cl_recall_thin,1,0.4002871356695881,,0.12043639760174639,0.39034570392246976,200
+reference_soft_256,reference_soft_256 (context; not an upper bound),cl_recall_medium,1,0.9555235639172338,,0.013560989861497022,0.9557687988621648,200
+reference_soft_256,reference_soft_256 (context; not an upper bound),cl_recall_thick,1,1.0,,0.0,1.0,200
+reference_soft_256,reference_soft_256 (context; not an upper bound),cldice,1,0.9405267039927533,,0.023506311111386062,0.94509965857886,200
+reference_soft_256,reference_soft_256 (context; not an upper bound),nsd,1,0.9363445151706701,,0.023551207360785198,0.9391553605047946,200
+reference_soft_256,reference_soft_256 (context; not an upper bound),cl_recall_thin_r4_8,1,0.6347666494941143,,0.07954832557923291,0.645845158348082,200
+reference_soft_256,reference_soft_256 (context; not an upper bound),cl_recall_medium_r4_8,1,0.9934041854636798,,0.0040788852966235295,0.9940882807255647,200
+reference_soft_256,reference_soft_256 (context; not an upper bound),cl_recall_thick_r4_8,1,1.0,,0.0,1.0,200

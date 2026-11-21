@@ -1,0 +1,20 @@
+{
+ "split": "test",
+ "n_images": 200,
+ "warmup_calls": 10,
+ "seed_checkpoints": 0,
+ "timed_span": "input on GPU -> probability map at the model's output grid (tiling, stitching/blending, sigmoid included); disk I/O and CPU preprocessing excluded; outputs discarded",
+ "flops": "torch.utils.flop_counter.FlopCounterMode, one image",
+ "environment": {
+  "time": "2026-11-21T15:43:14-06:00",
+  "host": "c0903.swan.hcc.unl.edu",
+  "slurm_job_id": "19055019",
+  "git": {
+   "commit": "cca008ff6e6dc6eeea5ab62debbd8d94df7dbe5c",
+   "dirty": true
+  },
+  "torch": "2.14.1+cu126",
+  "cuda": "12.6",
+  "gpu": "NVIDIA L40S"
+ }
+}
