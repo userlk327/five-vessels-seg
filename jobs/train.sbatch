@@ -58,6 +58,13 @@ echo "== $(date -Is) predicting the val split from best.pt"
 python -m src.predict --config "$CONFIG" --seed "$SEED" --split val || exit $?
 echo "== $(date -Is) scoring the val split"
 python -m src.evaluate score --config "$CONFIG" --seed "$SEED" --split val --workers "${SLURM_CPUS_PER_TASK:-8}" || exit $?
+if [ "${TEST_AFTER:-0}" = "1" ]; then                 # opt-in (Phase 6+): test once, on this job's own GPU
+    echo "== $(date -Is) predicting the test split once from best.pt (threshold: this run's val selection)"
+    python -m src.predict --config "$CONFIG" --seed "$SEED" --split test --final-test || exit $?
+    echo "== $(date -Is) scoring the test split"
+    python -m src.evaluate score --config "$CONFIG" --seed "$SEED" --split test --final-test \
+        --workers "${SLURM_CPUS_PER_TASK:-8}" || exit $?
+fi
 if [ -n "${PROBE_RES:-}" ]; then
     echo "== $(date -Is) GPU memory / speed probe at: $PROBE_RES"
     python -m src.train --config "$CONFIG" --seed "$SEED" --probe $PROBE_RES || echo "== probe failed (training results unaffected)"

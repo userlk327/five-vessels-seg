@@ -293,7 +293,7 @@ def cmd_sam(split: str = "val") -> None:
     for m, label in SAM_AUTO.items():
         if not list((root / m).glob(f"seed*/{split}_metrics.csv")):
             continue
-        sam_df = load_eval(split, models={m: label}).set_index("image_id")[MAIN_METRICS]
+        sam_df = load_eval(split, models={m: label}).groupby("image_id")[MAIN_METRICS].mean()   # seeds averaged per image
         for c, clabel in ABLATION.items():
             other = cnn.loc[c]
             for k in MAIN_METRICS:
