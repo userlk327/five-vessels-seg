@@ -1,0 +1,40 @@
+# ---- Large files: live under $WORK, reached through symlinks (Rule 10) ----
+# No trailing slash: git sees a symlink as a file, so "outputs/" would NOT match it.
+/outputs
+/logs
+/data/*
+!/data/splits/
+/data/splits/*
+# the shared split definition is public (user decision 2026-11-21); nothing else from data/
+!/data/splits/splits.csv
+!/data/splits/split_groups.csv
+!/data/splits/norm_stats.json
+# Raw/derived image data must never be committed, even if copied into the repo by mistake
+*.parquet
+*.npz
+*.npy
+*.pt
+*.pth
+*.ckpt
+data/**/*.png
+
+# ---- Local only: never pushed (public repo) ----
+/CLAUDE.md
+.claude/
+.env
+*.env
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+.ipynb_checkpoints/
+
+# ---- Editors / OS ----
+.vscode/
+.idea/
+.DS_Store
+
+# ---- SLURM logs written into the project folder by mistake ----
+slurm-*.out

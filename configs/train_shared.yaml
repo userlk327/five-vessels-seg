@@ -1,0 +1,16 @@
+# Shared training protocol (Phase 3), used unchanged by all four CNNs. SAM (5b)
+# inherits it too and overrides only what memory forces (recorded in docs/protocol.md).
+inherits: base.yaml
+
+train:
+  loss: {bce_weight: 1.0, dice_weight: 1.0, dice_eps: 1.0, dtype: float32}  # BCEWithLogits on logits + soft Dice
+                                    # (per image, mean over the batch) on sigmoid; soft targets used as is
+  optimizer: {name: adam, lr: 1.0e-4}
+  batch_size: 4
+  grad_accumulation: 1
+  max_epochs: 150
+  early_stopping:
+    metric: val_dice                # Dice on val predictions upsampled to 2048 vs original masks
+    patience: 20
+    val_threshold: 0.5              # fixed during training; operating threshold chosen later on val
+  amp: {enabled: true, dtype: float16}   # fp16 + GradScaler: runs the same on L40S and V100

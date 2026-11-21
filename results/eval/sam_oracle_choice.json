@@ -1,0 +1,22 @@
+{
+ "label": "zero-shot, oracle point prompts",
+ "chosen_k": 5,
+ "rule": "highest mean val Dice at each K's own val-selected threshold; ties -> smaller K",
+ "per_k": {
+  "5": {
+   "threshold": 0.2,
+   "mean_dice": 0.18140871372678255,
+   "mean_thin_recall": 0.9813655987802381
+  },
+  "10": {
+   "threshold": 0.2,
+   "mean_dice": 0.1804036958005676,
+   "mean_thin_recall": 0.991819317574378
+  },
+  "20": {
+   "threshold": 0.25,
+   "mean_dice": 0.18010230616485143,
+   "mean_thin_recall": 0.991231021547561
+  }
+ }
+}

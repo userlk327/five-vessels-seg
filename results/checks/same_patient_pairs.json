@@ -1,0 +1,231 @@
+{
+ "method": "binary pattern max(R,G,B) > 128 outside the FOV in the top-left 128x128 px, on a 64x64 grid; IoU maximized over shifts of +-2 cells (patterns kept in memory only)",
+ "n_images_compared": 574,
+ "n_images_without_top_left_marking": 226,
+ "n_pairs_compared": 164451,
+ "iou_quantiles_all_pairs": {
+  "0.5": 0.3524,
+  "0.9": 0.4469,
+  "0.99": 0.6371,
+  "0.999": 1.0
+ },
+ "split_file": "data/splits/splits.csv",
+ "levels": {
+  "identical_marking": "all pairs with IoU >= t (upper bound; common characters also match across patients)",
+  "isolated_pairs": "identical-marking groups of exactly 2 images (likely same patient)",
+  "adjacent_numbers": "identical marking and consecutive numbers in the same official split"
+ },
+ "by_threshold": {
+  "0.7": {
+   "identical_marking": {
+    "n_pairs": 1561,
+    "within_one_split": 698,
+    "across_splits": 852,
+    "by_split": {
+     "train-train": 535,
+     "val-val": 35,
+     "test-test": 128,
+     "train-val": 220,
+     "train-test": 523,
+     "val-test": 109
+    },
+    "involving_excluded": 11,
+    "same_category": 657,
+    "adjacent_numbers": 109,
+    "images_involved": 520,
+    "groups": 127,
+    "group_sizes": {
+     "2": 64,
+     "3": 18,
+     "4": 12,
+     "5": 7,
+     "6": 6,
+     "7": 4,
+     "8": 6,
+     "9": 1,
+     "10": 1,
+     "12": 1,
+     "13": 1,
+     "14": 1,
+     "15": 2,
+     "17": 1,
+     "18": 1,
+     "20": 1
+    }
+   },
+   "isolated_pairs": {
+    "n_pairs": 64,
+    "within_one_split": 44,
+    "across_splits": 20,
+    "by_split": {
+     "train-train": 20,
+     "val-val": 7,
+     "test-test": 17,
+     "train-val": 0,
+     "train-test": 12,
+     "val-test": 8
+    },
+    "involving_excluded": 0,
+    "same_category": 58,
+    "adjacent_numbers": 34,
+    "images_involved": 128
+   },
+   "adjacent_numbers": {
+    "n_pairs": 109,
+    "within_one_split": 108,
+    "across_splits": 0,
+    "by_split": {
+     "train-train": 67,
+     "val-val": 12,
+     "test-test": 29,
+     "train-val": 0,
+     "train-test": 0,
+     "val-test": 0
+    },
+    "involving_excluded": 1,
+    "same_category": 109,
+    "adjacent_numbers": 109,
+    "images_involved": 213
+   }
+  },
+  "0.8": {
+   "identical_marking": {
+    "n_pairs": 1515,
+    "within_one_split": 672,
+    "across_splits": 832,
+    "by_split": {
+     "train-train": 511,
+     "val-val": 34,
+     "test-test": 127,
+     "train-val": 215,
+     "train-test": 508,
+     "val-test": 109
+    },
+    "involving_excluded": 11,
+    "same_category": 641,
+    "adjacent_numbers": 108,
+    "images_involved": 513,
+    "groups": 130,
+    "group_sizes": {
+     "2": 70,
+     "3": 17,
+     "4": 11,
+     "5": 8,
+     "6": 5,
+     "7": 4,
+     "8": 5,
+     "9": 1,
+     "10": 1,
+     "12": 1,
+     "13": 1,
+     "14": 2,
+     "15": 2,
+     "18": 1,
+     "20": 1
+    }
+   },
+   "isolated_pairs": {
+    "n_pairs": 70,
+    "within_one_split": 49,
+    "across_splits": 21,
+    "by_split": {
+     "train-train": 25,
+     "val-val": 6,
+     "test-test": 18,
+     "train-val": 0,
+     "train-test": 13,
+     "val-test": 8
+    },
+    "involving_excluded": 0,
+    "same_category": 63,
+    "adjacent_numbers": 38,
+    "images_involved": 140
+   },
+   "adjacent_numbers": {
+    "n_pairs": 108,
+    "within_one_split": 107,
+    "across_splits": 0,
+    "by_split": {
+     "train-train": 66,
+     "val-val": 12,
+     "test-test": 29,
+     "train-val": 0,
+     "train-test": 0,
+     "val-test": 0
+    },
+    "involving_excluded": 1,
+    "same_category": 108,
+    "adjacent_numbers": 108,
+    "images_involved": 212
+   }
+  },
+  "0.9": {
+   "identical_marking": {
+    "n_pairs": 1038,
+    "within_one_split": 471,
+    "across_splits": 562,
+    "by_split": {
+     "train-train": 347,
+     "val-val": 25,
+     "test-test": 99,
+     "train-val": 133,
+     "train-test": 362,
+     "val-test": 67
+    },
+    "involving_excluded": 5,
+    "same_category": 561,
+    "adjacent_numbers": 105,
+    "images_involved": 492,
+    "groups": 151,
+    "group_sizes": {
+     "2": 95,
+     "3": 17,
+     "4": 13,
+     "5": 7,
+     "6": 6,
+     "7": 5,
+     "8": 1,
+     "9": 1,
+     "10": 3,
+     "11": 1,
+     "15": 1,
+     "20": 1
+    }
+   },
+   "isolated_pairs": {
+    "n_pairs": 95,
+    "within_one_split": 65,
+    "across_splits": 30,
+    "by_split": {
+     "train-train": 36,
+     "val-val": 7,
+     "test-test": 22,
+     "train-val": 4,
+     "train-test": 19,
+     "val-test": 7
+    },
+    "involving_excluded": 0,
+    "same_category": 83,
+    "adjacent_numbers": 52,
+    "images_involved": 190
+   },
+   "adjacent_numbers": {
+    "n_pairs": 105,
+    "within_one_split": 104,
+    "across_splits": 0,
+    "by_split": {
+     "train-train": 63,
+     "val-val": 12,
+     "test-test": 29,
+     "train-val": 0,
+     "train-test": 0,
+     "val-test": 0
+    },
+    "involving_excluded": 1,
+    "same_category": 105,
+    "adjacent_numbers": 105,
+    "images_involved": 206
+   }
+  }
+ }
+}

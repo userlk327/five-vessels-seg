@@ -1,0 +1,154 @@
+{
+ "images": [
+  "train_8_A",
+  "train_161_D",
+  "train_350_G",
+  "train_467_N"
+ ],
+ "resolution": 512,
+ "target_method": "soft",
+ "steps": 4000,
+ "optimizer": "Adam lr 0.1, cosine decay to 0, free per-pixel logits (no network), batch of 1",
+ "loss": {
+  "bce_weight": 1.0,
+  "dice_weight": 1.0,
+  "dice_eps": 1.0
+ },
+ "mean_p_at_optimum_by_target_value": {
+  "0": {
+   "bce_dice": 0.0,
+   "bce_only": 0.0002
+  },
+  "0.0625": {
+   "bce_dice": 0.0105,
+   "bce_only": 0.0625
+  },
+  "0.125": {
+   "bce_dice": 0.0242,
+   "bce_only": 0.125
+  },
+  "0.1875": {
+   "bce_dice": 0.0438,
+   "bce_only": 0.1875
+  },
+  "0.25": {
+   "bce_dice": 0.0726,
+   "bce_only": 0.25
+  },
+  "0.3125": {
+   "bce_dice": 0.1193,
+   "bce_only": 0.3125
+  },
+  "0.375": {
+   "bce_dice": 0.1979,
+   "bce_only": 0.375
+  },
+  "0.4375": {
+   "bce_dice": 0.3722,
+   "bce_only": 0.4375
+  },
+  "0.5": {
+   "bce_dice": 0.6204,
+   "bce_only": 0.5
+  },
+  "0.5625": {
+   "bce_dice": 0.7826,
+   "bce_only": 0.5625
+  },
+  "0.625": {
+   "bce_dice": 0.868,
+   "bce_only": 0.625
+  },
+  "0.6875": {
+   "bce_dice": 0.9134,
+   "bce_only": 0.6875
+  },
+  "0.75": {
+   "bce_dice": 0.9435,
+   "bce_only": 0.75
+  },
+  "0.8125": {
+   "bce_dice": 0.9643,
+   "bce_only": 0.8125
+  },
+  "0.875": {
+   "bce_dice": 0.9798,
+   "bce_only": 0.875
+  },
+  "0.9375": {
+   "bce_dice": 0.9912,
+   "bce_only": 0.9375
+  },
+  "1": {
+   "bce_dice": 0.9999,
+   "bce_only": 0.9998
+  }
+ },
+ "max_abs_p_minus_t_bce_only": 0.0001634359359741211,
+ "final_grad_max": {
+  "bce_dice": 2.4158519629224884e-09,
+  "bce_only": 6.234586180653423e-10
+ },
+ "dice_at_optimum": {
+  "bce_dice": {
+   "train_161_D": 0.903,
+   "train_350_G": 0.9298,
+   "train_467_N": 0.9307,
+   "train_8_A": 0.9262
+  },
+  "bce_only": {
+   "train_161_D": 0.8807,
+   "train_350_G": 0.9101,
+   "train_467_N": 0.9151,
+   "train_8_A": 0.9085
+  }
+ },
+ "evaluation_at_2048_mean_over_images": {
+  "bce_dice": {
+   "at_0.5": {
+    "dice": 0.9564,
+    "cl_recall_thin": 0.9582,
+    "cl_recall_medium": 1.0,
+    "cl_recall_thick": 1.0
+   },
+   "best_dice_threshold": 0.6,
+   "at_best_dice_threshold": {
+    "dice": 0.9615,
+    "cl_recall_thin": 0.9222,
+    "cl_recall_medium": 1.0,
+    "cl_recall_thick": 1.0
+   }
+  },
+  "bce_only": {
+   "at_0.5": {
+    "dice": 0.9841,
+    "cl_recall_thin": 0.9403,
+    "cl_recall_medium": 1.0,
+    "cl_recall_thick": 1.0
+   },
+   "best_dice_threshold": 0.5,
+   "at_best_dice_threshold": {
+    "dice": 0.9841,
+    "cl_recall_thin": 0.9403,
+    "cl_recall_medium": 1.0,
+    "cl_recall_thick": 1.0
+   }
+  },
+  "target": {
+   "at_0.5": {
+    "dice": 0.9841,
+    "cl_recall_thin": 0.9403,
+    "cl_recall_medium": 1.0,
+    "cl_recall_thick": 1.0
+   },
+   "best_dice_threshold": 0.5,
+   "at_best_dice_threshold": {
+    "dice": 0.9841,
+    "cl_recall_thin": 0.9403,
+    "cl_recall_medium": 1.0,
+    "cl_recall_thick": 1.0
+   }
+  }
+ },
+ "note": "float16 storage and bilinear upsampling to 2048 as for predictions; metrics inside the FOV"
+}

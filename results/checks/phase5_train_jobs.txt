@@ -1,0 +1,3 @@
+sam smoke        job 19042605
+sam_lora_tiled   job 19042606  (afterok smoke)
+sam_lora_whole   job 19042607  (afterany tiled)

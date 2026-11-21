@@ -1,0 +1,31 @@
+{
+ "computed_on": "train split only (477 images) of data/splits/splits.csv (sha256 aee9e29af7d8f769)",
+ "input": "CLAHE-processed cached PNGs, scaled to [0, 1], all pixels (background included)",
+ "channel_order": "RGB",
+ "512": {
+  "mean": [
+   0.384131,
+   0.19208,
+   0.104345
+  ],
+  "std": [
+   0.248743,
+   0.134776,
+   0.068527
+  ],
+  "n_pixels": 125042688
+ },
+ "1024": {
+  "mean": [
+   0.384516,
+   0.192476,
+   0.104745
+  ],
+  "std": [
+   0.249226,
+   0.135397,
+   0.069381
+  ],
+  "n_pixels": 500170752
+ }
+}

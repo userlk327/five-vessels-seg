@@ -1,0 +1,5 @@
+row,image_id,cx,cy,r,rms_px,n_points,inlier_frac,threshold,background,touches_frame,fov_fraction,gt_px_outside_fov,display_gain
+GT reaching outside the FOV,train_335_G,1009.087,1031.372,1005.651,0.921,5919,0.934,5.5,4.0,False,0.7601,161,1.17
+GT reaching outside the FOV,train_338_G,1008.502,1030.61,1005.393,1.001,5901,0.943,5.5,4.0,False,0.7597,118,1.25
+GT reaching outside the FOV,train_36_A,1021.33,1037.794,1008.695,2.139,6388,0.936,4.5,3.0,False,0.7655,54,1.0
+GT reaching outside the FOV,train_169_D,1019.88,1033.003,1010.282,2.616,6712,0.951,4.5,3.0,False,0.7682,36,1.0

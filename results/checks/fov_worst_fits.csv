@@ -1,0 +1,11 @@
+row,image_id,cx,cy,r,rms_px,n_points,inlier_frac,threshold,background,touches_frame,fov_fraction,gt_px_outside_fov,display_gain
+highest fit RMS / lowest inlier share,train_86_A,1014.181,1034.184,1012.64,5.047,7229,0.959,5.5,4.0,False,0.7739,0,1.0
+highest fit RMS / lowest inlier share,test_45_A,1023.159,1031.8,1013.789,4.918,7336,0.93,5.5,4.0,False,0.7764,0,1.0
+highest fit RMS / lowest inlier share,train_133_A,1021.792,1032.415,1012.663,4.535,7287,0.959,5.5,4.0,False,0.7733,0,1.0
+highest fit RMS / lowest inlier share,test_24_A,1017.025,1035.494,1013.649,4.299,7051,0.967,3.5,2.0,True,0.7746,0,1.0
+highest fit RMS / lowest inlier share,test_54_D,1019.831,1037.64,1012.191,4.264,7147,0.942,3.5,2.0,True,0.7728,0,1.0
+,train_353_G,1010.203,1019.821,1003.831,0.844,7833,0.612,5.5,4.0,False,0.757,0,1.15
+,test_83_D,1021.199,1033.071,1006.684,1.274,6371,0.807,5.5,4.0,False,0.7629,0,1.0
+,train_565_N,1035.394,1030.621,1021.022,1.217,5812,0.828,4.5,3.0,True,0.7838,0,1.0
+,train_411_G,1020.324,1038.574,1006.951,1.036,6197,0.836,5.5,4.0,False,0.7631,0,1.0
+,train_129_A,1015.958,1033.126,1006.696,1.054,6185,0.837,6.5,5.0,False,0.7626,0,1.0

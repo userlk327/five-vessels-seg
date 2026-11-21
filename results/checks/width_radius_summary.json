@@ -1,0 +1,90 @@
+{
+ "images": 477,
+ "split": "train",
+ "skeleton_px": 10692024,
+ "definition": "radius = Euclidean distance transform of the full GT at each GT skeleton pixel inside the FOV (px at 2048); thin: r < lo, medium: lo <= r <= hi, thick: r > hi",
+ "proposed_cutoffs": {
+  "thin_below": 3,
+  "thick_above": 7
+ },
+ "shares_proposed": {
+  "thin": 0.10335741857668856,
+  "medium": 0.4986938862090096,
+  "thick": 0.3979486952143018
+ },
+ "shares_alternatives": {
+  "3/7": {
+   "thin": 0.10335741857668856,
+   "medium": 0.4986938862090096,
+   "thick": 0.3979486952143018
+  },
+  "2/5": {
+   "thin": 0.02239538556965454,
+   "medium": 0.4173851461612881,
+   "thick": 0.5602194682690573
+  },
+  "2.5/6": {
+   "thin": 0.07848626228298777,
+   "medium": 0.44967660005252513,
+   "thick": 0.4718371376644871
+  },
+  "3/6": {
+   "thin": 0.10335741857668856,
+   "medium": 0.42480544375882434,
+   "thick": 0.4718371376644871
+  },
+  "4/8": {
+   "thin": 0.22190073647421668,
+   "medium": 0.45784446424736797,
+   "thick": 0.3202547992784154
+  }
+ },
+ "radius_quantiles": {
+  "0.1": 2.828,
+  "0.25": 4.0,
+  "0.5": 5.831,
+  "0.75": 9.0,
+  "0.9": 11.18,
+  "0.99": 16.492
+ },
+ "per_image_share_quantiles": {
+  "thin": {
+   "0.05": 0.0562,
+   "0.5": 0.0914,
+   "0.95": 0.177
+  },
+  "medium": {
+   "0.05": 0.3874,
+   "0.5": 0.4968,
+   "0.95": 0.6026
+  },
+  "thick": {
+   "0.05": 0.2706,
+   "0.5": 0.4007,
+   "0.95": 0.5394
+  }
+ },
+ "shares_by_category": {
+  "A": {
+   "thin": 0.1233,
+   "medium": 0.4971,
+   "thick": 0.3796
+  },
+  "D": {
+   "thin": 0.1036,
+   "medium": 0.481,
+   "thick": 0.4153
+  },
+  "G": {
+   "thin": 0.109,
+   "medium": 0.5147,
+   "thick": 0.3762
+  },
+  "N": {
+   "thin": 0.0817,
+   "medium": 0.5013,
+   "thick": 0.4171
+  }
+ },
+ "approx_width_px": "a straight vessel of width w has centre radius (w + 1) / 2, so r < 3 ~ w <= 4 px at 2048 (<= 1 px at 512), r > 7 ~ w >= 14 px"
+}

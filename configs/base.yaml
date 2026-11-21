@@ -1,0 +1,59 @@
+# Shared by EVERY model (CNNs and SAM). Change a value only with a stated reason,
+# for all comparable models, and record it in docs/protocol.md (Rule 9).
+# Values marked "Phase N" are decided in that phase.
+
+paths:                              # relative to the project root
+  fives_dir: data/FIVES             # symlink -> $WORK/FIVES (parquet; extracted PNGs in Phase 1)
+  splits_csv: data/splits/splits.csv
+  cache_dir: data/cache             # symlink -> $WORK/fives-vessel-seg/data_cache
+  outputs_dir: outputs              # symlink -> $WORK/fives-vessel-seg/outputs
+  results_dir: results
+
+data:
+  native_resolution: 2048
+  cnn_resolution: 512               # CNN input/output size. Read it from here; never hardcode 512.
+  sam_resolution: 1024              # SAM input size
+  sam_decoder_resolution: 256       # SAM mask-decoder output size (upsampled to 1024 by SAM's postprocessing)
+  split:                            # official train -> train/val; official test unchanged
+    val_fraction: 0.2               # per category: round(0.2 * n) val images
+    stratify_by: category
+    seed: 17
+    group_marking_iou: 0.8          # groups kept on one side: identical image files, and
+                                    # identical marking (IoU >= this) + adjacent numbers
+    exclude:                        # neither train nor val (decision after Phase 1)
+      train_447_G: empty ground-truth mask (all 0); near-identical image to train_448_G
+      train_448_G: empty ground-truth mask (all 0); near-identical image to train_447_G
+      train_174_D: same eye as test_54_D (practically identical vessel masks, layout IoU 0.997); test set unchanged
+  clahe: {color_space: LAB, channel: L, clip_limit: 2.0, tile_grid: [8, 8], at_resolution: 2048}
+  image_resize: area
+  mask_resize: soft                 # Phase 2 decision: area average, NO threshold -> soft targets in [0, 1],
+                                    # used as is by both loss terms (docs/protocol.md §8)
+  mask_cache_dtype: float16         # one compressed .npz archive per resolution (train + val only)
+  augmentation: {hflip_p: 0.5, vflip_p: 0.5, rot90: true}   # training only, image and mask together
+  num_workers: 8
+
+qa:                                 # Phase 1 data check only (rough FOV + burned-in marking detector);
+  fov_threshold: 15                 # the Phase 2 FOV mask is defined and checked separately
+  marking_threshold: 40             # max(R,G,B) above this, outside the FOV -> marking pixel
+  fov_margin_px: 20                 # ignore this band just outside the estimated FOV edge
+  min_marking_px: 20                # flag an image if it has at least this many marking pixels
+  redact_block_px: 64               # figures: everything outside the FOV is pixelated in 64x64 blocks
+  pairs:                            # likely same-patient pairs: identical top-left markings
+    binarize_threshold: 128         # marking pattern = max(R,G,B) > 128 outside the FOV
+    grid: 64                        # patterns compared on a 64x64 grid (IoU), never saved
+    max_shift: 2                    # allow +-2 grid cells of misalignment
+    thresholds: [0.7, 0.8, 0.9]     # counts reported at each IoU threshold
+
+evaluation:                         # all metrics at 2048 vs the original masks
+  prob_upsample: bilinear
+  threshold_grid: {start: 0.05, stop: 0.95, step: 0.05}     # chosen on val, per model and seed
+  centerline_tolerance_px: 1
+  width_classes_radius_px: {thin_below: 3, thick_above: 7}  # approved after the radius histogram (Phase 2);
+                                    # r = 3 and r = 7 count as medium
+  width_sensitivity_radius_px: {thin_below: 4, thick_above: 8}  # Phase 6 secondary table only
+  nsd_tolerance_px: 2
+  fractal_box_sizes: [2, 4, 8, 16, 32, 64, 128, 256, 512]
+
+reproducibility:
+  cudnn_deterministic: true
+  cudnn_benchmark: false

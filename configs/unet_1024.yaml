@@ -1,0 +1,6 @@
+# Phase 3 resolution pilot: the baseline U-Net at cnn_resolution 1024 (validation only).
+# Identical to unet.yaml except the CNN resolution (decision rule in docs/protocol.md §11).
+inherits: unet.yaml
+run_name: unet_r1024
+data:
+  cnn_resolution: 1024

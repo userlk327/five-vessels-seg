@@ -1,0 +1,200 @@
+{
+ "train_images": 600,
+ "train_masks": 600,
+ "train_unpaired": [],
+ "test_images": 200,
+ "test_masks": 200,
+ "test_unpaired": [],
+ "names_shared_by_train_and_test": [],
+ "ids_match_parquet": true,
+ "parquet_paths_equal_image_id": true,
+ "files_equal_parquet_sha256": 800,
+ "duplicate_image_files": [
+  "train_34_A",
+  "train_39_A",
+  "train_53_A",
+  "train_55_A",
+  "train_61_A",
+  "train_97_A",
+  "train_118_A",
+  "train_121_A",
+  "train_132_A",
+  "train_134_A",
+  "test_32_A",
+  "test_48_A"
+ ],
+ "values_img_h": {
+  "2048": 800
+ },
+ "values_img_w": {
+  "2048": 800
+ },
+ "values_img_channels": {
+  "3": 800
+ },
+ "values_img_dtype": {
+  "uint8": 800
+ },
+ "values_mask_h": {
+  "2048": 800
+ },
+ "values_mask_w": {
+  "2048": 800
+ },
+ "values_mask_channels": {
+  "1": 800
+ },
+ "values_mask_dtype": {
+  "uint8": 800
+ },
+ "values_mask_values": {
+  "0 255": 798,
+  "0": 2
+ },
+ "category_letter_matches_number_block": true,
+ "category_counts": {
+  "test": {
+   "A": 50,
+   "D": 50,
+   "G": 50,
+   "N": 50,
+   "All": 200
+  },
+  "train": {
+   "A": 150,
+   "D": 150,
+   "G": 150,
+   "N": 150,
+   "All": 600
+  },
+  "All": {
+   "A": 200,
+   "D": 200,
+   "G": 200,
+   "N": 200,
+   "All": 800
+  }
+ },
+ "pixel_compare": [
+  {
+   "image_id": "train_15_A",
+   "image_equal": true,
+   "mask_equal": true,
+   "pil_image_mode": "RGB",
+   "pil_mask_mode": "L"
+  },
+  {
+   "image_id": "train_41_A",
+   "image_equal": true,
+   "mask_equal": true,
+   "pil_image_mode": "RGB",
+   "pil_mask_mode": "L"
+  },
+  {
+   "image_id": "train_232_D",
+   "image_equal": true,
+   "mask_equal": true,
+   "pil_image_mode": "RGB",
+   "pil_mask_mode": "L"
+  },
+  {
+   "image_id": "train_237_D",
+   "image_equal": true,
+   "mask_equal": true,
+   "pil_image_mode": "RGB",
+   "pil_mask_mode": "L"
+  },
+  {
+   "image_id": "train_241_D",
+   "image_equal": true,
+   "mask_equal": true,
+   "pil_image_mode": "RGB",
+   "pil_mask_mode": "L"
+  },
+  {
+   "image_id": "train_300_D",
+   "image_equal": true,
+   "mask_equal": true,
+   "pil_image_mode": "RGB",
+   "pil_mask_mode": "L"
+  },
+  {
+   "image_id": "train_304_G",
+   "image_equal": true,
+   "mask_equal": true,
+   "pil_image_mode": "RGB",
+   "pil_mask_mode": "L"
+  },
+  {
+   "image_id": "train_390_G",
+   "image_equal": true,
+   "mask_equal": true,
+   "pil_image_mode": "RGB",
+   "pil_mask_mode": "L"
+  },
+  {
+   "image_id": "train_437_G",
+   "image_equal": true,
+   "mask_equal": true,
+   "pil_image_mode": "RGB",
+   "pil_mask_mode": "L"
+  },
+  {
+   "image_id": "train_496_N",
+   "image_equal": true,
+   "mask_equal": true,
+   "pil_image_mode": "RGB",
+   "pil_mask_mode": "L"
+  },
+  {
+   "image_id": "train_501_N",
+   "image_equal": true,
+   "mask_equal": true,
+   "pil_image_mode": "RGB",
+   "pil_mask_mode": "L"
+  },
+  {
+   "image_id": "test_6_A",
+   "image_equal": true,
+   "mask_equal": true,
+   "pil_image_mode": "RGB",
+   "pil_mask_mode": "L"
+  }
+ ],
+ "markings": {
+  "rule": "pixels with max(R,G,B) > 40 more than 20 px outside the estimated FOV, merged into label regions (41 px closing); a region with >= 20 such pixels is a marking, smaller ones are specks",
+  "images_with_specks_only": 34,
+  "n_flagged": 574,
+  "by_split_category": {
+   "test_A": 48,
+   "test_D": 41,
+   "test_G": 43,
+   "test_N": 43,
+   "train_A": 147,
+   "train_D": 120,
+   "train_G": 127,
+   "train_N": 5
+  },
+  "region_sets": {
+   "top-left": 573,
+   "bottom-left;top-left": 1
+  },
+  "regions_per_image": {
+   "1": 573,
+   "2": 1
+  },
+  "test_101_G": {
+   "marking_px": 1828,
+   "marking_regions": "top-left"
+  }
+ },
+ "fov": {
+  "fraction_min": 0.43366336822509766,
+  "fraction_median": 0.7572929859161377,
+  "fraction_max": 0.7801499366760254,
+  "touches_border": 126,
+  "mean_gray_min": 27.39662249383699,
+  "mean_gray_median": 107.89110613263301,
+  "mask_px_outside_fov_images": 25
+ }
+}

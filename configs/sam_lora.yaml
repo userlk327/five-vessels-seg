@@ -1,0 +1,14 @@
+# Model 5b: SAM ViT-B fine-tuned with LoRA (SAMed-style), no prompts. Fully automatic.
+# Shared by both variants; use sam_lora_tiled.yaml (MAIN) or sam_lora_whole.yaml.
+inherits: train_shared.yaml
+model:
+  name: sam_lora
+  checkpoint: outputs/pretrained/sam_vit_b_01ec64.pth   # SHA-256 ec2df627...c912, MD5 01ec64d2...
+  lora_rank: 4
+  lora_targets: [q, v]              # q and v parts of each fused qkv projection
+sam:
+  variant: null                     # tiled | whole (set by the variant config)
+train:
+  batch_size: 2                     # micro-batch: 15.7 GB peak on L40S (Phase 5 probe; 4 is not faster)
+  grad_accumulation: 2              # micro-batch x accumulation = effective batch 4 (as the CNNs)
+  # optimizer, loss, epochs, early stopping, AMP: unchanged from train_shared.yaml (Adam, lr 1e-4)

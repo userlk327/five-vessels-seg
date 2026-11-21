@@ -1,0 +1,36 @@
+{
+ "run": "ms_attention_unet",
+ "seed": 1,
+ "finish_reason": "early stopping: no improvement in 20 epochs",
+ "epochs_run": 105,
+ "best_epoch": 84,
+ "best_val_dice_at_0.5": 0.9122674536156258,
+ "training_time_h": 0.534,
+ "training_time_definition": "sum of epoch times (train + val), excluding start-up and resume overhead",
+ "epoch_time_s": {
+  "mean": 18.314095238095238,
+  "median": 18.29,
+  "train_mean": 16.05285714285714,
+  "val_mean": 1.7026666666666668
+ },
+ "gpu_peak_alloc_gb": 4.38,
+ "gpu_peak_reserved_gb": 5.18,
+ "parameters": {
+  "total": 33833861,
+  "trainable": 33833861
+ },
+ "cnn_resolution": 512,
+ "batch_size": 4,
+ "sessions": [
+  {
+   "time": "2026-11-20T12:25:54-06:00",
+   "host": "c0903.swan.hcc.unl.edu",
+   "gpu": "NVIDIA L40S",
+   "slurm_job_id": "19031876",
+   "slurm_restart_count": null,
+   "torch": "2.14.1+cu126",
+   "cuda": "12.6"
+  }
+ ],
+ "config_hash": "e57dfb85a95f0dd5"
+}

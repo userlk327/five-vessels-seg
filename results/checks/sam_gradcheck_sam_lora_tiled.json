@@ -1,0 +1,630 @@
+{
+ "run": "sam_lora_tiled",
+ "variant": "tiled",
+ "seed": 0,
+ "device": "cuda",
+ "gpu": "NVIDIA L40S",
+ "amp": true,
+ "batch": "first 4 training samples, no augmentation, the same batch at every step",
+ "lr": 0.0001,
+ "optimizer_steps_applied": 3,
+ "iterations": 7,
+ "parameters": {
+  "image_encoder (frozen)": {
+   "tensors": 177,
+   "elements": 89670912,
+   "requires_grad": [
+    false
+   ]
+  },
+  "lora_A": {
+   "tensors": 24,
+   "elements": 73728,
+   "requires_grad": [
+    true
+   ]
+  },
+  "lora_B": {
+   "tensors": 24,
+   "elements": 73728,
+   "requires_grad": [
+    true
+   ]
+  },
+  "mask_decoder": {
+   "tensors": 120,
+   "elements": 4058340,
+   "requires_grad": [
+    true
+   ]
+  },
+  "prompt_encoder (frozen)": {
+   "tensors": 16,
+   "elements": 6220,
+   "requires_grad": [
+    false
+   ]
+  }
+ },
+ "steps": [
+  {
+   "iteration": 1,
+   "loss": 1.5910661220550537,
+   "optimizer_step_skipped_by_gradscaler": true,
+   "groups": {
+    "image_encoder (frozen)": {
+     "tensors": 177,
+     "none": 177,
+     "zero": 0,
+     "nonzero": 0,
+     "nonfinite": 0,
+     "grad_norm": 0.0
+    },
+    "lora_A": {
+     "tensors": 24,
+     "none": 0,
+     "zero": 0,
+     "nonzero": 0,
+     "nonfinite": 24,
+     "grad_norm": 0.0
+    },
+    "lora_B": {
+     "tensors": 24,
+     "none": 0,
+     "zero": 0,
+     "nonzero": 0,
+     "nonfinite": 24,
+     "grad_norm": 0.0
+    },
+    "mask_decoder": {
+     "tensors": 120,
+     "none": 6,
+     "zero": 18,
+     "nonzero": 70,
+     "nonfinite": 26,
+     "grad_norm": 28.102378717326445
+    },
+    "prompt_encoder (frozen)": {
+     "tensors": 16,
+     "none": 16,
+     "zero": 0,
+     "nonzero": 0,
+     "nonfinite": 0,
+     "grad_norm": 0.0
+    }
+   },
+   "mask_decoder_no_grad": [
+    "sam.mask_decoder.iou_prediction_head.layers.0.weight",
+    "sam.mask_decoder.iou_prediction_head.layers.0.bias",
+    "sam.mask_decoder.iou_prediction_head.layers.1.weight",
+    "sam.mask_decoder.iou_prediction_head.layers.1.bias",
+    "sam.mask_decoder.iou_prediction_head.layers.2.weight",
+    "sam.mask_decoder.iou_prediction_head.layers.2.bias"
+   ],
+   "mask_decoder_zero_grad": [
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.0.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.0.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.1.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.1.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.2.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.2.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.0.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.0.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.1.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.1.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.2.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.2.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.0.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.0.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.1.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.1.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.2.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.2.bias"
+   ]
+  },
+  {
+   "iteration": 2,
+   "loss": 1.5910661220550537,
+   "optimizer_step_skipped_by_gradscaler": true,
+   "groups": {
+    "image_encoder (frozen)": {
+     "tensors": 177,
+     "none": 177,
+     "zero": 0,
+     "nonzero": 0,
+     "nonfinite": 0,
+     "grad_norm": 0.0
+    },
+    "lora_A": {
+     "tensors": 24,
+     "none": 0,
+     "zero": 0,
+     "nonzero": 0,
+     "nonfinite": 24,
+     "grad_norm": 0.0
+    },
+    "lora_B": {
+     "tensors": 24,
+     "none": 0,
+     "zero": 0,
+     "nonzero": 0,
+     "nonfinite": 24,
+     "grad_norm": 0.0
+    },
+    "mask_decoder": {
+     "tensors": 120,
+     "none": 6,
+     "zero": 18,
+     "nonzero": 70,
+     "nonfinite": 26,
+     "grad_norm": 28.10278725916601
+    },
+    "prompt_encoder (frozen)": {
+     "tensors": 16,
+     "none": 16,
+     "zero": 0,
+     "nonzero": 0,
+     "nonfinite": 0,
+     "grad_norm": 0.0
+    }
+   },
+   "mask_decoder_no_grad": [
+    "sam.mask_decoder.iou_prediction_head.layers.0.weight",
+    "sam.mask_decoder.iou_prediction_head.layers.0.bias",
+    "sam.mask_decoder.iou_prediction_head.layers.1.weight",
+    "sam.mask_decoder.iou_prediction_head.layers.1.bias",
+    "sam.mask_decoder.iou_prediction_head.layers.2.weight",
+    "sam.mask_decoder.iou_prediction_head.layers.2.bias"
+   ],
+   "mask_decoder_zero_grad": [
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.0.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.0.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.1.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.1.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.2.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.2.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.0.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.0.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.1.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.1.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.2.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.2.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.0.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.0.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.1.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.1.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.2.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.2.bias"
+   ]
+  },
+  {
+   "iteration": 3,
+   "loss": 1.5910661220550537,
+   "optimizer_step_skipped_by_gradscaler": true,
+   "groups": {
+    "image_encoder (frozen)": {
+     "tensors": 177,
+     "none": 177,
+     "zero": 0,
+     "nonzero": 0,
+     "nonfinite": 0,
+     "grad_norm": 0.0
+    },
+    "lora_A": {
+     "tensors": 24,
+     "none": 0,
+     "zero": 24,
+     "nonzero": 0,
+     "nonfinite": 0,
+     "grad_norm": 0.0
+    },
+    "lora_B": {
+     "tensors": 24,
+     "none": 0,
+     "zero": 0,
+     "nonzero": 24,
+     "nonfinite": 0,
+     "grad_norm": 0.13433957392690338
+    },
+    "mask_decoder": {
+     "tensors": 120,
+     "none": 6,
+     "zero": 18,
+     "nonzero": 95,
+     "nonfinite": 1,
+     "grad_norm": 63.97469193891643
+    },
+    "prompt_encoder (frozen)": {
+     "tensors": 16,
+     "none": 16,
+     "zero": 0,
+     "nonzero": 0,
+     "nonfinite": 0,
+     "grad_norm": 0.0
+    }
+   },
+   "mask_decoder_no_grad": [
+    "sam.mask_decoder.iou_prediction_head.layers.0.weight",
+    "sam.mask_decoder.iou_prediction_head.layers.0.bias",
+    "sam.mask_decoder.iou_prediction_head.layers.1.weight",
+    "sam.mask_decoder.iou_prediction_head.layers.1.bias",
+    "sam.mask_decoder.iou_prediction_head.layers.2.weight",
+    "sam.mask_decoder.iou_prediction_head.layers.2.bias"
+   ],
+   "mask_decoder_zero_grad": [
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.0.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.0.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.1.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.1.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.2.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.2.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.0.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.0.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.1.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.1.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.2.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.2.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.0.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.0.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.1.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.1.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.2.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.2.bias"
+   ]
+  },
+  {
+   "iteration": 4,
+   "loss": 1.5910661220550537,
+   "optimizer_step_skipped_by_gradscaler": false,
+   "groups": {
+    "image_encoder (frozen)": {
+     "tensors": 177,
+     "none": 177,
+     "zero": 0,
+     "nonzero": 0,
+     "nonfinite": 0,
+     "grad_norm": 0.0
+    },
+    "lora_A": {
+     "tensors": 24,
+     "none": 0,
+     "zero": 24,
+     "nonzero": 0,
+     "nonfinite": 0,
+     "grad_norm": 0.0
+    },
+    "lora_B": {
+     "tensors": 24,
+     "none": 0,
+     "zero": 0,
+     "nonzero": 24,
+     "nonfinite": 0,
+     "grad_norm": 0.13420896055344542
+    },
+    "mask_decoder": {
+     "tensors": 120,
+     "none": 6,
+     "zero": 18,
+     "nonzero": 96,
+     "nonfinite": 0,
+     "grad_norm": 65.29860183181772
+    },
+    "prompt_encoder (frozen)": {
+     "tensors": 16,
+     "none": 16,
+     "zero": 0,
+     "nonzero": 0,
+     "nonfinite": 0,
+     "grad_norm": 0.0
+    }
+   },
+   "mask_decoder_no_grad": [
+    "sam.mask_decoder.iou_prediction_head.layers.0.weight",
+    "sam.mask_decoder.iou_prediction_head.layers.0.bias",
+    "sam.mask_decoder.iou_prediction_head.layers.1.weight",
+    "sam.mask_decoder.iou_prediction_head.layers.1.bias",
+    "sam.mask_decoder.iou_prediction_head.layers.2.weight",
+    "sam.mask_decoder.iou_prediction_head.layers.2.bias"
+   ],
+   "mask_decoder_zero_grad": [
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.0.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.0.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.1.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.1.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.2.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.2.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.0.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.0.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.1.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.1.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.2.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.2.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.0.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.0.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.1.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.1.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.2.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.2.bias"
+   ]
+  },
+  {
+   "iteration": 5,
+   "loss": 1.3477919101715088,
+   "optimizer_step_skipped_by_gradscaler": true,
+   "groups": {
+    "image_encoder (frozen)": {
+     "tensors": 177,
+     "none": 177,
+     "zero": 0,
+     "nonzero": 0,
+     "nonfinite": 0,
+     "grad_norm": 0.0
+    },
+    "lora_A": {
+     "tensors": 24,
+     "none": 0,
+     "zero": 0,
+     "nonzero": 24,
+     "nonfinite": 0,
+     "grad_norm": 0.007784091368404723
+    },
+    "lora_B": {
+     "tensors": 24,
+     "none": 0,
+     "zero": 0,
+     "nonzero": 24,
+     "nonfinite": 0,
+     "grad_norm": 0.27210081549696685
+    },
+    "mask_decoder": {
+     "tensors": 120,
+     "none": 6,
+     "zero": 18,
+     "nonzero": 95,
+     "nonfinite": 1,
+     "grad_norm": 110.27910959059604
+    },
+    "prompt_encoder (frozen)": {
+     "tensors": 16,
+     "none": 16,
+     "zero": 0,
+     "nonzero": 0,
+     "nonfinite": 0,
+     "grad_norm": 0.0
+    }
+   },
+   "mask_decoder_no_grad": [
+    "sam.mask_decoder.iou_prediction_head.layers.0.weight",
+    "sam.mask_decoder.iou_prediction_head.layers.0.bias",
+    "sam.mask_decoder.iou_prediction_head.layers.1.weight",
+    "sam.mask_decoder.iou_prediction_head.layers.1.bias",
+    "sam.mask_decoder.iou_prediction_head.layers.2.weight",
+    "sam.mask_decoder.iou_prediction_head.layers.2.bias"
+   ],
+   "mask_decoder_zero_grad": [
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.0.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.0.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.1.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.1.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.2.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.2.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.0.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.0.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.1.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.1.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.2.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.2.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.0.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.0.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.1.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.1.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.2.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.2.bias"
+   ]
+  },
+  {
+   "iteration": 6,
+   "loss": 1.3477919101715088,
+   "optimizer_step_skipped_by_gradscaler": false,
+   "groups": {
+    "image_encoder (frozen)": {
+     "tensors": 177,
+     "none": 177,
+     "zero": 0,
+     "nonzero": 0,
+     "nonfinite": 0,
+     "grad_norm": 0.0
+    },
+    "lora_A": {
+     "tensors": 24,
+     "none": 0,
+     "zero": 0,
+     "nonzero": 24,
+     "nonfinite": 0,
+     "grad_norm": 0.007783078294434767
+    },
+    "lora_B": {
+     "tensors": 24,
+     "none": 0,
+     "zero": 0,
+     "nonzero": 24,
+     "nonfinite": 0,
+     "grad_norm": 0.27215759512725585
+    },
+    "mask_decoder": {
+     "tensors": 120,
+     "none": 6,
+     "zero": 18,
+     "nonzero": 96,
+     "nonfinite": 0,
+     "grad_norm": 114.39150407403947
+    },
+    "prompt_encoder (frozen)": {
+     "tensors": 16,
+     "none": 16,
+     "zero": 0,
+     "nonzero": 0,
+     "nonfinite": 0,
+     "grad_norm": 0.0
+    }
+   },
+   "mask_decoder_no_grad": [
+    "sam.mask_decoder.iou_prediction_head.layers.0.weight",
+    "sam.mask_decoder.iou_prediction_head.layers.0.bias",
+    "sam.mask_decoder.iou_prediction_head.layers.1.weight",
+    "sam.mask_decoder.iou_prediction_head.layers.1.bias",
+    "sam.mask_decoder.iou_prediction_head.layers.2.weight",
+    "sam.mask_decoder.iou_prediction_head.layers.2.bias"
+   ],
+   "mask_decoder_zero_grad": [
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.0.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.0.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.1.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.1.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.2.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.2.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.0.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.0.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.1.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.1.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.2.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.2.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.0.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.0.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.1.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.1.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.2.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.2.bias"
+   ]
+  },
+  {
+   "iteration": 7,
+   "loss": 1.2846145629882812,
+   "optimizer_step_skipped_by_gradscaler": false,
+   "groups": {
+    "image_encoder (frozen)": {
+     "tensors": 177,
+     "none": 177,
+     "zero": 0,
+     "nonzero": 0,
+     "nonfinite": 0,
+     "grad_norm": 0.0
+    },
+    "lora_A": {
+     "tensors": 24,
+     "none": 0,
+     "zero": 0,
+     "nonzero": 24,
+     "nonfinite": 0,
+     "grad_norm": 0.0006004873107754226
+    },
+    "lora_B": {
+     "tensors": 24,
+     "none": 0,
+     "zero": 0,
+     "nonzero": 24,
+     "nonfinite": 0,
+     "grad_norm": 0.024866447613146093
+    },
+    "mask_decoder": {
+     "tensors": 120,
+     "none": 6,
+     "zero": 18,
+     "nonzero": 96,
+     "nonfinite": 0,
+     "grad_norm": 9.214725401319996
+    },
+    "prompt_encoder (frozen)": {
+     "tensors": 16,
+     "none": 16,
+     "zero": 0,
+     "nonzero": 0,
+     "nonfinite": 0,
+     "grad_norm": 0.0
+    }
+   },
+   "mask_decoder_no_grad": [
+    "sam.mask_decoder.iou_prediction_head.layers.0.weight",
+    "sam.mask_decoder.iou_prediction_head.layers.0.bias",
+    "sam.mask_decoder.iou_prediction_head.layers.1.weight",
+    "sam.mask_decoder.iou_prediction_head.layers.1.bias",
+    "sam.mask_decoder.iou_prediction_head.layers.2.weight",
+    "sam.mask_decoder.iou_prediction_head.layers.2.bias"
+   ],
+   "mask_decoder_zero_grad": [
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.0.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.0.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.1.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.1.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.2.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.1.layers.2.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.0.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.0.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.1.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.1.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.2.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.2.layers.2.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.0.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.0.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.1.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.1.bias",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.2.weight",
+    "sam.mask_decoder.output_hypernetworks_mlps.3.layers.2.bias"
+   ]
+  }
+ ],
+ "after_all_steps": {
+  "image_encoder (frozen)": {
+   "tensors_changed": 0,
+   "tensors_unchanged": 177,
+   "max_abs_change": 0.0
+  },
+  "lora_A": {
+   "tensors_changed": 24,
+   "tensors_unchanged": 0,
+   "max_abs_change": 0.0001603197306394577
+  },
+  "lora_B": {
+   "tensors_changed": 24,
+   "tensors_unchanged": 0,
+   "max_abs_change": 0.00030038811382837594
+  },
+  "mask_decoder": {
+   "tensors_changed": 96,
+   "tensors_unchanged": 24,
+   "max_abs_change": 0.0003004930913448334
+  },
+  "prompt_encoder (frozen)": {
+   "tensors_changed": 0,
+   "tensors_unchanged": 16,
+   "max_abs_change": 0.0
+  }
+ },
+ "mask_decoder_unchanged": [
+  "sam.mask_decoder.output_hypernetworks_mlps.1.layers.0.weight",
+  "sam.mask_decoder.output_hypernetworks_mlps.1.layers.0.bias",
+  "sam.mask_decoder.output_hypernetworks_mlps.1.layers.1.weight",
+  "sam.mask_decoder.output_hypernetworks_mlps.1.layers.1.bias",
+  "sam.mask_decoder.output_hypernetworks_mlps.1.layers.2.weight",
+  "sam.mask_decoder.output_hypernetworks_mlps.1.layers.2.bias",
+  "sam.mask_decoder.output_hypernetworks_mlps.2.layers.0.weight",
+  "sam.mask_decoder.output_hypernetworks_mlps.2.layers.0.bias",
+  "sam.mask_decoder.output_hypernetworks_mlps.2.layers.1.weight",
+  "sam.mask_decoder.output_hypernetworks_mlps.2.layers.1.bias",
+  "sam.mask_decoder.output_hypernetworks_mlps.2.layers.2.weight",
+  "sam.mask_decoder.output_hypernetworks_mlps.2.layers.2.bias",
+  "sam.mask_decoder.output_hypernetworks_mlps.3.layers.0.weight",
+  "sam.mask_decoder.output_hypernetworks_mlps.3.layers.0.bias",
+  "sam.mask_decoder.output_hypernetworks_mlps.3.layers.1.weight",
+  "sam.mask_decoder.output_hypernetworks_mlps.3.layers.1.bias",
+  "sam.mask_decoder.output_hypernetworks_mlps.3.layers.2.weight",
+  "sam.mask_decoder.output_hypernetworks_mlps.3.layers.2.bias",
+  "sam.mask_decoder.iou_prediction_head.layers.0.weight",
+  "sam.mask_decoder.iou_prediction_head.layers.0.bias",
+  "sam.mask_decoder.iou_prediction_head.layers.1.weight",
+  "sam.mask_decoder.iou_prediction_head.layers.1.bias",
+  "sam.mask_decoder.iou_prediction_head.layers.2.weight",
+  "sam.mask_decoder.iou_prediction_head.layers.2.bias"
+ ],
+ "frozen_bit_identical": true
+}

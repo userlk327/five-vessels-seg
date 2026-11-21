@@ -1,0 +1,71 @@
+{
+ "model": "multiscale_unet",
+ "seed": 2,
+ "split": "val",
+ "n_images": 120,
+ "probabilities": "outputs/multiscale_unet/seed2/val/probs.npz",
+ "probabilities_sha256": "05ee25ba260bd27e",
+ "config_hash": "e45a289df9026c2e",
+ "evaluation": {
+  "prob_upsample": "bilinear",
+  "threshold_grid": {
+   "start": 0.05,
+   "stop": 0.95,
+   "step": 0.05
+  },
+  "centerline_tolerance_px": 1,
+  "width_classes_radius_px": {
+   "thin_below": 3,
+   "thick_above": 7
+  },
+  "width_sensitivity_radius_px": {
+   "thin_below": 4,
+   "thick_above": 8
+  },
+  "nsd_tolerance_px": 2,
+  "fractal_box_sizes": [
+   2,
+   4,
+   8,
+   16,
+   32,
+   64,
+   128,
+   256,
+   512
+  ]
+ },
+ "environment": {
+  "time": "2026-11-20T13:52:00-06:00",
+  "host": "c0903.swan.hcc.unl.edu",
+  "slurm_job_id": "19031879",
+  "git": {
+   "commit": null,
+   "dirty": null
+  }
+ },
+ "threshold": 0.55,
+ "mean_dice_at_threshold": 0.9146457036513548,
+ "rule": "highest mean Dice over the val images on the grid; ties -> lowest threshold",
+ "mean_dice_by_threshold": {
+  "0.05": 0.8030580802052132,
+  "0.1": 0.8274300263372628,
+  "0.15": 0.853803931765195,
+  "0.2": 0.8661271676402704,
+  "0.25": 0.8770002418863049,
+  "0.3": 0.8858842262859377,
+  "0.35": 0.8968451476658551,
+  "0.4": 0.9101884746480082,
+  "0.45": 0.9128919318423095,
+  "0.5": 0.9133378591592517,
+  "0.55": 0.9146457036513548,
+  "0.6": 0.9143313700147275,
+  "0.65": 0.9010838596934574,
+  "0.7": 0.8883286176021514,
+  "0.75": 0.8766763759019862,
+  "0.8": 0.8610143789769784,
+  "0.85": 0.8400322948394737,
+  "0.9": 0.7935430423528118,
+  "0.95": 0.7439392230757756
+ }
+}

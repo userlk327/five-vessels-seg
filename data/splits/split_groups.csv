@@ -1,0 +1,178 @@
+image_id,group,group_size,split,reasons
+train_3_A,g000,2,train,"identical marking (IoU >= 0.8), isolated pair"
+train_181_D,g000,2,train,"identical marking (IoU >= 0.8), isolated pair"
+train_5_A,g001,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_6_A,g001,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_7_A,g002,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_8_A,g002,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_12_A,g003,2,val,identical marking (IoU >= 0.8) + adjacent numbers
+train_13_A,g003,2,val,identical marking (IoU >= 0.8) + adjacent numbers
+train_17_A,g004,2,val,"identical marking (IoU >= 0.8), isolated pair"
+train_21_A,g004,2,val,"identical marking (IoU >= 0.8), isolated pair"
+train_18_A,g005,2,val,"identical marking (IoU >= 0.8), isolated pair"
+train_129_A,g005,2,val,"identical marking (IoU >= 0.8), isolated pair"
+train_24_A,g006,2,train,"identical marking (IoU >= 0.8), isolated pair"
+train_167_D,g006,2,train,"identical marking (IoU >= 0.8), isolated pair"
+train_29_A,g007,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_30_A,g007,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_34_A,g008,2,train,identical image file
+train_118_A,g008,2,train,identical image file
+train_35_A,g009,2,val,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_36_A,g009,2,val,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_39_A,g010,3,train,identical image file; identical marking (IoU >= 0.8) + adjacent numbers
+train_40_A,g010,3,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_132_A,g010,3,train,identical image file
+train_45_A,g011,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_46_A,g011,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_47_A,g012,3,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_48_A,g012,3,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_49_A,g012,3,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_50_A,g013,3,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_51_A,g013,3,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_52_A,g013,3,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_53_A,g014,2,train,identical image file
+train_97_A,g014,2,train,identical image file
+train_54_A,g015,4,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_55_A,g015,4,train,identical image file; identical marking (IoU >= 0.8) + adjacent numbers
+train_134_A,g015,4,train,identical image file; identical marking (IoU >= 0.8) + adjacent numbers
+train_135_A,g015,4,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_61_A,g016,2,train,"identical image file; identical marking (IoU >= 0.8), isolated pair"
+train_121_A,g016,2,train,"identical image file; identical marking (IoU >= 0.8), isolated pair"
+train_67_A,g017,2,val,"identical marking (IoU >= 0.8), isolated pair"
+train_175_D,g017,2,val,"identical marking (IoU >= 0.8), isolated pair"
+train_76_A,g018,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_77_A,g018,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_78_A,g019,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_79_A,g019,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_81_A,g020,2,train,"identical marking (IoU >= 0.8), isolated pair"
+train_273_D,g020,2,train,"identical marking (IoU >= 0.8), isolated pair"
+train_82_A,g021,3,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_83_A,g021,3,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_84_A,g021,3,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_87_A,g022,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_88_A,g022,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_92_A,g023,2,train,"identical marking (IoU >= 0.8), isolated pair"
+train_110_A,g023,2,train,"identical marking (IoU >= 0.8), isolated pair"
+train_103_A,g024,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_104_A,g024,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_105_A,g025,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_106_A,g025,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_107_A,g026,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_108_A,g026,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_115_A,g027,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_116_A,g027,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_122_A,g028,2,val,identical marking (IoU >= 0.8) + adjacent numbers
+train_123_A,g028,2,val,identical marking (IoU >= 0.8) + adjacent numbers
+train_137_A,g029,3,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_138_A,g029,3,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_139_A,g029,3,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_145_A,g030,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_146_A,g030,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_155_D,g031,2,train,"identical marking (IoU >= 0.8), isolated pair"
+train_265_D,g031,2,train,"identical marking (IoU >= 0.8), isolated pair"
+train_159_D,g032,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_160_D,g032,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_198_D,g033,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_199_D,g033,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_247_D,g034,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_248_D,g034,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_258_D,g035,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_259_D,g035,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_274_D,g036,2,train,"identical marking (IoU >= 0.8), isolated pair"
+train_287_D,g036,2,train,"identical marking (IoU >= 0.8), isolated pair"
+train_291_D,g037,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_292_D,g037,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_301_G,g038,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_302_G,g038,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_304_G,g039,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_305_G,g039,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_306_G,g040,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_307_G,g040,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_308_G,g041,2,val,identical marking (IoU >= 0.8) + adjacent numbers
+train_309_G,g041,2,val,identical marking (IoU >= 0.8) + adjacent numbers
+train_314_G,g042,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_315_G,g042,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_321_G,g043,2,val,identical marking (IoU >= 0.8) + adjacent numbers
+train_322_G,g043,2,val,identical marking (IoU >= 0.8) + adjacent numbers
+train_323_G,g044,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_324_G,g044,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_329_G,g045,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_330_G,g045,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_331_G,g046,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_332_G,g046,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_334_G,g047,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_335_G,g047,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_336_G,g048,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_337_G,g048,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_339_G,g049,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_340_G,g049,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_342_G,g050,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_343_G,g050,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_344_G,g051,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_345_G,g051,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_346_G,g052,2,val,identical marking (IoU >= 0.8) + adjacent numbers
+train_347_G,g052,2,val,identical marking (IoU >= 0.8) + adjacent numbers
+train_349_G,g053,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_350_G,g053,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_352_G,g054,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_353_G,g054,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_354_G,g055,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_355_G,g055,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_356_G,g056,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_357_G,g056,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_360_G,g057,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_361_G,g057,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_362_G,g058,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_363_G,g058,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_365_G,g059,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_366_G,g059,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_381_G,g060,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_382_G,g060,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_384_G,g061,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_385_G,g061,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_387_G,g062,2,val,identical marking (IoU >= 0.8) + adjacent numbers
+train_388_G,g062,2,val,identical marking (IoU >= 0.8) + adjacent numbers
+train_389_G,g063,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_390_G,g063,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_391_G,g064,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_392_G,g064,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_393_G,g065,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_394_G,g065,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_397_G,g066,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_398_G,g066,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_402_G,g067,2,val,identical marking (IoU >= 0.8) + adjacent numbers
+train_403_G,g067,2,val,identical marking (IoU >= 0.8) + adjacent numbers
+train_405_G,g068,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_406_G,g068,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_410_G,g069,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_411_G,g069,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_412_G,g070,2,val,identical marking (IoU >= 0.8) + adjacent numbers
+train_413_G,g070,2,val,identical marking (IoU >= 0.8) + adjacent numbers
+train_414_G,g071,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_415_G,g071,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_417_G,g072,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_418_G,g072,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_420_G,g073,2,val,identical marking (IoU >= 0.8) + adjacent numbers
+train_421_G,g073,2,val,identical marking (IoU >= 0.8) + adjacent numbers
+train_427_G,g074,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_428_G,g074,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_429_G,g075,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_430_G,g075,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_431_G,g076,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_432_G,g076,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_433_G,g077,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_434_G,g077,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_436_G,g078,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_437_G,g078,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_438_G,g079,2,val,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_439_G,g079,2,val,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_440_G,g080,2,val,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_441_G,g080,2,val,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_442_G,g081,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_443_G,g081,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_449_G,g082,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_450_G,g082,2,train,identical marking (IoU >= 0.8) + adjacent numbers
+train_453_N,g083,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_454_N,g083,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_457_N,g084,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+train_458_N,g084,2,train,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"

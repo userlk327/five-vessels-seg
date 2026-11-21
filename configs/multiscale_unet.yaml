@@ -1,0 +1,4 @@
+# Model 3: Multi-Scale U-Net (attention no, multi-scale yes)
+inherits: train_shared.yaml
+run_name: multiscale_unet
+model: {name: multiscale_unet, in_channels: 3, out_channels: 1}

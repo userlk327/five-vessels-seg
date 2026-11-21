@@ -1,0 +1,4 @@
+# Model 2: Attention U-Net (attention yes, multi-scale no)
+inherits: train_shared.yaml
+run_name: attention_unet
+model: {name: attention_unet, in_channels: 3, out_channels: 1}

@@ -1,0 +1,6 @@
+# Model 5b, MAIN fine-tuned SAM: 2x2 native-resolution 1024x1024 tiles per 2048 image;
+# the stitched decoder output is a 512 grid, the same as the CNNs (docs/protocol.md §12).
+inherits: sam_lora.yaml
+run_name: sam_lora_tiled
+sam:
+  variant: tiled

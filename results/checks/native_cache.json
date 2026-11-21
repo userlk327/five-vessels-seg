@@ -1,0 +1,19 @@
+{
+ "source": "data/FIVES/<split>/images/<image_id>.png (2048x2048 RGB)",
+ "clahe": {
+  "color_space": "LAB",
+  "channel": "L",
+  "clip_limit": 2.0,
+  "tile_grid": [
+   8,
+   8
+  ],
+  "at_resolution": 2048
+ },
+ "format": "8-bit RGB PNG, CLAHE at native resolution, no resize, before normalization",
+ "n_images": 800,
+ "all_roundtrip_equal": true,
+ "all_match_1024_cache_after_area_resize": true,
+ "mismatches": [],
+ "created": "2026-11-20T22:23:18"
+}

@@ -1,0 +1,5 @@
+model,config,params_total,params_trainable,attention_gate_params,multiscale_fusion_and_bn_params,gmacs_conv_at_cnn_resolution,cnn_resolution,params_vs_unet_pct,gmacs_vs_unet_pct
+U-Net,configs/unet.yaml,31037633,31037633,0,0,192.67,512,0.0,0.0
+Attention U-Net,configs/attention_unet.yaml,32083077,32083077,1045444,0,195.89,512,3.37,1.7
+Multi-Scale U-Net,configs/multiscale_unet.yaml,32788417,32788417,0,1756672,202.33,512,5.64,5.0
+Multi-Scale Attention U-Net,configs/ms_attention_unet.yaml,33833861,33833861,1045444,1756672,205.56,512,9.01,6.7

@@ -1,0 +1,47 @@
+{
+ "run": "sam_lora_tiled",
+ "variant": "tiled",
+ "gpu": "NVIDIA L40S",
+ "amp": true,
+ "steps": 12,
+ "rows": [
+  {
+   "micro_batch": 1,
+   "status": "ok",
+   "train_s_per_micro_batch": 0.1285560131072998,
+   "train_s_per_sample": 0.1285560131072998,
+   "train_peak_alloc_gb": 8.12,
+   "peak_reserved_gb": 16.65,
+   "val_s_per_sample": 0.04930038253466288
+  },
+  {
+   "micro_batch": 2,
+   "status": "ok",
+   "train_s_per_micro_batch": 0.2538888454437256,
+   "train_s_per_sample": 0.1269444227218628,
+   "train_peak_alloc_gb": 15.66,
+   "peak_reserved_gb": 20.81,
+   "val_s_per_sample": 0.047869463761647545
+  },
+  {
+   "micro_batch": 4,
+   "status": "ok",
+   "train_s_per_micro_batch": 0.5244758129119873,
+   "train_s_per_sample": 0.13111895322799683,
+   "train_peak_alloc_gb": 30.74,
+   "peak_reserved_gb": 35.23,
+   "val_s_per_sample": 0.054394284884134926
+  }
+ ],
+ "estimate_fastest_micro_batch": {
+  "micro_batch": 2,
+  "train_samples": 1908,
+  "val_samples": 480,
+  "train_s": 242,
+  "val_s": 23,
+  "epoch_s": 265,
+  "hours_per_50_epochs": 3.68,
+  "hours_at_max_150_epochs": 11.05
+ },
+ "note": "time per sample = median wall time per optimizer step (includes data loading) / micro-batch, after 3 warm-up steps; the epoch estimate ignores start-up and checkpointing"
+}

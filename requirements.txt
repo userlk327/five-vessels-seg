@@ -1,0 +1,26 @@
+# Pinned direct dependencies. Python 3.11.18 (set in jobs/setup_env.sh). Installed by jobs/setup_env.sh.
+# The full resolved set (including torch's NVIDIA libraries) is written to
+# requirements.lock.txt after installation.
+#
+# PyTorch build: cu126. The cu130 build is compiled for sm_75 and newer only
+# (checked on Swan: sm_75 sm_80 sm_86 sm_90 sm_100 sm_120), so it cannot run on
+# the group's V100 nodes (sm_70). The cu126 build keeps one env usable on both
+# V100 and L40S. Verify the compiled arch list after install (setup_env.sh prints it).
+# torch 2.14.1 is the version the existing notebook ran with on Colab.
+--extra-index-url https://download.pytorch.org/whl/cu126
+torch==2.14.1+cu126
+torchvision==0.29.1+cu126
+
+numpy==2.4.6
+scipy==1.17.1
+scikit-image==0.26.0
+scikit-learn==1.9.1          # stratified train/val split (same call as the notebook, plus stratify=)
+opencv-python-headless==5.1.0.95
+pandas==3.1.1
+matplotlib==3.11.2
+pillow==13.0.0
+pyarrow==26.0.1              # read the Hugging Face parquet files directly
+pyyaml==6.0.3
+segment-anything==1.0        # official SAM package (ViT-B checkpoint downloaded separately)
+tqdm==4.70.1
+pytest==9.2.0

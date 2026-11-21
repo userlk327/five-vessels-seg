@@ -1,0 +1,4 @@
+# Model 4: Multi-Scale Attention U-Net (attention yes, multi-scale yes)
+inherits: train_shared.yaml
+run_name: ms_attention_unet
+model: {name: ms_attention_unet, in_channels: 3, out_channels: 1}

@@ -1,0 +1,204 @@
+{
+ "identical_images": {
+  "n_groups": 6,
+  "n_images": 12,
+  "groups_across_splits": 0,
+  "groups": [
+   {
+    "images": [
+     "train_39_A",
+     "train_132_A"
+    ],
+    "splits": [
+     "train",
+     "train"
+    ],
+    "masks_identical": false,
+    "mask_dice": 0.8777
+   },
+   {
+    "images": [
+     "train_34_A",
+     "train_118_A"
+    ],
+    "splits": [
+     "train",
+     "train"
+    ],
+    "masks_identical": false,
+    "mask_dice": 0.9822
+   },
+   {
+    "images": [
+     "train_61_A",
+     "train_121_A"
+    ],
+    "splits": [
+     "train",
+     "train"
+    ],
+    "masks_identical": false,
+    "mask_dice": 0.9779
+   },
+   {
+    "images": [
+     "train_53_A",
+     "train_97_A"
+    ],
+    "splits": [
+     "train",
+     "train"
+    ],
+    "masks_identical": false,
+    "mask_dice": 0.9601
+   },
+   {
+    "images": [
+     "test_32_A",
+     "test_48_A"
+    ],
+    "splits": [
+     "test",
+     "test"
+    ],
+    "masks_identical": false,
+    "mask_dice": 0.9932
+   },
+   {
+    "images": [
+     "train_55_A",
+     "train_134_A"
+    ],
+    "splits": [
+     "train",
+     "train"
+    ],
+    "masks_identical": false,
+    "mask_dice": 0.9697
+   }
+  ]
+ },
+ "identical_masks_on_different_images": [
+  {
+   "images": [
+    "train_447_G",
+    "train_448_G"
+   ],
+   "splits": [
+    "excluded",
+    "excluded"
+   ],
+   "images_identical": false,
+   "mean_abs_image_difference_0_255": 5.22,
+   "vessel_fraction": 0.0
+  },
+  {
+   "images": [
+    "test_22_A",
+    "test_23_A"
+   ],
+   "splits": [
+    "test",
+    "test"
+   ],
+   "images_identical": false,
+   "mean_abs_image_difference_0_255": 2.67,
+   "vessel_fraction": 0.0831
+  }
+ ],
+ "empty_masks": [
+  {
+   "image": "train_447_G",
+   "split": "excluded"
+  },
+  {
+   "image": "train_448_G",
+   "split": "excluded"
+  }
+ ],
+ "gt_outside_fov": {
+  "n_images": 25,
+  "by_kind": {
+   "border_line": 19,
+   "dim_eye_rim": 5,
+   "other": 1
+  },
+  "images_by_kind": {
+   "border_line": [
+    "train_38_A",
+    "train_39_A",
+    "train_40_A",
+    "train_41_A",
+    "train_42_A",
+    "train_48_A",
+    "train_212_D",
+    "train_414_G",
+    "train_415_G",
+    "train_416_G",
+    "train_417_G",
+    "train_418_G",
+    "train_419_G",
+    "train_420_G",
+    "train_421_G",
+    "train_424_G",
+    "test_68_D",
+    "test_143_G",
+    "test_146_G"
+   ],
+   "dim_eye_rim": [
+    "train_353_G",
+    "train_361_G",
+    "train_373_G",
+    "test_133_G",
+    "test_145_G"
+   ],
+   "other": [
+    "train_193_D"
+   ]
+  },
+  "px_by_kind": {
+   "border_line": 41117,
+   "dim_eye_rim": 14189,
+   "other": 86
+  }
+ },
+ "near_duplicates_by_mask_layout": {
+  "method": "masks as 'any vessel' in 16x16 blocks (128x128), dilated 1 block; IoU over all image pairs",
+  "n_pairs": 319600,
+  "iou_quantiles": {
+   "0.5": 0.3197,
+   "0.99": 0.4503,
+   "0.999": 0.4865,
+   "1.0": 1.0
+  },
+  "by_threshold": {
+   "0.7": {
+    "train-train": 9,
+    "val-val": 0,
+    "test-test": 3,
+    "train-val": 2,
+    "train-test": 2,
+    "val-test": 1,
+    "involving_excluded": 1
+   },
+   "0.8": {
+    "train-train": 5,
+    "val-val": 0,
+    "test-test": 2,
+    "train-val": 0,
+    "train-test": 0,
+    "val-test": 0,
+    "involving_excluded": 1
+   },
+   "0.9": {
+    "train-train": 3,
+    "val-val": 0,
+    "test-test": 2,
+    "train-val": 0,
+    "train-test": 0,
+    "val-test": 0,
+    "involving_excluded": 1
+   }
+  }
+ }
+}

@@ -1,0 +1,46 @@
+{
+ "method": "soft",
+ "dtype": "float16",
+ "source": "data/FIVES/train/masks/<image_id>.png (2048, original)",
+ "images": 597,
+ "splits": {
+  "train": 477,
+  "val": 120
+ },
+ "splits_csv_sha256": "aee9e29af7d8f769",
+ "created": "2026-11-20T06:03:44",
+ "resolutions": {
+  "512": {
+   "file": "masks_soft_512.npz",
+   "size_mb": 12.0,
+   "shape": [
+    512,
+    512
+   ],
+   "value_range": [
+    0.0,
+    1.0
+   ],
+   "distinct_values": 17,
+   "max_float16_rounding_error": 0.0,
+   "max_abs_target_mean_minus_2048_vessel_fraction": 0.0,
+   "mean_share_of_pixels_strictly_between_0_and_1": 0.04181
+  },
+  "1024": {
+   "file": "masks_soft_1024.npz",
+   "size_mb": 19.4,
+   "shape": [
+    1024,
+    1024
+   ],
+   "value_range": [
+    0.0,
+    1.0
+   ],
+   "distinct_values": 5,
+   "max_float16_rounding_error": 0.0,
+   "max_abs_target_mean_minus_2048_vessel_fraction": 0.0,
+   "mean_share_of_pixels_strictly_between_0_and_1": 0.01403
+  }
+ }
+}

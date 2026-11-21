@@ -1,0 +1,47 @@
+{
+ "images": [
+  "train_8_A",
+  "train_9_A",
+  "train_11_A",
+  "train_29_A",
+  "train_59_A",
+  "train_117_A",
+  "train_118_A",
+  "train_121_A",
+  "train_161_D",
+  "train_239_D",
+  "train_248_D",
+  "train_258_D",
+  "train_275_D",
+  "train_282_D",
+  "train_295_D",
+  "train_350_G",
+  "train_362_G",
+  "train_367_G",
+  "train_369_G",
+  "train_371_G",
+  "train_373_G",
+  "train_427_G",
+  "train_431_G",
+  "train_467_N",
+  "train_492_N",
+  "train_511_N",
+  "train_522_N",
+  "train_579_N",
+  "train_583_N",
+  "train_592_N"
+ ],
+ "n": 30,
+ "categories": {
+  "A": 8,
+  "G": 8,
+  "D": 7,
+  "N": 7
+ },
+ "selection": "training split, stratified A 8 / D 7 / G 8 / N 7, RandomState(0)",
+ "reconstruction": "downsample with the method, bilinear upsampling to 2048 (half-pixel centres), >= threshold (0.5; soft also 0.25 as an illustration), scored inside the FOV",
+ "cutoffs": [
+  3,
+  7
+ ]
+}

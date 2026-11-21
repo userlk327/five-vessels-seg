@@ -1,0 +1,17 @@
+{
+ "model": "unet",
+ "resolution": 1024,
+ "batch_size": 4,
+ "steps": 30,
+ "gpu": "NVIDIA L40S",
+ "amp": true,
+ "status": "ok",
+ "step_time_s_median": 0.3236212730407715,
+ "step_time_s_mean": 0.3242300510406494,
+ "steps_timed": 25,
+ "train_peak_alloc_gb": 12.25,
+ "peak_alloc_gb": 12.25,
+ "peak_reserved_gb": 15.52,
+ "batches_per_epoch": 120,
+ "note": "step time = wall time between consecutive optimizer steps (includes data loading), after 5 warm-up steps; peak_alloc includes one validation forward + upsampling to 2048"
+}

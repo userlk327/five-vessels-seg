@@ -1,0 +1,12 @@
+{
+ "method": "binary pattern max(R,G,B) > 128 outside the FOV in the top-left 128x128 px, on a 64x64 grid; IoU maximized over shifts of +-2 cells (patterns kept in memory only)",
+ "n_images_compared": 574,
+ "n_images_without_top_left_marking": 226,
+ "n_pairs_compared": 164451,
+ "iou_quantiles_all_pairs": {
+  "0.5": 0.3524,
+  "0.9": 0.4469,
+  "0.99": 0.6371,
+  "0.999": 1.0
+ }
+}

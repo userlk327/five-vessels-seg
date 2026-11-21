@@ -1,0 +1,78 @@
+{
+ "model": "reference_soft_512",
+ "seed": null,
+ "split": "val",
+ "n_images": 120,
+ "probabilities": "outputs/reference/reference_soft_512/val/probs.npz",
+ "probabilities_sha256": "c152fffe2f878b00",
+ "config_hash": "ad987fd1075d223f",
+ "evaluation": {
+  "prob_upsample": "bilinear",
+  "threshold_grid": {
+   "start": 0.05,
+   "stop": 0.95,
+   "step": 0.05
+  },
+  "centerline_tolerance_px": 1,
+  "width_classes_radius_px": {
+   "thin_below": 3,
+   "thick_above": 7
+  },
+  "width_sensitivity_radius_px": {
+   "thin_below": 4,
+   "thick_above": 8
+  },
+  "nsd_tolerance_px": 2,
+  "fractal_box_sizes": [
+   2,
+   4,
+   8,
+   16,
+   32,
+   64,
+   128,
+   256,
+   512
+  ]
+ },
+ "environment": {
+  "time": "2026-11-20T06:04:11-06:00",
+  "host": "c2016.swan.hcc.unl.edu",
+  "slurm_job_id": "19029556",
+  "git": {
+   "commit": null,
+   "dirty": null
+  }
+ },
+ "reference": {
+  "name": "reference_soft_512",
+  "size": 512,
+  "stored_at": 512,
+  "path": "2048 GT -> soft at 512 -> float16 -> bilinear to 2048 -> threshold (as CNN predictions)"
+ },
+ "note": "mask-resampling reference: context only, not an upper bound",
+ "threshold": 0.5,
+ "mean_dice_at_threshold": 0.9847658616429481,
+ "rule": "highest mean Dice over the val images on the grid; ties -> lowest threshold",
+ "mean_dice_by_threshold": {
+  "0.05": 0.808322758542513,
+  "0.1": 0.8405066203440573,
+  "0.15": 0.8655491827080231,
+  "0.2": 0.8854228492598559,
+  "0.25": 0.9051518374979381,
+  "0.3": 0.9230938183351515,
+  "0.35": 0.9432752705395562,
+  "0.4": 0.9608114830125608,
+  "0.45": 0.9783055612851527,
+  "0.5": 0.9847658616429481,
+  "0.55": 0.9769270176425228,
+  "0.6": 0.9560167208218855,
+  "0.65": 0.9337724210832156,
+  "0.7": 0.9064449457473313,
+  "0.75": 0.8799870965664401,
+  "0.8": 0.848385741150864,
+  "0.85": 0.8140186714385863,
+  "0.9": 0.7658808862976402,
+  "0.95": 0.6956087872840248
+ }
+}

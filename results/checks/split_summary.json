@@ -1,0 +1,63 @@
+{
+ "splits_csv_sha256": "aee9e29af7d8f76984a410bf00740ebecb95a72715cafc11b567e63e91c3c2ba",
+ "seed": 17,
+ "val_fraction": 0.2,
+ "counts": {
+  "excluded": {
+   "A": 0,
+   "D": 1,
+   "G": 2,
+   "N": 0,
+   "All": 3
+  },
+  "test": {
+   "A": 50,
+   "D": 50,
+   "G": 50,
+   "N": 50,
+   "All": 200
+  },
+  "train": {
+   "A": 120,
+   "D": 119,
+   "G": 118,
+   "N": 120,
+   "All": 477
+  },
+  "val": {
+   "A": 30,
+   "D": 30,
+   "G": 30,
+   "N": 30,
+   "All": 120
+  },
+  "All": {
+   "A": 200,
+   "D": 200,
+   "G": 200,
+   "N": 200,
+   "All": 800
+  }
+ },
+ "excluded": {
+  "train_447_G": "empty ground-truth mask (all 0); near-identical image to train_448_G",
+  "train_448_G": "empty ground-truth mask (all 0); near-identical image to train_447_G",
+  "train_174_D": "same eye as test_54_D (practically identical vessel masks, layout IoU 0.997); test set unchanged"
+ },
+ "group_pairs": {
+  "identical marking (IoU >= 0.8) + adjacent numbers": 79,
+  "identical marking (IoU >= 0.8), isolated pair": 31,
+  "identical image file": 5
+ },
+ "groups": 85,
+ "group_sizes": {
+  "2": 79,
+  "3": 5,
+  "4": 1
+ },
+ "grouped_images_by_split": {
+  "train": 147,
+  "val": 30
+ },
+ "groups_crossing_train_val": 0
+}

@@ -1,0 +1,11 @@
+seed 0  attention_unet  job 19031870
+seed 0  multiscale_unet  job 19031871
+seed 0  ms_attention_unet  job 19031872
+seed 1  unet  job 19031873  (chain 0)
+seed 1  attention_unet  job 19031874  (chain 1)
+seed 1  multiscale_unet  job 19031875  (chain 0)
+seed 1  ms_attention_unet  job 19031876  (chain 1)
+seed 2  unet  job 19031877  (chain 0)
+seed 2  attention_unet  job 19031878  (chain 1)
+seed 2  multiscale_unet  job 19031879  (chain 0)
+seed 2  ms_attention_unet  job 19031880  (chain 1)

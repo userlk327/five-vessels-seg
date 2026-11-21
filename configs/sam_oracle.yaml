@@ -1,0 +1,14 @@
+# Model 5a: SAM ViT-B zero-shot with ORACLE point prompts sampled from each image's own
+# ground truth (allowed exception to Rule 3). Separate table; never ranked against the
+# automatic models. No training. Whole images at 1024 (standard SAM usage).
+inherits: base.yaml
+run_name: sam_oracle
+label: "zero-shot, oracle point prompts"
+model:
+  name: sam_oracle
+  checkpoint: outputs/pretrained/sam_vit_b_01ec64.pth
+prompts:
+  k_grid: [5, 10, 20]               # K positive (GT skeleton) + K negative (background); K chosen on val
+  negative_margin_px: 10            # negatives at least this far (px at 2048) from any GT vessel
+  seed: 0
+  multimask_output: false

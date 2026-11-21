@@ -1,0 +1,22 @@
+{
+ "K5": {
+  "prompts_on_intended_class": 1.0,
+  "mean_prob_at_positive_points": 0.8093880414962769,
+  "mean_prob_at_negative_points": 0.6713952422142029,
+  "share_images_negatives_above_0.5": 0.85
+ },
+ "K10": {
+  "prompts_on_intended_class": 1.0,
+  "mean_prob_at_positive_points": 0.7767448425292969,
+  "mean_prob_at_negative_points": 0.7009047269821167,
+  "share_images_negatives_above_0.5": 0.9
+ },
+ "K20": {
+  "prompts_on_intended_class": 1.0,
+  "mean_prob_at_positive_points": 0.7453703284263611,
+  "mean_prob_at_negative_points": 0.7204781174659729,
+  "share_images_negatives_above_0.5": 0.9666666666666667
+ },
+ "dice_if_the_whole_fov_were_predicted": 0.17717851478657215,
+ "note": "prompt classes checked against the 2048 GT; probabilities read at the prompt locations in the 1024 maps"
+}
