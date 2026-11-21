@@ -172,6 +172,9 @@ def ablation_effects(per_image: pd.DataFrame, metrics=MAIN_METRICS, n_boot: int 
     return pd.DataFrame(rows)
 
 
+TRAINED_AS = {"sam_lora_tiled_overlap": "sam_lora_tiled"}     # inference-only variant -> its trained run
+
+
 def run_rows(split: str, models: dict) -> list[dict]:
     """One row per trained (model, seed) run: threshold, epochs, time, memory, mean metrics."""
     import json
@@ -182,8 +185,9 @@ def run_rows(split: str, models: dict) -> list[dict]:
         for f in sorted(project_path("results/eval").glob(f"{m}/seed*/{split}_metrics.csv")):
             seed = int(f.parent.name[4:])
             df = pd.read_csv(f)
-            s = json.loads((project_path("results/train") / m / f"seed{seed}" / "summary.json").read_text())
-            rows.append({"model": label, "seed": seed, "threshold": float(df.threshold.iloc[0]),
+            src_run = TRAINED_AS.get(m, m)                # inference-only variants reuse a trained run
+            s = json.loads((project_path("results/train") / src_run / f"seed{seed}" / "summary.json").read_text())
+            rows.append({"model": label, "seed": seed, "trained_run": src_run, "threshold": float(df.threshold.iloc[0]),
                          "best_epoch": s["best_epoch"], "epochs_run": s["epochs_run"],
                          "epoch_time_s_median": s["epoch_time_s"]["median"], "training_time_h": s["training_time_h"],
                          "gpu_peak_alloc_gb": s["gpu_peak_alloc_gb"], "host": s["sessions"][-1]["host"],
@@ -252,7 +256,8 @@ def cmd_ablation(split: str = "val", final_test: bool = False, fixed_threshold: 
     print(f"[analysis] wrote {out / f'{split}_model_level{tag}.csv'} and {out / f'{split}_ablation_effects{tag}.csv'}")
 
 
-SAM_AUTO = {"sam_lora_tiled": "SAM LoRA, tiled 2x2 (main)", "sam_lora_whole": "SAM LoRA, whole image"}
+SAM_AUTO = {"sam_lora_tiled": "SAM LoRA, tiled 2x2 (main)", "sam_lora_whole": "SAM LoRA, whole image",
+            "sam_lora_tiled_overlap": "SAM LoRA, tiled, overlapping-tile inference (sensitivity)"}
 SAM_REFERENCE = {"sam_lora_tiled": "reference_soft_512", "sam_lora_whole": "reference_soft_256"}
 SAM_ORACLE_LABEL = "zero-shot, oracle point prompts"
 
@@ -286,6 +291,8 @@ def cmd_sam(split: str = "val") -> None:
     cnn = load_eval(split).groupby(["model", "image_id"])[MAIN_METRICS].mean()
     paired = []
     for m, label in SAM_AUTO.items():
+        if not list((root / m).glob(f"seed*/{split}_metrics.csv")):
+            continue
         sam_df = load_eval(split, models={m: label}).set_index("image_id")[MAIN_METRICS]
         for c, clabel in ABLATION.items():
             other = cnn.loc[c]
@@ -317,7 +324,9 @@ def cmd_sam(split: str = "val") -> None:
     print(f"[analysis] wrote {split}_sam_runs.csv, {split}_sam_vs_cnn_paired.csv, {split}_sam_oracle.csv in {tables}")
 
 
-SEAM_RUNS = (("sam_lora_tiled", 0), ("sam_lora_whole", 0), ("unet", 0), ("unet", 1), ("unet", 2))
+SEAM_RUNS = (("sam_lora_tiled", 0), ("sam_lora_tiled_overlap", 0), ("sam_lora_whole", 0), ("unet", 0), ("unet", 1),
+             ("unet", 2))
+SEAM_SUBJECTS = ("sam_lora_tiled", "sam_lora_tiled_overlap")    # tiled variants; the rest are controls
 SEAM_BAND_PX = (16, 32, 64)        # half-widths at 2048 (16 px = 4 px of the stitched 512 grid)
 
 
@@ -408,7 +417,11 @@ def cmd_seam(split: str = "val", workers: int = 1) -> None:
     cfg = load_config("configs/base.yaml")
     runs = []
     for run, seed in SEAM_RUNS:
-        thr = json.loads((project_path("results/eval") / run / f"seed{seed}" / "val_threshold.json").read_text())["threshold"]
+        tfile = project_path("results/eval") / run / f"seed{seed}" / "val_threshold.json"
+        if not tfile.exists():
+            print(f"[seam] {run} seed {seed}: no val results yet, skipped")
+            continue
+        thr = json.loads(tfile.read_text())["threshold"]
         archive = prob_archive_path(project_path(cfg["paths"]["outputs_dir"]) / run / f"seed{seed}", split)
         runs.append((run, seed, archive, float(thr)))
     ids = split_ids(cfg, split)
@@ -438,22 +451,26 @@ def cmd_seam(split: str = "val", workers: int = 1) -> None:
                                   "cl_recall_thin": float(sums.thin_hit / sums.n_thin), "n_thin": int(sums.n_thin)})
     wide = per.pivot_table(index=["image_id", "half_width_px"], columns=["model", "band"],
                            values=["dice", "cl_recall", "cl_recall_thin"])
-    for control in ("unet_mean_s012", "sam_lora_whole"):
-        for w in SEAM_BAND_PX:
-            sub = wide.xs(w, level="half_width_px")
-            for k in ("dice", "cl_recall", "cl_recall_thin"):
-                did = ((sub[(k, "sam_lora_tiled", "seam")] - sub[(k, control, "seam")])
-                       - (sub[(k, "sam_lora_tiled", "midline")] - sub[(k, control, "midline")])).dropna()
-                lo, hi = bootstrap_ci(did)
-                summary["did"].append({"control": control, "half_width_px": w, "metric": k, "did_mean": float(did.mean()),
-                                       "ci_low": lo, "ci_high": hi, "n_images": int(len(did))})
+    subjects = [m for m in SEAM_SUBJECTS if m in set(per.model)]
+    for subject in subjects:
+        for control in ("unet_mean_s012", "sam_lora_whole"):
+            for w in SEAM_BAND_PX:
+                sub = wide.xs(w, level="half_width_px")
+                for k in ("dice", "cl_recall", "cl_recall_thin"):
+                    did = ((sub[(k, subject, "seam")] - sub[(k, control, "seam")])
+                           - (sub[(k, subject, "midline")] - sub[(k, control, "midline")])).dropna()
+                    lo, hi = bootstrap_ci(did)
+                    summary["did"].append({"subject": subject, "control": control, "half_width_px": w, "metric": k,
+                                           "did_mean": float(did.mean()), "ci_low": lo, "ci_high": hi,
+                                           "n_images": int(len(did))})
     jr = per[(per.band == "seam") & (per.half_width_px == SEAM_BAND_PX[0])].pivot(index="image_id", columns="model",
                                                                                  values="jump_ratio")
     for m in jr.columns:
         summary["jump_ratio"][m] = {"mean": float(jr[m].mean()), "median": float(jr[m].median())}
-    d = (jr["sam_lora_tiled"] - jr["unet_mean_s012"]).dropna()
-    lo, hi = bootstrap_ci(d)
-    summary["jump_ratio"]["tiled_minus_unet"] = {"mean": float(d.mean()), "ci_low": lo, "ci_high": hi}
+    for subject in subjects:
+        d = (jr[subject] - jr["unet_mean_s012"]).dropna()
+        lo, hi = bootstrap_ci(d)
+        summary["jump_ratio"][f"{subject}_minus_unet"] = {"mean": float(d.mean()), "ci_low": lo, "ci_high": hi}
     with open(out_dir / "seam_check_summary.json", "w") as f:
         json.dump(summary, f, indent=1)
     print(pd.DataFrame(summary["pooled"]).round(4).to_string(index=False))

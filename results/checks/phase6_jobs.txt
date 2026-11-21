@@ -1,0 +1,1 @@
+fives-phase6-main  job 19054745  (part A: 12 CNN runs, whole-image SAM, oracle K=5, references; test, once)  commit ee677cd

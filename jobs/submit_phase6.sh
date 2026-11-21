@@ -7,7 +7,13 @@
 #                                       whole-image SAM, oracle-prompted SAM (K chosen on
 #                                       val) and the two mask-resampling references on test
 #   PART=tiled bash jobs/submit_phase6.sh
-#                                       part B: tiled SAM (after the val tile-seam check)
+#                                       part B: tiled SAM as frozen (main SAM; user decision after
+#                                       the val tile-seam check), then the overlapping-tile
+#                                       sensitivity variant on VAL only (src.sam_overlap: threshold
+#                                       chosen on val), the seam check rerun and the SAM val table
+#   PART=overlap_test bash jobs/submit_phase6.sh
+#                                       part C: the overlapping-tile variant on test, once (only
+#                                       after its val results have been checked)
 #
 # One GPU job per part (1x L40S, the training GPU type), parts run in sequence inside it;
 # a failing part is reported and does not stop the others. Every command passes --final-test,
@@ -35,7 +41,13 @@ case "$PART" in
         TIME=03:00:00 ;;
     tiled)
         run_pair configs/sam_lora_tiled.yaml 0
-        TIME=00:45:00 ;;
-    *) echo "PART must be main or tiled" >&2; exit 1 ;;
+        add src.sam_overlap --split val "${W[@]}"
+        add src.analysis seam "${W[@]}"
+        add src.analysis sam
+        TIME=01:00:00 ;;
+    overlap_test)
+        add src.sam_overlap --split test --final-test "${W[@]}"
+        TIME=00:30:00 ;;
+    *) echo "PART must be main, tiled or overlap_test" >&2; exit 1 ;;
 esac
 env $S sbatch --job-name="fives-phase6-$PART" --time="$TIME" jobs/gpu.sbatch "${args[@]}"
