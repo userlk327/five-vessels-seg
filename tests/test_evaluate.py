@@ -107,3 +107,16 @@ def test_portable_path_never_writes_personal_absolute_paths(monkeypatch, tmp_pat
     assert portable_path(PROJECT_ROOT / "outputs" / "unet" / "seed0" / "val" / "probs.npz") == "outputs/unet/seed0/val/probs.npz"
     monkeypatch.setenv("WORK", str(tmp_path))
     assert portable_path(tmp_path / "fives-vessel-seg" / "x.npz") == "$WORK/fives-vessel-seg/x.npz"
+
+
+def test_test_split_is_never_predicted_twice(monkeypatch, tmp_path):
+    import pytest
+
+    import src.predict as predict_mod
+    monkeypatch.setattr(predict_mod, "run_dir_for", lambda cfg, seed: tmp_path)
+    (tmp_path / "test").mkdir()
+    (tmp_path / "test" / "probs.npz").write_bytes(b"")
+    with pytest.raises(SystemExit, match="never overwritten"):
+        predict_mod.predict("configs/unet.yaml", 0, "test", final_test=True)
+    with pytest.raises(SystemExit, match="Phase 6"):            # and test needs --final-test at all
+        predict_mod.predict("configs/unet.yaml", 0, "test", final_test=False)

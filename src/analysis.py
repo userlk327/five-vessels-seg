@@ -8,6 +8,7 @@ Available now:
     python -m src.analysis params    # parameter table of the four CNNs -> results/tables/model_params.csv
     python -m src.analysis runs      # one row per trained run: threshold, epochs, time, memory, val metrics
     python -m src.analysis ablation  # 2x2 effects on VAL (exploratory; the test analysis is Phase 6)
+    python -m src.analysis seam      # tile-seam check of tiled SAM on VAL (CPU job; results/checks/seam_check_*)
     python -m src.analysis sam       # Phase 5 first look on VAL: SAM runs, SAM vs each CNN per image, oracle table
 
 Seeds (CLAUDE.md, Phase 6 rules, used here on val): model-level numbers are computed per seed,
@@ -316,6 +317,151 @@ def cmd_sam(split: str = "val") -> None:
     print(f"[analysis] wrote {split}_sam_runs.csv, {split}_sam_vs_cnn_paired.csv, {split}_sam_oracle.csv in {tables}")
 
 
+SEAM_RUNS = (("sam_lora_tiled", 0), ("sam_lora_whole", 0), ("unet", 0), ("unet", 1), ("unet", 2))
+SEAM_BAND_PX = (16, 32, 64)        # half-widths at 2048 (16 px = 4 px of the stitched 512 grid)
+
+
+def _line_distance(native: int, positions) -> "np.ndarray":
+    """Distance of every pixel centre to the nearest vertical or horizontal line at ``positions``."""
+    import numpy as np
+    c = np.arange(native) + 0.5
+    d = np.min(np.abs(c[:, None] - np.asarray(positions, float)[None, :]), axis=1)
+    return np.minimum(d[:, None], d[None, :])
+
+
+def _grid_jumps(prob: "np.ndarray", fov: "np.ndarray") -> dict:
+    """Mean |p[k+1] - p[k]| between adjacent columns / rows of the model's own output grid
+    (pixels fully inside the FOV), at the central seam (k = n/2 - 1) and, as reference, the
+    median over the central half of the grid excluding the seam +- 2."""
+    import cv2
+    import numpy as np
+    n = prob.shape[0]
+    inside = cv2.resize(fov.astype(np.float32), (n, n), interpolation=cv2.INTER_AREA) >= 0.999
+    out = {"grid": n}
+    for name, axis in (("col", 1), ("row", 0)):
+        p, m = (prob, inside) if axis == 1 else (prob.T, inside.T)
+        jump, both = np.abs(np.diff(p, axis=1)), m[:, 1:] & m[:, :-1]
+        prof = np.array([jump[both[:, k], k].mean() if both[:, k].any() else np.nan for k in range(n - 1)])
+        k = n // 2 - 1
+        ref = np.r_[prof[n // 4:k - 2], prof[k + 3:3 * n // 4]]
+        out[f"jump_{name}_seam"], out[f"jump_{name}_ref"] = float(prof[k]), float(np.nanmedian(ref))
+    out["jump_ratio"] = (out["jump_col_seam"] + out["jump_row_seam"]) / (out["jump_col_ref"] + out["jump_row_ref"])
+    return out
+
+
+def _seam_one(args) -> list[dict]:
+    import cv2
+    import numpy as np
+    from scipy import ndimage as ndi
+
+    from src.data import raw_mask_path, read_npz_member, read_unchanged
+    from src.evaluate import eval_settings, load_fov
+    from src.metrics import prepare_gt, width_class
+    from src.resample import binarize, upsample_prob
+    image_id, cfg, runs = args
+    cv2.setNumThreads(1)
+    s = eval_settings(cfg)
+    native = s["native"]
+    g = prepare_gt(read_unchanged(raw_mask_path(cfg, image_id)) > 0, load_fov(cfg, image_id))
+    thin = np.zeros_like(g.skel)
+    thin[np.nonzero(g.skel)] = width_class(g.skel_radius, s["cutoffs"]) == 0
+    bands = {"seam": _line_distance(native, [native / 2]),
+             "midline": _line_distance(native, [native / 4, 3 * native / 4])}
+    rows = []
+    for run, seed, archive, threshold in runs:
+        prob = read_npz_member(archive, image_id).astype(np.float32)
+        pred = binarize(upsample_prob(prob, native), threshold) & g.fov
+        hit = ndi.binary_dilation(pred, structure=np.ones((3, 3), bool), iterations=s["center_tol"])
+        base = {"image_id": image_id, "model": run, "seed": seed, "threshold": threshold, **_grid_jumps(prob, g.fov)}
+        for band, dist in bands.items():
+            for w in SEAM_BAND_PX:
+                b = (dist < w) & g.fov
+                sk, skt = g.skel & b, thin & b
+                rows.append({**base, "band": band, "half_width_px": w,
+                             "tp": int((pred & g.gt & b).sum()), "n_pred": int((pred & b).sum()),
+                             "n_gt": int((g.gt & b).sum()), "n_skel": int(sk.sum()), "skel_hit": int((hit & sk).sum()),
+                             "n_thin": int(skt.sum()), "thin_hit": int((hit & skt).sum())})
+    return rows
+
+
+def cmd_seam(split: str = "val", workers: int = 1) -> None:
+    """Tile-seam check for tiled SAM, VAL only. Tiled SAM's 2x2 tiles meet at x = 1024 and
+    y = 1024 (native px); the four 256 decoder grids are stitched without overlap. Two measures:
+      1. discontinuity: probability jump across the seam on the model's own grid, relative to
+         the other adjacent columns / rows (jump_ratio; ~1 if no seam effect);
+      2. accuracy near the seam: Dice and centreline recall (all, thin) inside bands of
+         half-width 16 / 32 / 64 px around the seam lines vs around the tile MIDLINES
+         (x, y = 512, 1536), as a difference-in-differences against models without seams
+         (U-Net seeds 0-2, averaged per image; whole-image SAM):
+           DiD = (tiled - control)[seam band] - (tiled - control)[midline band]
+         < 0 means tiled SAM loses more near its seams than elsewhere. 95% bootstrap CIs
+         over images. Writes results/checks/seam_check_per_image.csv, seam_check_summary.json."""
+    import json
+
+    import numpy as np
+
+    from src.data import split_ids
+    from src.evaluate import _pool
+    from src.utils import load_config, prob_archive_path, project_path
+    if split != "val":
+        raise SystemExit("The seam check runs on val only.")
+    cfg = load_config("configs/base.yaml")
+    runs = []
+    for run, seed in SEAM_RUNS:
+        thr = json.loads((project_path("results/eval") / run / f"seed{seed}" / "val_threshold.json").read_text())["threshold"]
+        archive = prob_archive_path(project_path(cfg["paths"]["outputs_dir"]) / run / f"seed{seed}", split)
+        runs.append((run, seed, archive, float(thr)))
+    ids = split_ids(cfg, split)
+    with _pool(workers) as ex:
+        rows = [r for part in ex.map(_seam_one, [(i, cfg, runs) for i in ids], chunksize=2) for r in part]
+    df = pd.DataFrame(rows)
+    out_dir = project_path("results/checks")
+    df.to_csv(out_dir / "seam_check_per_image.csv", index=False)
+
+    with np.errstate(invalid="ignore", divide="ignore"):         # per run and image; NaN if nothing in the band
+        df["dice"] = 2 * df.tp / (df.n_pred + df.n_gt)
+        df["cl_recall"] = df.skel_hit / df.n_skel
+        df["cl_recall_thin"] = df.thin_hit / df.n_thin
+    df = df.assign(model=df.model.where(df.model != "unet", "unet_mean_s012"))   # U-Net: mean over seeds per image
+    per = df.groupby(["model", "image_id", "band", "half_width_px"], as_index=False)[
+        ["tp", "n_pred", "n_gt", "n_skel", "skel_hit", "n_thin", "thin_hit", "jump_ratio",
+         "dice", "cl_recall", "cl_recall_thin"]].mean()
+    from src.utils import environment_info
+    env = {k: v for k, v in environment_info().items() if k in ("time", "host", "slurm_job_id", "git")}
+    summary = {"split": split, "n_images": len(ids), "environment": env, "runs": [[r, s_, t] for r, s_, _, t in runs],
+               "band_half_widths_px": list(SEAM_BAND_PX), "pooled": [], "did": [], "jump_ratio": {}}
+    for (m, band, w), d in per.groupby(["model", "band", "half_width_px"]):
+        sums = d[["tp", "n_pred", "n_gt", "n_skel", "skel_hit", "n_thin", "thin_hit"]].sum()
+        summary["pooled"].append({"model": m, "band": band, "half_width_px": int(w),
+                                  "dice": float(2 * sums.tp / (sums.n_pred + sums.n_gt)),
+                                  "cl_recall": float(sums.skel_hit / sums.n_skel),
+                                  "cl_recall_thin": float(sums.thin_hit / sums.n_thin), "n_thin": int(sums.n_thin)})
+    wide = per.pivot_table(index=["image_id", "half_width_px"], columns=["model", "band"],
+                           values=["dice", "cl_recall", "cl_recall_thin"])
+    for control in ("unet_mean_s012", "sam_lora_whole"):
+        for w in SEAM_BAND_PX:
+            sub = wide.xs(w, level="half_width_px")
+            for k in ("dice", "cl_recall", "cl_recall_thin"):
+                did = ((sub[(k, "sam_lora_tiled", "seam")] - sub[(k, control, "seam")])
+                       - (sub[(k, "sam_lora_tiled", "midline")] - sub[(k, control, "midline")])).dropna()
+                lo, hi = bootstrap_ci(did)
+                summary["did"].append({"control": control, "half_width_px": w, "metric": k, "did_mean": float(did.mean()),
+                                       "ci_low": lo, "ci_high": hi, "n_images": int(len(did))})
+    jr = per[(per.band == "seam") & (per.half_width_px == SEAM_BAND_PX[0])].pivot(index="image_id", columns="model",
+                                                                                 values="jump_ratio")
+    for m in jr.columns:
+        summary["jump_ratio"][m] = {"mean": float(jr[m].mean()), "median": float(jr[m].median())}
+    d = (jr["sam_lora_tiled"] - jr["unet_mean_s012"]).dropna()
+    lo, hi = bootstrap_ci(d)
+    summary["jump_ratio"]["tiled_minus_unet"] = {"mean": float(d.mean()), "ci_low": lo, "ci_high": hi}
+    with open(out_dir / "seam_check_summary.json", "w") as f:
+        json.dump(summary, f, indent=1)
+    print(pd.DataFrame(summary["pooled"]).round(4).to_string(index=False))
+    print(pd.DataFrame(summary["did"]).round(4).to_string(index=False))
+    print(json.dumps(summary["jump_ratio"], indent=1))
+    print(f"[analysis] wrote {out_dir / 'seam_check_per_image.csv'}, seam_check_summary.json")
+
+
 def cmd_curves_all() -> None:
     """Validation Dice per epoch for every run of the four CNNs: one panel per model,
     one line per seed (results/figures/val_dice_curves_cnns.png)."""
@@ -356,11 +502,12 @@ def main() -> None:
     from src.train import results_dir_for
     from src.utils import load_config
     ap = argparse.ArgumentParser(description="Analysis")
-    ap.add_argument("command", choices=["curves", "curves_all", "params", "runs", "ablation", "sam"])
+    ap.add_argument("command", choices=["curves", "curves_all", "params", "runs", "ablation", "sam", "seam"])
     ap.add_argument("--config")
     ap.add_argument("--seed", type=int)
     ap.add_argument("--split", choices=["val", "test"], default="val")
     ap.add_argument("--final-test", action="store_true", help="Phase 6 only")
+    ap.add_argument("--workers", type=int, default=int(__import__("os").environ.get("SLURM_CPUS_PER_TASK", "1")))
     ap.add_argument("--fixed-threshold", type=float, help="ablation: use this grid threshold for every run (sensitivity check)")
     a = ap.parse_args()
     if a.command == "params":
@@ -371,6 +518,9 @@ def main() -> None:
         return
     if a.command == "ablation":
         cmd_ablation(a.split, a.final_test, a.fixed_threshold)
+        return
+    if a.command == "seam":
+        cmd_seam(a.split, a.workers)
         return
     if a.command == "sam":
         cmd_sam(a.split)

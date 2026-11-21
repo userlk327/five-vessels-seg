@@ -40,6 +40,9 @@ def predict(cfg_path: str, seed: int, split: str, final_test: bool = False, smok
     if smoke:
         cfg["run_name"] = (cfg.get("run_name") or cfg["model"]["name"]) + "_smoke"
     run_dir = run_dir_for(cfg, seed)
+    if split == "test" and prob_archive_path(run_dir, split).exists():
+        raise SystemExit(f"{portable_path(prob_archive_path(run_dir, split))} exists: each run predicts the "
+                         "test split once (Phase 6); it is never overwritten.")
     best = run_dir / "best.pt"
     ckpt = torch.load(best, map_location="cpu", weights_only=True)
     run_cfg = yaml.safe_load((run_dir / "config.yaml").read_text())

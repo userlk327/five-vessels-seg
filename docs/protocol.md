@@ -65,6 +65,18 @@ Status: Phase 1 complete. Sections marked *(Phase N)* are filled in during that 
   and every resume). Each line holds the host, GPU, SLURM job id and restart count,
   the git commit and whether the working tree had uncommitted changes, and all
   package versions.
+- **Version control** (set up 2026-11-21, before Phase 6). Runs up to and including
+  Phase 5 record no commit, because the repository had none yet.
+  - **Pre-test freeze commit:** `0ee73608db87db9e0b6f2ff46d29f2faa75fd1dc` (2026-11-21).
+    It holds the code, configs, job scripts, this protocol, the shared split
+    (`data/splits/splits.csv`, `split_groups.csv`), the CNN normalization statistics
+    (`norm_stats.json`) and every Phase 1–5 check and validation result. It was made
+    **before any test-set prediction** and pushed to the public repository
+    `github.com/userlk327/five-vessels-seg` (branch `main`) the same day.
+  - **Public repository:** `CLAUDE.md`, the rest of `data/` (images, masks, caches),
+    `outputs/`, logs and checkpoints are never committed. No figure shows the burned-in
+    markings unredacted. Result files store project-relative paths
+    (`src.utils.portable_path`).
 
 ## 3. Checkpointing and resume (Phase 0)
 

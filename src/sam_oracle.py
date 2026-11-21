@@ -69,6 +69,10 @@ def run(cfg: dict, split: str, ks, final_test: bool, workers: int) -> None:
     sam = sam_model_registry["vit_b"](checkpoint=str(project_path(cfg["model"]["checkpoint"]))).to(device).eval()
     predictor = SamPredictor(sam)
     ids = split_ids(cfg, split)
+    if split == "test":                                   # predicted once (Phase 6); never overwritten
+        done = [k for k in ks if (run_dir_for({**cfg, "run_name": f"sam_oracle_k{k}"}, seed) / split / "probs.npz").exists()]
+        if done:
+            raise SystemExit(f"test predictions already exist for K = {done}; they are never overwritten.")
     kmax = max(ks)
     probs = {k: {} for k in ks}
     prompts = {}
