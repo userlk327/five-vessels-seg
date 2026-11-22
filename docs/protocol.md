@@ -660,7 +660,10 @@ Status: Phase 1 complete. Sections marked *(Phase N)* are filled in during that 
       - MD5 `01ec64d29a2fca3f0661936605ae66f8` (its prefix is the `01ec64` in the file
         name);
       - loads strictly into the ViT-B model; 93,735,472 parameters.
-  - **Seeds:** one seed (0) for SAM for now.
+  - **Seeds:** one seed (0) during Phase 5. After the Phase 6 test evaluation, tiled SAM
+    and whole-image SAM were trained with seeds 1 and 2 as well, and the overlapping-tile
+    inference was run on each tiled seed (frozen configs, unchanged; §13). The oracle
+    experiment has no training and keeps its single prompt seed.
   - **Input:** the same CLAHE-processed images as the CNNs, with only SAM's own pixel
     normalization.
   - **5a, oracle-prompted zero-shot** (`src/sam_oracle.py`, `configs/sam_oracle.yaml`;
@@ -866,6 +869,50 @@ Status: Phase 1 complete. Sections marked *(Phase N)* are filled in during that 
     val only, the seam-check rerun and the SAM val table.
   - **Part C (job 19054772):** the overlap variant on test.
   - **Not predicted on test:** the 1024 pilot (`unet_r1024`), which stays a pilot.
+- **Tiled SAM, seeds 1 and 2 (2026-11-21/22; user decision after the first Phase 6
+  report):** jobs 19055109 and 19055110, in parallel on two free L40S GPUs (nobody
+  preempted). Config unchanged from the freeze (same config hash).
+  - Each job trains, predicts and scores val, then predicts the test split once and
+    scores it at that seed's own val-selected threshold (`TEST_AFTER=1` in
+    `jobs/train.sbatch`; submitted by `jobs/submit_sam_seeds.sh`). Code at commit
+    `a0102fb`.
+  - Both seeds ran to the 150-epoch cap. Best epochs: seed 1 at 149 (the last epoch),
+    seed 2 at 138; seed 0 had stopped early at 124 (best 103). Best val Dice at 0.5:
+    0.9038 / 0.9045 / 0.9047 for seeds 0 / 1 / 2. Val-selected thresholds: 0.55 / 0.45 /
+    0.45.
+  - Then job 19055111 (`afterok` both) reran `src.analysis sam` and
+    `src.report --final-test`, so every Phase 6 table and figure now uses tiled SAM as a
+    3-seed model, with the same rules as the CNNs.
+  - At that point the overlapping-tile variant and whole-image SAM were still seed 0
+    only; both were brought to 3 seeds next.
+- **Overlap variant and whole-image SAM, seeds 1 and 2 (2026-11-22; user decision):**
+  submitted by `jobs/submit_overlap_seeds.sh` (`PARTITION=gpu WHOLE=1`). Job ids:
+  `results/checks/phase6_jobs.txt`.
+  - **Partition:** every L40S on c0903 was held by other users' `guest_gpu` jobs that an
+    `ltarunl` job would have preempted, so these jobs ran on the shared `gpu` partition,
+    still on L40S GPUs (`--constraint=gpu_l40s`). Nobody was preempted.
+  - **Overlap inference, seeds 1 and 2** (no training; each seed's own tiled `best.pt`):
+    one job predicted and scored val (each seed's own threshold: 0.45 / 0.55 for seeds
+    1 / 2; seed 0: 0.55), then a second job, only if the first succeeded, predicted the
+    test split once per seed and scored it at that threshold. So a failed val step could
+    not use up a seed's single test prediction.
+  - **Whole-image SAM, seeds 1 and 2:** trained in parallel with the frozen config
+    (same config hash as seed 0), then val, then test once (`TEST_AFTER=1`). Like seed 0,
+    both ran to the 150-epoch cap. Best epochs 143 / 149 / 145 for seeds 0 / 1 / 2; best
+    val Dice at 0.5: 0.9124 for all three (to 4 decimals). Val-selected threshold 0.5
+    for all three.
+    - Epochs took about 82 s for seeds 1 and 2 (shared `gpu` nodes) against 69 s for
+      seed 0 (c0903). This affects training time only. The cost table keeps the seed-0
+      training times, which were all measured on c0903.
+  - Then the CPU job reran `src.analysis sam` and `src.report --final-test`: every
+    automatic model, including all three fine-tuned SAM rows, now has 3 seeds.
+  - **Provenance:** these jobs record commit `a0102fb` with uncommitted changes. The
+    uncommitted changes were only `src/report.py` (figure labels and seed bands),
+    `tests/test_report.py`, `jobs/submit_overlap_seeds.sh`, this document and
+    `results/checks/phase6_jobs.txt`. The prediction and scoring code was unchanged.
+  - After the report job, the threshold figure was re-plotted once on the login node
+    from the saved sweeps (overlap line dashed, because it lies on the tiled line); its
+    CSV was byte-identical.
 - **Each run predicts the test split once.** `src.predict`, `src.sam_oracle` and
   `src.sam_overlap` require `--final-test` and refuse to overwrite an existing test
   archive (tested).
@@ -906,6 +953,39 @@ Status: Phase 1 complete. Sections marked *(Phase N)* are filled in during that 
       map also shows the prediction, since TP ∪ FP = prediction.
     - Each image also gets a native 256×256 crop: the window with the most thin-class
       skeleton pixels, chosen automatically.
+- **How to word the SAM results (3 seeds; wording for tiled SAM agreed with the user):**
+  - **Thin-vessel recall:** a modest average gain over U-Net (+0.027; mean over images
+    of the seed-averaged per-image difference), **within training-seed variability, not
+    a robust improvement.**
+    - Per-seed test thin recall: SAM 0.574 / 0.537 / 0.598; U-Net 0.544 / 0.565 /
+      0.520. Seed sd: 0.031 for SAM, 0.022 for U-Net.
+    - SAM seed 1 is below two of the three U-Net seeds.
+    - The image-level Wilcoxon test treats the 200 images as the sample, so its small
+      p-value does not capture training-seed variability.
+  - **Dice:** the deficit is consistent across seeds. Every SAM seed (0.8854–0.8869) is
+    below every U-Net seed (0.8910–0.8934); mean difference −0.0065.
+  - **Checkpoint selection by val Dice does not control thin recall.** The three SAM
+    seeds have near-identical best val Dice (0.9038 / 0.9045 / 0.9047 at threshold 0.5),
+    yet their val thin recall at the selected thresholds is 0.597 / 0.558 / 0.623.
+  - Across thresholds (`thin_recall_vs_threshold.csv`, test): the 3-seed tiled-SAM mean
+    is above the best CNN at all 19 thresholds (+0.015 to +0.049), but its seed range
+    overlaps U-Net's seed range at 18 of the 19.
+  - **Overlapping-tile variant (3 seeds):** at the same threshold its thin recall equals
+    tiled SAM's within 0.004 (test: −0.002 to +0.000; val: +0.001 to +0.004). The
+    larger gain seen with seed 0 alone was a seed effect, not an effect of overlapping
+    tiles.
+    - Removing the seams raises Dice for every seed (0.8883 / 0.8885 / 0.8868 vs tiled
+      0.8856 / 0.8869 / 0.8854), but it stays below U-Net (−0.0046).
+    - At the val-selected thresholds its thin-recall gain over U-Net is +0.014, smaller
+      than tiled SAM's, because val Dice chose a higher threshold for overlap seed 2
+      (0.55 vs 0.45).
+  - **Whole-image SAM (3 seeds):** the thin-recall deficit is consistent across seeds.
+    Every seed (0.4755–0.4812) is below every U-Net seed (0.5204–0.5652); mean difference
+    −0.064. Dice is also below every U-Net seed (0.8902–0.8904 vs 0.8910–0.8934).
+    Whole-image SAM varies very little between seeds (thin-recall seed sd 0.003).
+  - Source files: `results/eval/<run>/seed<s>/{val,test}_metrics.csv`,
+    `results/train/<run>/seed<s>/summary.json`, `results/tables/test_main.csv`,
+    `test_wilcoxon.csv`, `thin_recall_vs_threshold.csv`.
 - **Cost table** (`python -m src.benchmark`, one GPU job on the training GPU type, after
   all test predictions):
   - **Inference time:** batch 1 (one image per call) over the 200 test images, after 10
@@ -961,6 +1041,11 @@ Status: Phase 1 complete. Sections marked *(Phase N)* are filled in during that 
   probability discontinuity at the seams, which locally lowers Dice and thin recall within
   roughly ±64 px of x, y = 1024 (§12). The overlapping-tile sensitivity variant (same
   model) removes it on val and is reported next to the main result.
-- **SAM seeds.** Fine-tuned SAM has one training seed (0); the CNNs have three. SAM's
-  seed-to-seed variability is unknown.
-- **Whole-image SAM reached the 150-epoch cap** while still improving slowly (§12).
+- **Seeds.** Every automatic model has three training seeds (the overlap variant reuses
+  the three tiled-SAM models). Three seeds give only a rough estimate of seed-to-seed
+  spread. Thin-vessel recall varies by seed much more than Dice does, for SAM as for the
+  CNNs (§13), and image-level tests do not capture this.
+- **Tiled SAM seeds 1 and 2 reached the 150-epoch cap**; seed 1's best epoch was the last
+  one, so it may still have been improving slowly.
+- **Whole-image SAM reached the 150-epoch cap** with all three seeds (best epochs 143,
+  149, 145), so it may still have been improving slowly (§12, §13).

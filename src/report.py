@@ -70,6 +70,11 @@ def present(df: pd.DataFrame) -> list[str]:
     return [m for m in AUTO if m in set(df.model)]
 
 
+def seed_label(m: str, n_seeds: int) -> str:
+    """Legend label with the run's number of training seeds, e.g. 'SAM tiled (3 seeds)'."""
+    return f"{SHORT[m]} ({n_seeds} seed{'' if n_seeds == 1 else 's'})"
+
+
 def seed_avg(df: pd.DataFrame, metrics) -> pd.DataFrame:
     return df.groupby(["model", "image_id", "category"], as_index=False)[metrics].mean()
 
@@ -174,7 +179,7 @@ def display(table: pd.DataFrame, tests: pd.DataFrame | None, metrics) -> pd.Data
 
 
 # --------------------------------------------------------------------------- figures
-def _bars(ax, groups, series, values, errors=None, fmt="{:.3f}", label_rot=90):
+def _bars(ax, groups, series, values, errors=None, fmt="{:.3f}", label_rot=90, labels=None):
     """Grouped vertical bars from zero; value labels in ink (not series colour)."""
     n = len(series)
     width = 0.8 / n
@@ -182,7 +187,7 @@ def _bars(ax, groups, series, values, errors=None, fmt="{:.3f}", label_rot=90):
         xs = np.arange(len(groups)) + (j - (n - 1) / 2) * width
         vals = [values[g][s] for g in groups]
         err = [errors[g][s] for g in groups] if errors is not None else None
-        ax.bar(xs, vals, width=width * 0.92, color=COLOR[s], label=SHORT[s], zorder=2,
+        ax.bar(xs, vals, width=width * 0.92, color=COLOR[s], label=(labels or SHORT)[s], zorder=2,
                yerr=err, error_kw={"elinewidth": 1, "ecolor": INK, "capsize": 0})
         for x, v in zip(xs, vals):
             ax.text(x, v + 0.01, fmt.format(v), ha="center", va="bottom", rotation=label_rot, fontsize=6.5, color=INK)
@@ -199,7 +204,7 @@ def fig_main(table: pd.DataFrame, out: Path) -> None:
         vals = {k: {m: t.loc[m, "mean"] for m in runs}}
         errs = {k: {m: (t.loc[m, "sd_seeds"] if t.loc[m, "n_seeds"] > 1 else 0.0) for m in runs}}
         _style(ax)
-        _bars(ax, [k], runs, vals, errs)
+        _bars(ax, [k], runs, vals, errs, labels={m: seed_label(m, int(t.loc[m, "n_seeds"])) for m in runs})
         ax.set_xticklabels([])
         ax.set_ylim(0, 1.12)
         ax.set_title(LABEL[k], fontsize=10, color=INK)
@@ -220,7 +225,7 @@ def fig_width(table: pd.DataFrame, out: Path) -> None:
     errs = {k: {m: (t.loc[(k, m), "sd_seeds"] if t.loc[(k, m), "n_seeds"] > 1 else 0.0) for m in runs} for k in ks}
     fig, ax = plt.subplots(figsize=(9, 4), facecolor=SURFACE)
     _style(ax)
-    _bars(ax, ks, runs, vals, errs)
+    _bars(ax, ks, runs, vals, errs, labels={m: seed_label(m, int(t.loc[(ks[0], m), "n_seeds"])) for m in runs})
     ax.set_xticklabels(["thin (r < 3 px)", "medium (3-7 px)", "thick (r > 7 px)"])
     ax.set_ylim(0, 1.15)
     ax.set_ylabel("centreline recall, 1-px tolerance (test)", fontsize=8, color=INK)
@@ -240,7 +245,8 @@ def fig_disease(dis: pd.DataFrame, out: Path) -> None:
         t = dis[dis.metric == k].set_index(["category", "run"])
         vals = {c: {m: t.loc[(c, m), "mean"] for m in runs} for c in CATEGORIES}
         _style(ax)
-        _bars(ax, list(CATEGORIES), runs, vals)
+        _bars(ax, list(CATEGORIES), runs, vals,
+              labels={m: seed_label(m, int(t.loc[(CATEGORIES[0], m), "n_seeds"])) for m in runs})
         n = {c: int(t.loc[(c, runs[0]), "n_images"]) for c in CATEGORIES}
         names = {"A": "AMD", "D": "DR", "G": "glaucoma", "N": "normal"}
         ax.set_xticklabels([f"{names[c]} ({c}, n={n[c]})" for c in CATEGORIES], fontsize=8)
@@ -252,26 +258,54 @@ def fig_disease(dis: pd.DataFrame, out: Path) -> None:
     plt.close(fig)
 
 
+THRESHOLD_ROWS = (("CNNs", ("unet", "attention_unet", "multiscale_unet", "ms_attention_unet")),
+                  ("SAM variants vs the U-Net baseline", ("unet", "sam_lora_tiled", "sam_lora_tiled_overlap",
+                                                          "sam_lora_whole")))
+# the overlap variant follows the tiled line almost exactly (same models): dashed, so both stay visible
+LINESTYLE = {"sam_lora_tiled_overlap": (0, (4, 2))}
+
+
 def fig_threshold(out: Path, splits=("val", "test")) -> pd.DataFrame:
-    """Thin-vessel recall vs threshold (0.05-0.95) per model, from the saved sweeps
-    (per seed: mean over images; then mean over seeds)."""
+    """Thin-vessel recall vs threshold (0.05-0.95) per model, from the saved sweeps.
+    Line: per seed the mean over images, then the mean over seeds. Shaded band: the range
+    (min-max) of the per-seed means, for runs with more than one seed. Legend: seed count.
+    Rows: the CNNs; the SAM variants with U-Net repeated as the reference (bands of all seven
+    runs in one panel overlap too much to read)."""
     import matplotlib.pyplot as plt
     rows = []
-    fig, axes = plt.subplots(1, len(splits), figsize=(6 * len(splits), 4), facecolor=SURFACE, sharey=True)
-    for ax, split in zip(np.atleast_1d(axes), splits):
+    fig, axes = plt.subplots(len(THRESHOLD_ROWS), len(splits), figsize=(6 * len(splits), 3.6 * len(THRESHOLD_ROWS)),
+                             facecolor=SURFACE, sharex=True, sharey=True, squeeze=False)
+    for j, split in enumerate(splits):
         sw = load(split, "sweep")
-        curve = sw.groupby(["model", "seed", "threshold"]).cl_recall_thin.mean().groupby(["model", "threshold"]).mean()
-        _style(ax)
-        for m in present(sw):
-            c = curve.loc[m]
-            ax.plot(c.index, c.values, color=COLOR[m], lw=2, label=SHORT[m], zorder=3)
-            rows += [{"split": split, "run": m, "threshold": float(t), "cl_recall_thin": float(v)} for t, v in c.items()]
-        ax.set_xlabel("threshold", fontsize=8, color=INK)
-        ax.set_title(f"{split}", fontsize=10, color=INK)
-        ax.set_xlim(0.05, 0.95)
-    np.atleast_1d(axes)[0].set_ylabel("thin-vessel centreline recall", fontsize=8, color=INK)
-    np.atleast_1d(axes)[-1].legend(fontsize=7, frameon=False, loc="upper left", bbox_to_anchor=(1.0, 1.0))
-    fig.suptitle("Thin-vessel recall vs threshold (mean over images, then over seeds)", fontsize=10, color=INK)
+        per_seed = sw.groupby(["model", "seed", "threshold"]).cl_recall_thin.mean()
+        runs = present(sw)
+        for m in runs:
+            ps = per_seed.loc[m].unstack("seed")               # rows: threshold; columns: seed
+            mean, lo, hi = ps.mean(axis=1), ps.min(axis=1), ps.max(axis=1)
+            rows += [{"split": split, "run": m, "n_seeds": ps.shape[1], "threshold": float(t),
+                      "cl_recall_thin": float(mean[t]), "seed_min": float(lo[t]), "seed_max": float(hi[t])}
+                     for t in mean.index]
+        for i, (title, group) in enumerate(THRESHOLD_ROWS):
+            ax = axes[i, j]
+            _style(ax)
+            for m in [r for r in group if r in runs]:
+                ps = per_seed.loc[m].unstack("seed")
+                n, mean = ps.shape[1], ps.mean(axis=1)
+                if n > 1:
+                    ax.fill_between(mean.index, ps.min(axis=1).values, ps.max(axis=1).values, color=COLOR[m],
+                                    alpha=0.18, lw=0, zorder=2)
+                ax.plot(mean.index, mean.values, color=COLOR[m], lw=2, ls=LINESTYLE.get(m, "-"),
+                        label=seed_label(m, n), zorder=3)
+            ax.set_title(f"{split}: {title}", fontsize=10, color=INK)
+            ax.set_xlim(0.05, 0.95)
+            if j == 0:
+                ax.set_ylabel("thin-vessel centreline recall", fontsize=8, color=INK)
+            if i == len(THRESHOLD_ROWS) - 1:
+                ax.set_xlabel("threshold", fontsize=8, color=INK)
+            if j == len(splits) - 1:
+                ax.legend(fontsize=7, frameon=False, loc="upper left", bbox_to_anchor=(1.0, 1.0))
+    fig.suptitle("Thin-vessel recall vs threshold (line: mean over images, then over seeds; "
+                 "band: range across seeds)", fontsize=10, color=INK)
     fig.tight_layout()
     fig.savefig(out, dpi=130, facecolor=SURFACE)
     plt.close(fig)

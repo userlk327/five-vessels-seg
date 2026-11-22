@@ -21,13 +21,19 @@
    2
   ],
   "sam_lora_tiled": [
-   0
+   0,
+   1,
+   2
   ],
   "sam_lora_whole": [
-   0
+   0,
+   1,
+   2
   ],
   "sam_lora_tiled_overlap": [
-   0
+   0,
+   1,
+   2
   ]
  },
  "missing": [],
@@ -53,11 +59,11 @@
   "test_qualitative_test_163_N.png"
  ],
  "environment": {
-  "time": "2026-11-21T15:36:29-06:00",
-  "host": "c1215.swan.hcc.unl.edu",
-  "slurm_job_id": "19054790",
+  "time": "2026-11-22T14:51:48-06:00",
+  "host": "c1408.swan.hcc.unl.edu",
+  "slurm_job_id": "19063882",
   "git": {
-   "commit": "f8a76bb72b5cb0c1085b0e5d395226e8a36c0f31",
+   "commit": "a0102fbe7140afa596c96d48a425da1f8b20c026",
    "dirty": true
   }
  }

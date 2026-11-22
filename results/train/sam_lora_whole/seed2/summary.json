@@ -1,0 +1,36 @@
+{
+ "run": "sam_lora_whole",
+ "seed": 2,
+ "finish_reason": "reached max_epochs=150",
+ "epochs_run": 150,
+ "best_epoch": 145,
+ "best_val_dice_at_0.5": 0.9123607181071179,
+ "training_time_h": 3.471,
+ "training_time_definition": "sum of epoch times (train + val), excluding start-up and resume overhead",
+ "epoch_time_s": {
+  "mean": 83.31233333333333,
+  "median": 83.27000000000001,
+  "train_mean": 74.81433333333334,
+  "val_mean": 7.0359333333333325
+ },
+ "gpu_peak_alloc_gb": 15.66,
+ "gpu_peak_reserved_gb": 17.85,
+ "parameters": {
+  "total": 93882928,
+  "trainable": 4205796
+ },
+ "cnn_resolution": 512,
+ "batch_size": 2,
+ "sessions": [
+  {
+   "time": "2026-11-22T11:18:58-06:00",
+   "host": "c1709.swan.hcc.unl.edu",
+   "gpu": "NVIDIA L40S",
+   "slurm_job_id": "19063881",
+   "slurm_restart_count": null,
+   "torch": "2.14.1+cu126",
+   "cuda": "12.6"
+  }
+ ],
+ "config_hash": "cf19dedb115a3538"
+}

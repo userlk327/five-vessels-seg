@@ -1,0 +1,116 @@
+{
+ "model": "sam_lora_tiled_overlap",
+ "seed": 1,
+ "split": "val",
+ "n_images": 120,
+ "probabilities": "outputs/sam_lora_tiled_overlap/seed1/val/probs.npz",
+ "probabilities_sha256": "cd7c328279704e6d",
+ "config_hash": "22dc2e55db4fea54",
+ "evaluation": {
+  "prob_upsample": "bilinear",
+  "threshold_grid": {
+   "start": 0.05,
+   "stop": 0.95,
+   "step": 0.05
+  },
+  "centerline_tolerance_px": 1,
+  "width_classes_radius_px": {
+   "thin_below": 3,
+   "thick_above": 7
+  },
+  "width_sensitivity_radius_px": {
+   "thin_below": 4,
+   "thick_above": 8
+  },
+  "nsd_tolerance_px": 2,
+  "fractal_box_sizes": [
+   2,
+   4,
+   8,
+   16,
+   32,
+   64,
+   128,
+   256,
+   512
+  ]
+ },
+ "environment": {
+  "time": "2026-11-22T11:20:15-06:00",
+  "host": "c1713.swan.hcc.unl.edu",
+  "slurm_job_id": "19063878",
+  "git": {
+   "commit": "a0102fbe7140afa596c96d48a425da1f8b20c026",
+   "dirty": true
+  }
+ },
+ "label": "SAM LoRA, tiled, overlapping-tile inference (3x3 tiles, stride 512, tent-blended logits; sensitivity)",
+ "source_run": "sam_lora_tiled/seed1",
+ "tiles": {
+  "size": 1024,
+  "stride": 512,
+  "origins_native": [
+   [
+    0,
+    0
+   ],
+   [
+    0,
+    512
+   ],
+   [
+    0,
+    1024
+   ],
+   [
+    512,
+    0
+   ],
+   [
+    512,
+    512
+   ],
+   [
+    512,
+    1024
+   ],
+   [
+    1024,
+    0
+   ],
+   [
+    1024,
+    512
+   ],
+   [
+    1024,
+    1024
+   ]
+  ],
+  "blend": "tent-weighted mean of logits"
+ },
+ "threshold": 0.45,
+ "mean_dice_at_threshold": 0.908767491196948,
+ "rule": "highest mean Dice over the val images on the grid; ties -> lowest threshold",
+ "mean_dice_by_threshold": {
+  "0.05": 0.8144376263747614,
+  "0.1": 0.8357428390629721,
+  "0.15": 0.8654675657198716,
+  "0.2": 0.873337471882822,
+  "0.25": 0.8836076541991192,
+  "0.3": 0.8889914133482272,
+  "0.35": 0.897425776311816,
+  "0.4": 0.9083747079859011,
+  "0.45": 0.908767491196948,
+  "0.5": 0.9064755587244695,
+  "0.55": 0.9068897044250348,
+  "0.6": 0.9048185384365318,
+  "0.65": 0.8883982732797578,
+  "0.7": 0.8755072486105723,
+  "0.75": 0.8670128455761612,
+  "0.8": 0.8505983701406824,
+  "0.85": 0.8380115672858605,
+  "0.9": 0.7846432515838013,
+  "0.95": 0.7458104284064039
+ }
+}

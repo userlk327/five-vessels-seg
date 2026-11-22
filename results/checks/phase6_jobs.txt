@@ -7,3 +7,10 @@ fives-benchmark  job 19055019  (rerun after the oracle FLOP-counter fix; job 190
 fives-sam_lora_tiled-s1  job 19055109  (tiled SAM seed 1: train, val, test once; TEST_AFTER=1)  commit eae5483
 fives-sam_lora_tiled-s2  job 19055110  (tiled SAM seed 2, in parallel)  commit eae5483
 fives-report  job 19055111  (SAM val table + Phase 6 report, tiled SAM 3 seeds; after both)  commit eae5483
+
+fives-overlap-val  job 19063878  (overlap variant seeds 1, 2 on val, own thresholds; gpu partition*)  commit a0102fb + uncommitted report/docs
+fives-overlap-test  job 19063879  (overlap variant seeds 1, 2 on test, once; after 19063878 succeeded; gpu partition*)  commit a0102fb + uncommitted report/docs
+fives-sam_lora_whole-s1  job 19063880  (whole-image SAM seed 1: train, val, test once; TEST_AFTER=1; gpu partition*)  commit a0102fb + uncommitted report/docs
+fives-sam_lora_whole-s2  job 19063881  (whole-image SAM seed 2, in parallel; gpu partition*)  commit a0102fb + uncommitted report/docs
+fives-report  job 19063882  (SAM val table + Phase 6 report, every SAM run 3 seeds; after the three above)  commit a0102fb + uncommitted report/docs
+* every L40S on c0903 was held by guest_gpu jobs that an ltarunl job would preempt; same GPU type (L40S) on the shared gpu partition
