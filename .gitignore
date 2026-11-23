@@ -20,6 +20,7 @@ data/**/*.png
 
 # ---- Local only: never pushed (public repo) ----
 /CLAUDE.md
+/PAPER_PROMPT.md
 .claude/
 .env
 *.env
