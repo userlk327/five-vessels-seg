@@ -1,0 +1,90 @@
+% sections/discussion.tex
+\subsection*{Answers to the research questions}
+Under this protocol, neither module improved thin-vessel segmentation (question 1); fine-tuned SAM gave no thin-vessel
+advantage beyond training-seed variability and lost Dice and boundary accuracy (question 2); and Dice did not reveal the
+thin-vessel differences, although it detected other consistent differences (question 3). Consistency across three seeds is the strongest statement three runs allow (one-sided $p = 0.05$), so
+``no consistent effect'' means that this design could not establish an effect, not that none exists. Image-level
+intervals, by contrast, exclude zero for differences of a few thousandths because they ignore seed variability; in post
+hoc analyses, also resampling seeds widened them several-fold for thin-vessel recall.
+
+\subsection*{Attention gates and multi-scale blocks}
+The attention gates appear to have shifted the operating point rather than improved the segmentation: they raised recall
+and lowered precision at the selected thresholds, did the reverse at 0.5, and thin-vessel recall followed; at matched
+precision the attention effect was \PHStAttThinMatch. It also depended on the multi-scale blocks:
+at 0.5, attention lowered thin-vessel recall about three times as much with them as without, so the main effect alone is
+not a sufficient summary. The multi-scale decrease was consistent in direction, persisted at matched overall precision
+and came with higher thin-vessel precision, so the blocks traded thin-vessel recall for precision rather than only
+shifting the operating point. A design-specific explanation is plausible: the block splits its output channels between
+three dilations, so only a third of the filters in each block keep the plain 3 $\times$ 3 receptive field that resolves
+one-pixel structures. We tested neither this nor whether the gates were active; the identical stopping epochs of some same-seed model pairs (\nameref{si:runs}) suggest that shared
+initialization and data order coupled their training. The results agree with the FIVES benchmark~\cite{fadugba2024benchmark} but apply to one design of
+each module at 512 $\times$ 512 with soft targets and one learning rate; they do not show that attention or multi-scale
+processing cannot help thin vessels.
+
+\subsection*{Fine-tuned SAM and resolution}
+Tiling changes several things at once: the detail in the input, the output grid, the part of the eye seen in one pass,
+the target (binary tiles rather than soft masks) and the number of optimizer steps per epoch, and our design cannot
+separate them. The mask-resampling references point to the output grid as a major contributor to the consistent
+difference between tiled and whole-image SAM: the 256 $\times$ 256 grid alone kept \RefTwoThin{} of the thin-vessel
+centreline and the 512 $\times$ 512 grid \RefFiveThin. This is a supported hypothesis, not a tested mechanism, and the
+references are not upper bounds: whole-image SAM exceeded its 256 reference.
+
+The comparison of tiled SAM with the CNNs is confounded in the same way. Its small gain in thin-vessel recall shrank to
+\PHStTiledThinMatch{} at matched precision, so it mainly reflected a lower operating precision. Input resolution may
+also contribute: tiled SAM sees the image at full resolution and the CNNs at 512, and in our one-seed validation
+pilot a U-Net trained at 1024 gained \PilotThinGain{} over the 512 U-Net and almost reached the thin-vessel recall of the
+seed-0 tiled SAM (\PilotTenThin{} against \SAMTiledValThinSeedA, both at threshold \PilotThreshold) at higher precision
+(\PilotTenPrec{} against \PilotSAMTiledPrec). With one seed on validation data this is suggestive only;
+separating input resolution and binary targets from the foundation model needs a resolution-matched control with several
+seeds. Training may also have limited SAM: most runs reached the 150-epoch limit, with an
+untuned learning rate. Zero-shot SAM failed even with
+ground-truth points, as reported for vessels before~\cite{shi2023samzeroshot,qiu2023learnable}.
+
+\subsection*{What overlap metrics show}
+Dice detected consistent differences, for example between every SAM configuration and the U-Net, but ranked the SAM
+configurations and the disease categories differently from thin-vessel recall. This is expected of an overlap score when
+thin vessels hold few pixels~\cite{reinke2024pitfalls}. Dice also governed checkpoint and threshold
+selection: runs with almost the same best validation Dice differed in thin-vessel recall, and selecting the threshold by
+Dice reversed the sign of the attention effect. Whether thin-vessel
+recall varied within a run while validation Dice did not is unknown, because we recorded neither thin-vessel recall nor
+checkpoints at every epoch.
+
+\subsection*{Why thin-vessel recall stays low}
+All automatic models recovered only \AllThinMin--\AllThinMax{} of the thin-vessel centreline. Our data suggest, but do not
+test, four contributing factors. First, thin-vessel labels may be uncertain: thin-vessel precision was also low for every
+model, and where two masks exist for one image, each
+recovered on average \AgreeThinMean{} of the other's thin-vessel centreline, although this evidence is post hoc, limited to
+\AgreeNPairs{} AMD images. Second, for the CNNs and whole-image SAM the loss pushes soft
+thin-vessel targets towards low probabilities (a target of 0.25 towards about \LossOptQuarter), consistent with the steep
+dependence of thin-vessel recall on the threshold. Third, input resolution limits the CNNs, as the 1024 pilot suggests,
+whereas the 512 output grid alone kept \RefFiveThin{} of the thin-vessel centreline. Fourth, selection by Dice does not
+favour thin vessels.
+
+\subsection*{Comparison with published results and recommendations}
+Published Dice values on FIVES are not directly comparable with ours, because scoring region, resolution, split and
+threshold rule differ; for example, Cao et al.\ report a Dice of 0.8404 for a multi-scale attention
+U-Net~\cite{cao2023mfaunet}, below our U-Net's \UNetDiceMean, which may reflect the protocol rather than the model. For
+comparisons of vessel segmentation methods, our results suggest reporting a width-stratified measure, with its resolution,
+alongside overlap scores; training several seeds and reporting seed variability separately from image-level statistics;
+reporting more than one threshold rule, the full threshold curve or comparisons at matched precision; and auditing the
+dataset before training.
+
+\subsection*{Limitations}
+Three seeds estimate seed variability only roughly; the main image-level tests do not include it, and the post hoc
+intervals that do rest on three runs per model. The test images are not independent: they include a duplicated image, a
+shared mask and possible same-patient pairs, and \NIsoWithTest{} such pairs link the official training images to the test
+set. All data come from one hospital and from Asian patients~\cite{jin2022fives}, and there was no external testing.
+Several SAM runs reached the epoch limit with an untuned learning rate; SAM's second and third seeds were added after the
+first test evaluation, and its comparisons are confounded by input resolution and targets, controlled only by a one-seed
+pilot. The CNN results hold for one design of each module, 512
+$\times$ 512 inputs and soft targets, which at a threshold of 0.5 keep thin vessels less well than the binary
+alternatives (\nameref{si:resize}); we tested no other targets and did not inspect the attention coefficients.
+The post hoc analyses were added after the main test evaluation. Metrics were computed inside an FOV mask, NSD is a boundary-pixel approximation, and vessel
+density and fractal dimension are image-derived measures without clinical validation. The cost figures come from single
+runs on one GPU type, and the annotation-agreement analysis is post hoc and small.
+
+\subsection*{Future work}
+Next steps follow from these limitations: a CNN trained at full resolution with several seeds, on whole images or on the
+same tiles with binary targets, as a resolution-matched control for tiled SAM; longer SAM training with a tuned learning
+rate; inspection of the attention coefficients; and training targets or losses that keep thin vessels. External testing
+and a self-configuring baseline such as nnU-Net~\cite{isensee2021nnunet} would show how far the findings generalize.

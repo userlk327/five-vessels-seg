@@ -1,0 +1,32 @@
+% sections/declarations.tex -- general-purpose declarations; a venue may collect some of them in its submission system.
+\subsection*{Data availability}
+FIVES~\cite{jin2022fives} is publicly available under a CC BY 4.0 licence~\cite{jin2022fivesdata}. We used the copy on
+the Hugging Face hub (\texttt{tyluan/FIVES}, also tagged CC BY 4.0), whose images and masks are identical to those of the
+official release. The split files, per-image metrics for every run and
+split, threshold sweeps and all result tables are in the code repository.
+
+\subsection*{Code availability}
+All code, configurations, job scripts and the scripts that generate every number, table and figure in this paper are
+available at \url{https://github.com/userlk327/five-vessels-seg}, together with a protocol document that records every
+analysis decision; its version history shows when each was made. The analysis decisions were recorded in commit
+\texttt{0ee73608db87db9e0b6f2ff46d29f2faa75fd1dc} before any test prediction. The version used for this manuscript will
+be archived on Zenodo with a DOI at submission [TODO: commit hash and DOI]. Licence: MIT [TODO: confirm with co-authors].
+
+\subsection*{Ethics statement}
+This retrospective study used only a publicly available dataset; no new human data were collected, and no further ethics
+approval was required [TODO: authors confirm]. The FIVES study was approved by the Medical Ethics Committee of the Second
+Affiliated Hospital of Zhejiang University, followed the Declaration of Helsinki, was registered at ClinicalTrials.gov
+(NCT04718532), and obtained written informed consent from all participants~\cite{jin2022fives}. Some images carry
+burned-in text outside the eye that may contain fragments of patient names. This text was detected and compared only as
+binary patterns and was never read, transcribed or stored; all figures pixelate the area outside the field of view, and
+no image data, marking locations or image crops are released with this work. Of the marking comparison, the repository
+contains only image identifiers and pattern-similarity scores, which are needed to reproduce the grouped split.
+
+\subsection*{Competing interests}
+[TODO: competing interests of each author.]
+
+\subsection*{Funding}
+[TODO: funding sources, or a statement that the work received no specific funding.]
+
+\subsection*{Author contributions}
+[TODO: CRediT roles for Lalit Kharel, Carter Wald, Peyton Nelson and Jacob Dimmitt.]

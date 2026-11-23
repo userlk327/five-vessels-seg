@@ -1,0 +1,108 @@
+% sections/supporting.tex -- captions of the supporting information (the items themselves are in supplement.tex / S1 Appendix).
+% Numbered by type in order of first citation in the text; supplement.tex includes the items in the same order.
+\paragraph*{S1 Appendix.}
+\label{si:appendix}
+{\bf Supplementary methods, tables and figures.} Procedures of the data audit, FOV mask, resizing comparison, loss check,
+SAM implementation, seam check, oracle prompts, cost measurement and reproducibility, followed by all supporting tables
+and figures listed here (supplement.pdf).
+
+\paragraph*{S1 Checklist.}
+\label{si:claim}
+{\bf CLAIM 2024 checklist.} Location in the manuscript of every item of the Checklist for Artificial Intelligence in
+Medical Imaging (2024 update).
+
+\paragraph*{S1 Table.}
+\label{si:resize}
+{\bf Training-mask resizing.} Thirty training masks reduced by five methods, enlarged back to 2048 and scored against the
+originals.
+
+\paragraph*{S2 Table.}
+\label{si:pilot}
+{\bf Resolution pilot.} U-Net (seed 0) at 512 and 1024 on the validation set, with the decision rule fixed beforehand.
+
+\paragraph*{S3 Table.}
+\label{si:seam}
+{\bf Tile-seam check.} Discontinuity at the tile borders and its effect on accuracy near the borders (validation, seed 0).
+
+\paragraph*{S4 Table.}
+\label{si:oracle}
+{\bf Oracle-prompted zero-shot SAM and mask-resampling references.} Reported separately from the automatic models.
+
+\paragraph*{S5 Table.}
+\label{si:runs}
+{\bf Training runs.} Epochs, best epoch, selected threshold, best validation Dice and validation thin-vessel recall of every
+run.
+
+\paragraph*{S6 Table.}
+\label{si:overlap}
+{\bf IoU, precision and recall on the test set.}
+
+\paragraph*{S7 Table.}
+\label{si:imagelevel}
+{\bf Image-level spread of the test results.} Standard deviation and median over the test images.
+
+\paragraph*{S8 Table.}
+\label{si:width}
+{\bf Width classes with alternative cut-offs (4 and 8 pixels).}
+
+\paragraph*{S9 Table.}
+\label{si:simple}
+{\bf Simple effects in the 2 $\times$ 2 ablation.} Effect of each module with and without the other.
+
+\paragraph*{S1 Fig.}
+\label{si:training}
+{\bf Validation Dice during training.} Every training run, per epoch.
+
+\paragraph*{S10 Table.}
+\label{si:fixed}
+{\bf Test results with every run at a fixed threshold of 0.5.}
+
+\paragraph*{S2 Fig.}
+\label{si:thrval}
+{\bf Thin-vessel recall against the threshold on the validation set.}
+
+\paragraph*{S11 Table.}
+\label{si:disease}
+{\bf Test results by disease category.}
+
+\paragraph*{S12 Table.}
+\label{si:agreement}
+{\bf Agreement between two available annotations of the same image.} Post hoc descriptive analysis using labels only
+(n = \AgreeNPairs{}).
+
+\paragraph*{S3 Fig.}
+\label{si:qualall}
+{\bf All qualitative test images.} Native-resolution crops and error maps of every model (seed 0).
+
+\paragraph*{S4 Fig.}
+\label{si:diseasefig}
+{\bf Results by disease category (test set).}
+
+\paragraph*{S13 Table.}
+\label{si:vessel}
+{\bf Image-derived vessel measures.}
+
+\paragraph*{S5 Fig.}
+\label{si:blandaltman}
+{\bf Bland--Altman plots of vessel density and fractal dimension.}
+
+\paragraph*{S6 Fig.}
+\label{si:costfig}
+{\bf Inference cost and thin-vessel recall.}
+
+\paragraph*{S14 Table.}
+\label{si:matched}
+{\bf Thin-vessel recall at matched precision.} Post hoc analysis; thresholds matched on the validation set.
+
+\paragraph*{S7 Fig.}
+\label{si:precthin}
+{\bf Thin-vessel recall against overall precision (test set).} Post hoc analysis.
+
+\paragraph*{S15 Table.}
+\label{si:precision}
+{\bf Width-stratified precision, spur-pruned thin class, and clDice and NSD at 0.5.} Post hoc analysis.
+
+\paragraph*{S16 Table.}
+\label{si:stats}
+{\bf Uncertainty of the main comparisons under three resampling schemes.} Post hoc analysis: images, possible
+same-patient clusters, and seeds with clusters.

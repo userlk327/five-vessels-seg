@@ -1,0 +1,25 @@
+% sections/related.tex
+\subsection*{CNN variants for retinal vessels}
+Most current retinal vessel segmentation methods build on the U-Net~\cite{ronneberger2015unet}; earlier approaches are
+surveyed in~\cite{fraz2012survey}. Retinal models built on attention gates~\cite{oktay2018attention} and dilated
+multi-scale convolutions~\cite{yu2016dilated} combine several changes at once: Liu et al.\ add
+multiscale input and feature modules with position and channel attention and report accuracy on DRIVE and
+CHASE\_DB1~\cite{liu2022msunet}, and Cao et al.\ combine multi-scale feature fusion with self-attention for microvessels and
+report Dice on six datasets including FIVES~\cite{cao2023mfaunet}. Because the changes are combined, the contribution of
+attention or of multi-scale processing alone is not identified; the 2 $\times$ 2 design used here separates them.
+
+\subsection*{SAM for medical and vessel segmentation}
+Zero-shot SAM performs very differently across medical datasets, tasks and prompts~\cite{mazurowski2023sam,huang2024sam}. Blood vessels are among its failures~\cite{shi2023samzeroshot}; in colour
+fundus images it could not segment vessels and reached a Dice of 0.1572 on FIVES~\cite{qiu2023learnable}. Zhang et al.\
+traced such failures to dense, tree-like objects with low textural contrast~\cite{zhang2024samlimits}. Fine-tuning on
+medical data, either of the whole model~\cite{ma2024medsam} or of low-rank adaptation (LoRA)~\cite{hu2022lora} layers in the image encoder together with the prompt
+encoder and mask decoder~\cite{zhang2023samed}, improves the results.
+
+\subsection*{Metrics for thin tubular structures}
+clDice compares the skeleton of each mask with the other mask and is sensitive to breaks in
+connectivity~\cite{shit2021cldice}; normalized surface Dice measures how much of each boundary lies within a tolerance of
+the other~\cite{nikolov2021nsd}. A recent study on input resolution stratified vessel sensitivity by local half-width
+(below 3, 3--7 and above 7~pixels) and found that thin-vessel sensitivity of a U-Net on FIVES and HRF peaked when images
+were downsampled to widths of 256--876~pixels~\cite{amarnath2026resolution}; we use its cut-offs, and our 512-pixel CNN
+input lies in that range. On FIVES, a benchmark of five published architectures found that a basic U-Net performed as well
+as the more advanced models, while image quality strongly affected the results~\cite{fadugba2024benchmark}.

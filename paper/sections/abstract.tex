@@ -1,0 +1,21 @@
+% sections/abstract.tex -- at most 300 words, unstructured, no citations. Measured values are macros.
+Thin retinal vessels hold few pixels, so overlap scores such as Dice change little when they are missed. Using one protocol on
+FIVES (\NImages{} images, 2048 $\times$ 2048), we asked whether
+attention gates or multi-scale blocks improve thin-vessel segmentation by a U-Net (question 1), whether a fine-tuned Segment
+Anything Model (SAM) helps and how whole-image and tiled configurations differ (question 2), and whether overlap metrics
+reveal these differences (question 3). Four convolutional networks formed a 2 $\times$ 2 ablation at 512 $\times$ 512 with
+soft targets; SAM was fine-tuned with low-rank adaptation on whole images and on
+full-resolution tiles. Each model was trained with \NSeeds{} seeds and scored at full
+resolution with width-stratified centreline recall, clDice and normalized surface Dice. The analysis was recorded before
+testing; two further SAM seeds and post hoc analyses were added afterwards. An audit of FIVES
+found duplicate images with different masks, empty masks and one eye in both training and test sets. (1) On
+\NTestImages{} test images the networks were tied on Dice (\CNNDiceMin--\CNNDiceMax); attention had no consistent effect
+on thin-vessel recall, and multi-scale blocks slightly lowered it (\AblMSThinSel{} and \AblMSThinFix{} under two threshold
+rules, overlapping training-seed variability) while raising its precision (\PHStMSWPrecSel). (2) Tiled SAM's small average
+gain in thin-vessel recall (\SAMTiledThinDiff, within seed variability) largely disappeared at matched precision
+(\PHStTiledThinMatch, post hoc); it had lower Dice and boundary accuracy in every seed and \SAMTiledInfRatio{} times the
+inference time, and whole-image SAM had lower thin-vessel recall in every seed (\SAMWholeThinDiff). (3) Dice differences
+were small and did not track thin-vessel differences: the two metrics ranked the SAM configurations in opposite order, and
+checkpoint selection by validation Dice did not control thin-vessel recall across seeds. For this dataset, resolution,
+targets and loss, no configuration clearly improved thin-vessel segmentation over a plain U-Net, and Dice did not show
+this.

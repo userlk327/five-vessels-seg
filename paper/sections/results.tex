@@ -1,0 +1,162 @@
+% sections/results.tex -- every measured value is a macro from numbers.tex. Test set unless stated otherwise.
+\subsection*{Data audit}
+FIVES contains \NDupPairsTrain{} pairs of training images and \NDupPairsTest{} pair of test images that
+are byte-identical files with different masks (mask Dice over the whole image \DupTrainMaskDiceMin--\DupTrainMaskDiceMax{}
+and \DupTestMaskDice), \NSharedMaskTestPairs{} further test pair that shares one mask between two near-identical images,
+\NEmptyMasks{} empty training masks, \NSameEyePairs{} training image that shows the same eye as a test image (vessel-layout
+IoU \SameEyeIoU; the files are not identical, and whether they are separate photographs cannot be determined from the
+data), and \NBorderMasks{} masks with annotation lines outside the eye (Table~\ref{tab:data}, Fig~\ref{fig:audit}).
+\NMarkings{} of the \NImages{} images carry burned-in text. \NIsoPairs{} isolated pairs of images share an identical marking
+pattern and may come from one patient: \NIsoTrainTest{} pairs link our training set and \NIsoValTest{} our validation set
+with the test set, \NIsoTestTest{} lie within the test set and none links training and validation. A further
+\NAdjTestTest{} pairs of consecutively numbered test images share a marking pattern. \NNoMarking{} images carry no marking
+and could not be checked in this way.
+
+\subsection*{Overall segmentation}
+The four CNNs reached nearly the same mean Dice, \CNNDiceMin--\CNNDiceMax{}, with standard deviations across seeds of
+\CNNDiceSdSeedMin--\CNNDiceSdSeedMax{} (Table~\ref{tab:main}); at the image level their Dice differed from the U-Net's by
+at most \MSDiceDiff{} (Table~\ref{tab:paired}), a negligible difference even where the Wilcoxon test detected it. The
+fine-tuned SAM configurations had lower Dice (\SAMTiledDiceMean{} tiled, \SAMOverlapDiceMean{} with overlapping tiles,
+\SAMWholeDiceMean{} whole image), and every tiled-SAM seed was below every U-Net seed in both Dice
+(\SAMTiledDiceSeedMin--\SAMTiledDiceSeedMax{} against \UNetDiceSeedMin--\UNetDiceSeedMax) and NSD
+(\SAMTiledNSDSeedMin--\SAMTiledNSDSeedMax{} against \UNetNSDSeedMin--\UNetNSDSeedMax). Tiled SAM also had lower precision
+than the U-Net (\SAMTiledPrecMean{} against \UNetPrecMean; \nameref{si:overlap}). Image-level spread is given in
+\nameref{si:imagelevel}.
+
+\input{tables/main}
+
+\input{tables/paired}
+
+\subsection*{Thin vessels}
+Thin vessels were the hardest class for every model, with recall from \AllThinMin{} to \AllThinMax{} across the seven
+configurations against \AllMedMin--\AllMedMax{} for medium and \AllThickMinP--\AllThickMaxP{} for thick vessels
+(Table~\ref{tab:main}). The ground truth pushed through the 512 $\times$ 512 grid and back kept \RefFiveThin{} of the
+thin-vessel centreline, and through the 256 $\times$ 256 grid of whole-image SAM \RefTwoThin{} (\nameref{si:oracle}). With
+cut-offs of 4 and 8 pixels the ordering of the models was unchanged, but the differences shrank: the tiled-SAM advantage
+over the U-Net fell from \SAMTiledThinDiff{} to \SAMTiledThinAltDiff{} (\nameref{si:width}), so it lies mainly in the
+thinnest vessels.
+
+\subsection*{Attention gates and multi-scale blocks}
+Neither module changed Dice by more than \AblDiceMainMaxAbs{} (main effects, Table~\ref{tab:ablation},
+Fig~\ref{fig:ablation}). The attention main effect on thin-vessel recall changed sign with the threshold rule: \AblAttThinSel{}
+(95\% CI \AblAttThinSelLo{} to \AblAttThinSelHi) at the validation-selected thresholds and \AblAttThinFix{}
+(\AblAttThinFixLo{} to \AblAttThinFixHi) at 0.5, with precision and recall moving in opposite directions under the two
+rules, and its models' selected thresholds were equal or lower (\nameref{si:runs}). Attention therefore had no
+consistent effect on thin-vessel recall.
+
+Multi-scale blocks lowered thin-vessel recall under both rules: \AblMSThinSel{} (\AblMSThinSelLo{} to \AblMSThinSelHi) and
+\AblMSThinFix{} (\AblMSThinFixLo{} to \AblMSThinFixHi). The decrease was consistent in direction but overlapped
+training-seed variability (Fig~\ref{fig:ablation}D, E): per-seed thin-vessel recall was \MSThinSeedMin--\MSThinSeedMax{} for
+the Multi-Scale U-Net and \UNetThinSeedMin--\UNetThinSeedMax{} for the U-Net, and at 0.5 the best Multi-Scale U-Net seed
+(\MSThinFixSeedMax) exceeded every U-Net seed. The modules also interacted. At 0.5 the thin-vessel interaction
+(\AblIntThinFix, \AblIntThinFixLo{} to \AblIntThinFixHi) was as large as either main effect: attention changed thin-vessel
+recall by \SimpleAttNoMSThinFix{} without multi-scale blocks and by \SimpleAttWithMSThinFix{} with them. At the selected
+thresholds the precision interaction (\AblIntPrecSel) exceeded both main effects (\nameref{si:simple}).
+
+\input{tables/ablation}
+
+\begin{figure}[!h]
+\figpreview{figures/fig_ablation.pdf}
+\caption{\CapAblation}
+\label{fig:ablation}
+\end{figure}
+
+\subsection*{Fine-tuned SAM}
+Whole-image SAM had lower thin-vessel recall than the U-Net in every seed (\SAMWholeThinSeedMin--\SAMWholeThinSeedMax{}
+against \UNetThinSeedMin--\UNetThinSeedMax; mean per-image difference \SAMWholeThinDiff; Fig~\ref{fig:sam}), and also lower
+medium-vessel recall. Its thin-vessel recall exceeded that of its 256 $\times$ 256 reference.
+
+Tiled SAM had the highest mean thin-vessel recall, \SAMTiledThinMean{} $\pm$ \SAMTiledThinSdSeed{} against \UNetThinMean{}
+$\pm$ \UNetThinSdSeed{} for the U-Net (mean per-image difference \SAMTiledThinDiff, higher on \SAMTiledThinShare\% of
+images). The gain lay within training-seed variability: the tiled-SAM seeds reached \SAMTiledThinSeedA, \SAMTiledThinSeedB{}
+and \SAMTiledThinSeedC{} and the U-Net seeds \UNetThinSeedA, \UNetThinSeedB{} and \UNetThinSeedC, so one tiled-SAM seed was
+below two U-Net seeds. Its clDice did not differ consistently from the U-Net's.
+
+Across all three seeds the two SAM configurations differed consistently, in opposite directions on different metrics:
+tiled SAM had higher thin-vessel recall, clDice and NSD and lower Dice than whole-image SAM (Fig~\ref{fig:sam}). Two tiled
+runs and all three whole-image runs reached the 150-epoch limit with their best epoch near the end (\nameref{si:runs},
+\nameref{si:training}).
+
+\begin{figure}[!h]
+\figpreview{figures/fig_sam.pdf}
+\caption{\CapSam}
+\label{fig:sam}
+\end{figure}
+
+On validation (seed 0), the non-overlapping tiles left a discontinuity at the tile borders (Dice difference within
+$\pm$16~pixels \SeamSAMTiledDiDDice, \SeamSAMTiledDiDDiceLo{} to \SeamSAMTiledDiDDiceHi) that overlapping tiles removed
+(\nameref{si:seam}). On the test set overlapping tiles raised Dice in every seed, though not to the U-Net's level, and left
+thin-vessel recall unchanged at equal thresholds (\CurveOverlapMinusTiledMinTest{} to \CurveOverlapMinusTiledMaxTest).
+
+\subsection*{Threshold sensitivity}
+Thin-vessel recall depended strongly on the threshold (Fig~\ref{fig:threshold}); for the U-Net it fell from
+\CurveUNetThinLow{} at 0.05 to \CurveUNetThinMid{} at 0.5 and \CurveUNetThinHigh{} at 0.95. The mean of the tiled-SAM seeds
+lay above the best CNN at all \NThresholds{} thresholds (by \CurveSAMTiledGapBestMinTest{} to
+\CurveSAMTiledGapBestMaxTest), but the range of its seeds overlapped that of the U-Net's seeds at
+\CurveSAMTiledOverlapUNetTest{} of them; whole-image SAM lay below the CNNs except at the \CurveSAMWholeAboveBestTest{}
+highest thresholds. Part of the U-Net's spread between seeds came from the threshold choice: its seed standard deviation
+in thin-vessel recall was \UNetThinSdSeed{} at the selected thresholds and \UNetThinFixSdSeed{} at 0.5 (tiled SAM
+\SAMTiledThinSdSeed{} and \SAMTiledThinFixSdSeed; \nameref{si:fixed}, \nameref{si:thrval}).
+
+\begin{figure}[!h]
+\figpreview{figures/fig_threshold.pdf}
+\caption{\CapThreshold}
+\label{fig:threshold}
+\end{figure}
+
+\subsection*{What Dice shows}
+Mean Dice spanned \SpreadDice{} across the seven configurations and thin-vessel recall \SpreadThin{} (largest minus
+smallest model mean; Fig~\ref{fig:tradeoff}A, B), similar spans relative to their seed variability, and Dice separated
+every SAM configuration from the U-Net in every seed. The metrics ranked differently: whole-image SAM had higher Dice than
+tiled SAM but much lower thin-vessel recall, and glaucoma images had the lowest Dice for every model but the highest
+thin-vessel recall for the CNNs and whole-image SAM (\nameref{si:disease}).
+
+Across seeds, the checkpoint-selection criterion did not determine thin-vessel recall (Fig~\ref{fig:tradeoff}C, D). The
+three tiled-SAM runs reached a best validation Dice of \SAMTiledValBestDiceMin--\SAMTiledValBestDiceMax, while their
+validation thin-vessel recall ranged from \SAMTiledValThinMin{} to \SAMTiledValThinMax{} at the selected thresholds and from
+\SAMTiledValThinFixMin{} to \SAMTiledValThinFixMax{} at 0.5.
+
+\begin{figure}[!h]
+\figpreview{figures/fig_tradeoff.pdf}
+\caption{\CapTradeoff}
+\label{fig:tradeoff}
+\end{figure}
+
+\subsection*{Agreement between two available annotations}
+For the \AgreeNPairs{} pairs of byte-identical images with two masks, the masks agreed closely by Dice inside the FOV
+(\AgreeDiceMin--\AgreeDiceMax) but less on thin vessels: each mask recovered on average \AgreeThinMean{} of the other's
+thin-vessel centreline (pairs \AgreeThinMin--\AgreeThinMax), against \AgreeMedMean{} for medium and \AgreeThickMean{} for
+thick vessels (\nameref{si:agreement}). All pairs are AMD images, and n = \AgreeNPairs.
+
+\subsection*{Qualitative examples and secondary results}
+In native-resolution crops (Fig~\ref{fig:qualitative}, \nameref{si:qualall}), false negatives were mostly thin branches and
+false positives mostly narrow rims along larger vessels. Normal images had the lowest thin-vessel recall for every model (\nameref{si:disease}, \nameref{si:diseasefig}). All models slightly underestimated vessel
+density and fractal dimension; the largest fractal-dimension errors occurred on two glaucoma images with very sparse
+annotation (vessel density \FDOutOneDens{} and \FDOutTwoDens; \nameref{si:vessel}, \nameref{si:blandaltman}). Tiled SAM
+needed \SAMTiledInfMs{}~ms per image, \SAMTiledInfRatio{} times the U-Net (Table~\ref{tab:cost}, \nameref{si:costfig}).
+Zero-shot SAM with oracle prompts labelled most of the FOV as vessel (Dice \OracleDice; \nameref{si:oracle}).
+
+\begin{figure}[!h]
+\figpreview{figures/fig_qualitative_raster.png}
+\caption{\CapQualitative}
+\label{fig:qualitative}
+\end{figure}
+
+\input{tables/cost}
+
+\subsection*{Post hoc analyses}
+At matched precision the tiled-SAM advantage in thin-vessel recall shrank from \SAMTiledThinDiff{} to
+\PHStTiledThinMatch{} (\nameref{si:matched}, \nameref{si:precthin}), because tiled SAM had operated at lower precision. Whole-image SAM stayed lower (\PHStWholeThinMatch) and the multi-scale decrease persisted
+(\PHStMSThinMatch). Thin-vessel precision was \PHWPrecThinMin--\PHWPrecThinMax{} for all models, against
+\PHWPrecMedMin--\PHWPrecMedMax{} for medium and \PHWPrecThickMin--\PHWPrecThickMax{} for thick vessels; multi-scale blocks
+raised it (\PHStMSWPrecSel) while lowering thin-vessel recall. At 0.5, tiled SAM had lower clDice (\PHStTiledClDiceFix)
+and NSD (\PHStTiledNSDFix) than the U-Net in every seed (\nameref{si:precision}). Pruning skeleton spurs removed
+\PHPrunedThinShare\% of the thin-vessel centreline and barely changed the comparisons (tiled SAM \PHStTiledThinPrSel,
+multi-scale effect \PHStMSThinPrSel).
+
+Resampling \PHNClusters{} clusters of possibly same-patient test images instead of images barely changed the intervals;
+also resampling seeds widened them, for thin-vessel recall several-fold (\nameref{si:stats}). These
+intervals excluded zero for the Dice and NSD deficits of tiled SAM, the thin-vessel deficit of whole-image SAM and the
+multi-scale decrease in thin-vessel recall, which was also negative in all three coupled seed pairs under every threshold
+rule, but included zero for the tiled-SAM thin-vessel gain and every attention effect on thin-vessel recall and
+Dice.

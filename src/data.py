@@ -51,6 +51,9 @@ CATEGORIES = ("A", "D", "G", "N")
 CATEGORY_NAMES = {"A": "AMD", "D": "diabetic retinopathy", "G": "glaucoma", "N": "normal"}
 SPLITS = ("train", "test")          # official FIVES splits (parquet files)
 CHECKS_DIR = PROJECT_ROOT / "results" / "checks"
+PRIVATE_DIR = CHECKS_DIR / "private"     # git-ignored: per-image marking locations and review sheets
+MARKING_LOCATION_COLS = ["marking_regions", "marking_y0", "marking_y1", "marking_x0", "marking_x1",
+                         "topleft_y1", "topleft_x1"]
 
 
 # =========================================================================== ids and paths
@@ -751,7 +754,7 @@ def cmd_check(cfg: dict, workers: int | None = None) -> None:
         "by_split_category": {f"{s}_{c}": int(v) for (s, c), v in qa.groupby(["official_split", "category"]).has_marking.sum().items()},
         "region_sets": {k: int(v) for k, v in qa.loc[qa.has_marking, "marking_regions"].value_counts().items()},
         "regions_per_image": {str(k): int(v) for k, v in qa.loc[qa.has_marking, "marking_n_regions"].value_counts().sort_index().items()},
-        "test_101_G": qa.set_index("image_id").loc["test_101_G", ["marking_px", "marking_regions"]].to_dict()
+        "test_101_G": qa.set_index("image_id").loc["test_101_G", ["marking_px"]].to_dict()
                       if "test_101_G" in set(qa.image_id) else None,
     }
     summary["fov"] = {"fraction_min": float(qa.fov_fraction.min()), "fraction_median": float(qa.fov_fraction.median()),
@@ -762,11 +765,27 @@ def cmd_check(cfg: dict, workers: int | None = None) -> None:
     print("  distribution of marking_px:", qa.marking_px.describe(percentiles=[.1, .25, .5, .75, .9]).round(1).to_dict())
 
     qa = qa.drop(columns=["category_from_number"])
-    qa.to_csv(CHECKS_DIR / "image_qa.csv", index=False)
+    write_qa(qa)
     with open(CHECKS_DIR / "phase1_checks.json", "w") as f:
         json.dump(summary, f, indent=1, default=str)
     _marking_sheets(cfg, qa)
-    print(f"[check] wrote {CHECKS_DIR / 'image_qa.csv'} and {CHECKS_DIR / 'phase1_checks.json'}")
+    print(f"[check] wrote {CHECKS_DIR / 'image_qa.csv'}, {PRIVATE_DIR / 'marking_locations.csv'} (not public) "
+          f"and {CHECKS_DIR / 'phase1_checks.json'}")
+
+
+def write_qa(qa: pd.DataFrame) -> None:
+    """image_qa.csv without per-image marking locations (public); the locations go to the
+    git-ignored results/checks/private/ (decision D8: no marking locations or crops are published)."""
+    PRIVATE_DIR.mkdir(parents=True, exist_ok=True)
+    qa.drop(columns=MARKING_LOCATION_COLS).to_csv(CHECKS_DIR / "image_qa.csv", index=False)
+    qa[["image_id"] + MARKING_LOCATION_COLS].to_csv(PRIVATE_DIR / "marking_locations.csv", index=False)
+
+
+def load_qa(with_locations: bool = False) -> pd.DataFrame:
+    qa = pd.read_csv(CHECKS_DIR / "image_qa.csv")
+    if with_locations:
+        qa = qa.merge(pd.read_csv(PRIVATE_DIR / "marking_locations.csv"), on="image_id", how="left", validate="1:1")
+    return qa
 
 
 def _marking_sheets(cfg: dict, qa: pd.DataFrame) -> None:
@@ -803,7 +822,8 @@ def _marking_sheets(cfg: dict, qa: pd.DataFrame) -> None:
         fig.suptitle(f"{title}: {len(pick)} of {len(rows_df)} (random, seed 0). Cyan: rough FOV estimate of this check; "
                      f"magenta: detected marking box. Outside the FOV the image is pixelated ({q['redact_block_px']} px "
                      "blocks) so text is not legible.", fontsize=8)
-        fig.tight_layout(); fig.savefig(CHECKS_DIR / fname, dpi=110); plt.close(fig)
+        PRIVATE_DIR.mkdir(parents=True, exist_ok=True)              # marking boxes: never published (D8)
+        fig.tight_layout(); fig.savefig(PRIVATE_DIR / fname, dpi=110); plt.close(fig)
 
     order = qa.sort_values("image_id", key=lambda s: s.map(id_sort_key))
     sheet(order[order.has_marking], "Flagged (marking detected)", "markings_flagged_sample.png", True)
@@ -955,7 +975,7 @@ def cmd_pairs(cfg: dict, workers: int | None = None) -> None:
     import matplotlib.pyplot as plt
 
     q = cfg["qa"]["pairs"]
-    qa = pd.read_csv(CHECKS_DIR / "image_qa.csv")
+    qa = load_qa(with_locations=True)
     tl = qa[qa.topleft_y1 >= 0].sort_values("image_id", key=lambda s: s.map(id_sort_key))
     ids = tl.image_id.tolist()
     window = int(min(512, np.ceil((max(tl.topleft_y1.max(), tl.topleft_x1.max()) + 16) / 64) * 64))

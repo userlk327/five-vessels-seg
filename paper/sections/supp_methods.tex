@@ -1,0 +1,161 @@
+% sections/supp_methods.tex -- S1 Appendix, part A: supplementary methods (detail moved from the main text so that the
+% main text stays readable; nothing needed for reproduction is dropped). Fixed settings checked against docs/protocol.md,
+% the configs and the code; measured values are macros.
+\section*{A. Supplementary methods}
+
+\subsection*{A1. Data audit}
+\emph{Duplicates.} Byte-identical image files were found by SHA-256 hashes of all \NImages{} files. Near-duplicate eyes were
+found by representing each mask as ``any vessel'' in 16 $\times$ 16-pixel blocks (a 128 $\times$ 128 grid), dilating it by
+one block and computing the intersection over union (IoU) of every pair of masks; pairs with IoU $\geq$ 0.8 were treated
+as candidate duplicates.
+The pair of a training and a test image with IoU \SameEyeIoU{} shows the same eye.
+
+\emph{Burned-in markings.} Pixels with $\max(R, G, B) > 40$ lying more than 20 pixels outside a preliminary FOV estimate
+were merged into regions (closing with a 41-pixel element); a region of at least 20 such pixels was counted as a marking.
+For the grouping of possibly same-patient images, each marking was reduced to a binary pattern ($\max(R, G, B) > 128$
+outside the FOV, top-left 128 $\times$ 128 pixels, on a 64 $\times$ 64 grid) and patterns were compared by IoU, maximized
+over shifts of up to two cells. Patterns were kept in memory only; the text was never read, transcribed or stored. Pairs
+with IoU $\geq$ 0.8 were grouped if their numbers were consecutive within the same official split, or if they formed an
+isolated pair (a group of exactly two images with that pattern), the case most likely to be one patient. Identical
+patterns shared by larger groups were not used, because fragments of common characters also match across patients.
+
+\emph{Split.} Groups were visited in one seeded random order (seed \SplitSeed{}); a group was assigned to the validation set
+only if it fitted the remaining validation places of every category it contains, so that each category has exactly
+\NValPerCategory{} validation images. That no group crosses the split was checked when the split was written and again
+from the saved split files.
+
+\subsection*{A2. Field-of-view mask}
+For each image: (1) $g = \max(R, G, B)$, smoothed with a Gaussian of $\sigma = 1$ pixel; (2) threshold at the 99th
+percentile of $g$ in the three image corners that carry no text, plus 1.5; (3) morphological opening with 15 pixels,
+largest connected component, holes filled (the eye region); (4) boundary points of the eye region, excluding points on
+the image frame; (5) least-squares circle fit, refitted after removing points with $\lvert$residual$\rvert$ greater than
+max(3 pixels, three robust standard deviations) until stable; (6) FOV = fitted disk clipped to the image, united with the
+eye region. The disk includes dim rims that fall below the threshold, and the union keeps a bright notch at the rim that
+contains annotated vessels; burned-in text is not connected to the eye and stays outside. \NFOVTouchFrame{} fitted circles
+extend beyond the image frame. The FOV was checked visually on the five darkest images and on images where the eye
+touches the frame.
+
+\subsection*{A3. Training-mask resizing}
+Thirty training masks (stratified: 8 AMD, 7 DR, 8 glaucoma, 7 normal; random seed 0) were reduced to 512 and 1024 by
+nearest-neighbour sampling, block averaging with a threshold of 0.5 or 0.25, max-pooling, and block averaging without a
+threshold (soft). Each result was enlarged to 2048 by bilinear interpolation with half-pixel centres, thresholded at 0.5
+and scored inside the FOV (\sitab{tab:si_resize}). This measures what each training target retains through the evaluation
+path, not how a model trained on it behaves.
+
+\subsection*{A4. Effect of the loss on soft targets}
+Free per-pixel logits, without a network, were fitted to the soft 512 masks of four training images (one per category)
+for 4,000 steps (Adam, learning rate 0.1 with cosine decay, one image per step), once with binary cross-entropy alone and
+once with binary cross-entropy plus soft Dice. With binary cross-entropy alone the fitted probabilities equal the targets.
+With the soft Dice term, a target of 0.25 (a one-pixel vessel at 512) is driven to about \LossOptQuarter{} and a target of
+0.5 to about \LossOptHalf{}: the Dice term pushes values below roughly half of the image's Dice towards zero and values
+above it towards one. This describes the optimum of the loss, not a trained model.
+
+\subsection*{A5. SAM implementation}
+LoRA (rank 4) was added to the query and value parts of the fused query--key--value projection in each of the 12 encoder
+blocks; one LoRA factor was initialized with Kaiming uniform values and the other with zeros, as in
+SAMed~\cite{zhang2023samed}. The LoRA update is added to the frozen projection without a scaling factor (equivalent to
+$\alpha = r$) and without dropout. Without prompts, the prompt encoder supplies its empty sparse embedding and its learned
+no-mask dense embedding; the mask decoder is called once per sample and returns a single mask (no multi-mask output). Before
+training, three optimizer steps on one fixed batch were checked: with fp16 gradient scaling, three steps were applied in
+seven iterations; on the first applied step only the zero-initialized LoRA factors received gradients, as expected, and from
+the second step on all LoRA factors did; all LoRA parameters and the
+96 decoder tensors in use changed; the 24 decoder tensors not in use (the extra mask-token heads and the IoU head, which no
+loss reaches) did not change; and every frozen tensor of the image and prompt encoders stayed bit-identical. A short probe of
+speed and memory selected a micro-batch of two, the fastest per sample (about 15.7 GB peak allocated memory on the L40S),
+accumulated twice to the effective batch of four.
+
+\emph{Tiles.} The tiled model takes the four non-overlapping 1024 $\times$ 1024 crops of the full-resolution enhanced image,
+each normalized as a separate SAM input; augmentation is applied per tile. Validation Dice for checkpoint selection is
+computed per whole image after stitching its four 256 $\times$ 256 logit grids into one 512 $\times$ 512 grid.
+
+\emph{Overlapping tiles.} Nine 1024 $\times$ 1024 crops at a stride of 512 pixels (the four main crops are among them) are
+passed through the same model. Each crop's 256 $\times$ 256 logits are placed on the 512 $\times$ 512 grid at its position
+and averaged with the separable triangular weight $w(i) = 1 - \lvert (i + 0.5)/128 - 1 \rvert$, $i = 0, \dots, 255$,
+applied along both axes. With 50\% overlap the weights sum to one inside the image, so every interior pixel receives a
+convex combination of the crops that cover it and no crop border produces an edge. The blended logits pass through the
+sigmoid and are scored like every other model, with the threshold chosen on validation.
+
+\emph{Seam check (validation, seed 0).} The discontinuity was measured on each model's own output grid as the mean absolute
+probability difference across the seam lines ($x, y = 1024$ at full resolution), divided by the median difference between
+other adjacent rows and columns (about 1 means no seam). Accuracy near the seams was compared with a difference-in-differences:
+the difference between the tiled model and a seam-free control (U-Net, averaged over its seeds, or whole-image SAM) in bands
+of $\pm$16, 32 and 64 pixels around the seams, minus the same difference in bands around the tile midlines ($x, y = 512$
+and 1536), because all models are somewhat less accurate along the central lines of the image. Confidence intervals came
+from 10,000 bootstrap resamples of the \NVal{} validation images (\sitab{tab:si_seam}).
+
+\subsection*{A6. Oracle prompts}
+For each image, positive points were drawn uniformly from the ground-truth vessel skeleton and negative points uniformly
+from FOV background at least 10 pixels (at 2048) from any vessel, with one random permutation per image so that the sets
+for $K = 5$, 10 and 20 are nested; the random generator was seeded by a fixed seed combined with the image identifier. All positive and negative
+points fell on vessel and background respectively. SAM's predictor was run on the enhanced 1024 image with a single
+output mask; logits at 1024 were converted to probabilities and scored like the other models.
+
+\subsection*{A7. Cost measurement}
+Inference time was measured for the seed-0 models on one L40S with one image per call over the \NTestImages{} test images,
+after 10 warm-up calls, with GPU synchronization before and after each call. The timed span runs from the input tensor on
+the GPU to the probability map at the model's output grid, including tiling, stitching or blending and the sigmoid; disk
+access and CPU preprocessing are excluded, and the outputs were discarded. The trained models ran with 16-bit mixed
+precision, as in training and prediction; the oracle used SAM's default single-precision predictor with $K = 5$. The tiled
+model processes its four tiles in one call, whereas the overlapping-tile variant processes its nine tiles in chunks of
+three and blends the logits on the CPU, which lowers its peak memory and adds transfer time. Floating-point operations were counted for one
+image with PyTorch's \texttt{FlopCounterMode} (one multiply-accumulate counts as two operations). Peak GPU memory is the
+maximum allocated memory during the timed loop, including the weights. Training time is the sum of epoch times of the
+seed-0 run.
+
+\subsection*{A8. Reproducibility}
+Python, NumPy and PyTorch (CPU and GPU) were seeded from the run seed; the data loader's generator was reseeded at every
+epoch from the seed and the epoch number, so the image order and the augmentation of an epoch are the same whether or not
+a run was interrupted and resumed. cuDNN was set to deterministic mode with benchmarking disabled; some GPU kernels remain
+non-deterministic, so repeated runs with the same seed are equal in distribution rather than bit-identical. Checkpoints
+store the model, optimizer and gradient-scaler states, the epoch, the best validation score, the early-stopping counter
+and all random-number states, and a resumed run continues exactly where it stopped (tested).
+
+\subsection*{A9. Post hoc analyses}
+These analyses were added during revision, after the main test evaluation. None predicted any image again or chose
+anything on the test set; they re-scored the saved probability maps or re-analysed the saved per-image results.
+
+\textit{Width-stratified centreline precision.} The binary prediction was skeletonized, and each predicted skeleton pixel
+inside the FOV was assigned to a width class by the prediction's own distance transform, with the same cut-offs as the
+recall (thin $< 3$, medium 3--7, thick $> 7$ pixels at 2048). Precision of a class is the share of its predicted
+skeleton pixels that lie within 1 pixel ($3 \times 3$ dilation) of a ground-truth vessel pixel, the mirror image of the
+recall. A class without predicted skeleton pixels in an image was left out of that image's mean.
+
+\textit{Spur-pruned thin class.} A medial axis develops short terminal branches (spurs) that run from the centre line of
+a wider vessel to small bumps in its boundary; their tips have small radii and fall into the thin class. Terminal
+branches, with an end point at one end and a junction at the other, whose pixel count was at most 1.5 times the largest
+radius along the branch plus 2 pixels were removed in one pass before width classing, for the ground-truth skeleton
+(recall) and the predicted skeleton (precision). This removed \PHPrunedThinShare\% of the ground-truth thin-vessel
+centreline of the test set (\PHPrunedMedShare\% of medium, \PHPrunedThickShare\% of thick).
+
+\textit{Matched operating point.} For every run, the threshold on a grid of 0.01 to 0.99 (step 0.01) whose mean
+validation precision was closest to a target precision was applied to the test set. The main target was the U-Net's mean
+validation precision at its selected thresholds (\PHMatchTarget, mean over its three seeds); 0.90 and 0.95 were also used.
+
+\textit{Resampling schemes.} Besides the image bootstrap of the main analysis, the test images were grouped into
+possibly same-patient clusters by the rules used for the split (byte-identical image files, identical marking pattern with
+consecutive numbers, isolated pairs with an identical marking pattern), applied to pairs within the test set, plus
+identical masks: \PHNClusters{} clusters, \PHNMultiClusters{} of them with more than one image (\PHNClusteredImages{}
+images, at most \PHLargestCluster{} per cluster). The cluster bootstrap resampled clusters. The seed-and-cluster bootstrap
+also resampled, in each replicate, the three seeds of each model with replacement: jointly for comparisons among the four
+CNNs, whose seeds are coupled, and independently for comparisons of SAM with the U-Net. Seed-paired values compute the
+statistic from seed $s$ of every model ($s = 0, 1, 2$). All intervals are 95\% percentile intervals from \PHNBoot{}
+replicates.
+
+\textit{Official release.} The FIVES archive on figshare (version 1) was downloaded, its checksum compared with the one
+listed by figshare, and its \OffNPng{} image and mask files compared with the copy used, by SHA-256 hash and, where the
+files differed, by decoded pixels. All \OffBytesEqualImg{} image files were byte-identical. The masks differed only in
+storage: the release stores three identical colour channels (\OffPixEqualMaskRGBA{} masks with an additional fully opaque
+alpha channel) and the copy one channel, and all \OffPixEqualMask{} were pixel-identical after reduction to one channel.
+The audit findings derived again from the official files were the same: \OffNDupGroups{} pairs of byte-identical images
+with different masks, \OffNEmptyMasks{} empty masks, and Dice \OffSameEyeDice{} between the masks of the same-eye pair.
+Images were only hashed and compared as arrays.
+
+\subsection*{A10. Attention gates and data extraction}
+Each additive attention gate~\cite{oktay2018attention} multiplies a skip connection $x$ by
+\begin{equation}
+\alpha = \sigma\left(\psi\left(\mathrm{ReLU}\left(\theta_x(x) + \phi_g(g)\right)\right)\right),
+\end{equation}
+where $g$ are the decoder features one level coarser, $\theta_x$ is a 2 $\times$ 2 convolution with stride 2 and no bias,
+$\phi_g$ and $\psi$ are 1 $\times$ 1 convolutions, and the intermediate width is half the channels of $x$; $\alpha$ is
+enlarged bilinearly and $\alpha x$ replaces $x$. When the images and masks were extracted from the Hugging Face copy, all
+\NImages{} image and mask files written to disk were byte-identical to the bytes stored in the copy.

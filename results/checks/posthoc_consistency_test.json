@@ -1,0 +1,237 @@
+{
+ "max_abs_diff_vs_main_analysis": {
+  "unet/seed0": {
+   "dice": 0.0,
+   "precision": 0.0,
+   "cl_recall_thin": 0.0,
+   "n_grid_rows_matched": 3800,
+   "selected_cldice": 0.0,
+   "selected_nsd": 0.0,
+   "selected_cl_recall_thin": 0.0,
+   "selected_cl_recall_thick": 0.0
+  },
+  "unet/seed1": {
+   "dice": 0.0,
+   "precision": 0.0,
+   "cl_recall_thin": 0.0,
+   "n_grid_rows_matched": 3800,
+   "selected_cldice": 0.0,
+   "selected_nsd": 0.0,
+   "selected_cl_recall_thin": 0.0,
+   "selected_cl_recall_thick": 0.0
+  },
+  "unet/seed2": {
+   "dice": 0.0,
+   "precision": 0.0,
+   "cl_recall_thin": 0.0,
+   "n_grid_rows_matched": 3800,
+   "selected_cldice": 0.0,
+   "selected_nsd": 0.0,
+   "selected_cl_recall_thin": 0.0,
+   "selected_cl_recall_thick": 0.0
+  },
+  "attention_unet/seed0": {
+   "dice": 0.0,
+   "precision": 0.0,
+   "cl_recall_thin": 0.0,
+   "n_grid_rows_matched": 3800,
+   "selected_cldice": 0.0,
+   "selected_nsd": 0.0,
+   "selected_cl_recall_thin": 0.0,
+   "selected_cl_recall_thick": 0.0
+  },
+  "attention_unet/seed1": {
+   "dice": 0.0,
+   "precision": 0.0,
+   "cl_recall_thin": 0.0,
+   "n_grid_rows_matched": 3800,
+   "selected_cldice": 0.0,
+   "selected_nsd": 0.0,
+   "selected_cl_recall_thin": 0.0,
+   "selected_cl_recall_thick": 0.0
+  },
+  "attention_unet/seed2": {
+   "dice": 0.0,
+   "precision": 0.0,
+   "cl_recall_thin": 0.0,
+   "n_grid_rows_matched": 3800,
+   "selected_cldice": 0.0,
+   "selected_nsd": 0.0,
+   "selected_cl_recall_thin": 0.0,
+   "selected_cl_recall_thick": 0.0
+  },
+  "multiscale_unet/seed0": {
+   "dice": 0.0,
+   "precision": 0.0,
+   "cl_recall_thin": 0.0,
+   "n_grid_rows_matched": 3800,
+   "selected_cldice": 0.0,
+   "selected_nsd": 0.0,
+   "selected_cl_recall_thin": 0.0,
+   "selected_cl_recall_thick": 0.0
+  },
+  "multiscale_unet/seed1": {
+   "dice": 0.0,
+   "precision": 0.0,
+   "cl_recall_thin": 0.0,
+   "n_grid_rows_matched": 3800,
+   "selected_cldice": 0.0,
+   "selected_nsd": 0.0,
+   "selected_cl_recall_thin": 0.0,
+   "selected_cl_recall_thick": 0.0
+  },
+  "multiscale_unet/seed2": {
+   "dice": 0.0,
+   "precision": 0.0,
+   "cl_recall_thin": 0.0,
+   "n_grid_rows_matched": 3800,
+   "selected_cldice": 0.0,
+   "selected_nsd": 0.0,
+   "selected_cl_recall_thin": 0.0,
+   "selected_cl_recall_thick": 0.0
+  },
+  "ms_attention_unet/seed0": {
+   "dice": 0.0,
+   "precision": 0.0,
+   "cl_recall_thin": 0.0,
+   "n_grid_rows_matched": 3800,
+   "selected_cldice": 0.0,
+   "selected_nsd": 0.0,
+   "selected_cl_recall_thin": 0.0,
+   "selected_cl_recall_thick": 0.0
+  },
+  "ms_attention_unet/seed1": {
+   "dice": 0.0,
+   "precision": 0.0,
+   "cl_recall_thin": 0.0,
+   "n_grid_rows_matched": 3800,
+   "selected_cldice": 0.0,
+   "selected_nsd": 0.0,
+   "selected_cl_recall_thin": 0.0,
+   "selected_cl_recall_thick": 0.0
+  },
+  "ms_attention_unet/seed2": {
+   "dice": 0.0,
+   "precision": 0.0,
+   "cl_recall_thin": 0.0,
+   "n_grid_rows_matched": 3800,
+   "selected_cldice": 0.0,
+   "selected_nsd": 0.0,
+   "selected_cl_recall_thin": 0.0,
+   "selected_cl_recall_thick": 0.0
+  },
+  "sam_lora_tiled/seed0": {
+   "dice": 0.0,
+   "precision": 0.0,
+   "cl_recall_thin": 0.0,
+   "n_grid_rows_matched": 3800,
+   "selected_cldice": 0.0,
+   "selected_nsd": 0.0,
+   "selected_cl_recall_thin": 0.0,
+   "selected_cl_recall_thick": 0.0
+  },
+  "sam_lora_tiled/seed1": {
+   "dice": 0.0,
+   "precision": 0.0,
+   "cl_recall_thin": 0.0,
+   "n_grid_rows_matched": 3800,
+   "selected_cldice": 0.0,
+   "selected_nsd": 0.0,
+   "selected_cl_recall_thin": 0.0,
+   "selected_cl_recall_thick": 0.0
+  },
+  "sam_lora_tiled/seed2": {
+   "dice": 0.0,
+   "precision": 0.0,
+   "cl_recall_thin": 0.0,
+   "n_grid_rows_matched": 3800,
+   "selected_cldice": 0.0,
+   "selected_nsd": 0.0,
+   "selected_cl_recall_thin": 0.0,
+   "selected_cl_recall_thick": 0.0
+  },
+  "sam_lora_whole/seed0": {
+   "dice": 0.0,
+   "precision": 0.0,
+   "cl_recall_thin": 0.0,
+   "n_grid_rows_matched": 3800,
+   "selected_cldice": 0.0,
+   "selected_nsd": 0.0,
+   "selected_cl_recall_thin": 0.0,
+   "selected_cl_recall_thick": 0.0
+  },
+  "sam_lora_whole/seed1": {
+   "dice": 0.0,
+   "precision": 0.0,
+   "cl_recall_thin": 0.0,
+   "n_grid_rows_matched": 3800,
+   "selected_cldice": 0.0,
+   "selected_nsd": 0.0,
+   "selected_cl_recall_thin": 0.0,
+   "selected_cl_recall_thick": 0.0
+  },
+  "sam_lora_whole/seed2": {
+   "dice": 0.0,
+   "precision": 0.0,
+   "cl_recall_thin": 0.0,
+   "n_grid_rows_matched": 3800,
+   "selected_cldice": 0.0,
+   "selected_nsd": 0.0,
+   "selected_cl_recall_thin": 0.0,
+   "selected_cl_recall_thick": 0.0
+  },
+  "sam_lora_tiled_overlap/seed0": {
+   "dice": 0.0,
+   "precision": 0.0,
+   "cl_recall_thin": 0.0,
+   "n_grid_rows_matched": 3800,
+   "selected_cldice": 0.0,
+   "selected_nsd": 0.0,
+   "selected_cl_recall_thin": 0.0,
+   "selected_cl_recall_thick": 0.0
+  },
+  "sam_lora_tiled_overlap/seed1": {
+   "dice": 0.0,
+   "precision": 0.0,
+   "cl_recall_thin": 0.0,
+   "n_grid_rows_matched": 3800,
+   "selected_cldice": 0.0,
+   "selected_nsd": 0.0,
+   "selected_cl_recall_thin": 0.0,
+   "selected_cl_recall_thick": 0.0
+  },
+  "sam_lora_tiled_overlap/seed2": {
+   "dice": 0.0,
+   "precision": 0.0,
+   "cl_recall_thin": 0.0,
+   "n_grid_rows_matched": 3800,
+   "selected_cldice": 0.0,
+   "selected_nsd": 0.0,
+   "selected_cl_recall_thin": 0.0,
+   "selected_cl_recall_thick": 0.0
+  }
+ },
+ "worst_per_run": {
+  "unet/seed0": 0.0,
+  "unet/seed1": 0.0,
+  "unet/seed2": 0.0,
+  "attention_unet/seed0": 0.0,
+  "attention_unet/seed1": 0.0,
+  "attention_unet/seed2": 0.0,
+  "multiscale_unet/seed0": 0.0,
+  "multiscale_unet/seed1": 0.0,
+  "multiscale_unet/seed2": 0.0,
+  "ms_attention_unet/seed0": 0.0,
+  "ms_attention_unet/seed1": 0.0,
+  "ms_attention_unet/seed2": 0.0,
+  "sam_lora_tiled/seed0": 0.0,
+  "sam_lora_tiled/seed1": 0.0,
+  "sam_lora_tiled/seed2": 0.0,
+  "sam_lora_whole/seed0": 0.0,
+  "sam_lora_whole/seed1": 0.0,
+  "sam_lora_whole/seed2": 0.0,
+  "sam_lora_tiled_overlap/seed0": 0.0,
+  "sam_lora_tiled_overlap/seed1": 0.0,
+  "sam_lora_tiled_overlap/seed2": 0.0
+ }
+}

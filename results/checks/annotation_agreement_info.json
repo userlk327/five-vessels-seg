@@ -1,0 +1,49 @@
+{
+ "description": "agreement between two available annotations of the same image; post hoc, descriptive; labels only (no model predictions)",
+ "n_pairs": 6,
+ "pairs": [
+  [
+   "train_39_A",
+   "train_132_A"
+  ],
+  [
+   "train_34_A",
+   "train_118_A"
+  ],
+  [
+   "train_61_A",
+   "train_121_A"
+  ],
+  [
+   "train_53_A",
+   "train_97_A"
+  ],
+  [
+   "test_32_A",
+   "test_48_A"
+  ],
+  [
+   "train_55_A",
+   "train_134_A"
+  ]
+ ],
+ "settings": {
+  "resolution": 2048,
+  "width_cutoffs_radius_px": [
+   3,
+   7
+  ],
+  "centerline_tolerance_px": 1,
+  "nsd_tolerance_px": 2.0,
+  "fov": "image's FOV mask"
+ },
+ "per_pair": "mean of the two directions (each mask as reference once)",
+ "environment": {
+  "time": "2026-11-22T22:47:04-06:00",
+  "host": "c1825.swan.hcc.unl.edu",
+  "git": {
+   "commit": "c008d8384f9a3513056e3b4c030f3e9698dddb7f",
+   "dirty": false
+  }
+ }
+}

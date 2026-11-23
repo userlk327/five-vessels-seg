@@ -1,0 +1,45 @@
+% sections/introduction.tex
+Colour fundus photographs show the retinal vessels directly, and changes in these vessels accompany common eye and systemic
+diseases: diabetic retinopathy is a microvascular disease whose severe stage involves the growth of new retinal
+vessels~\cite{wong2016dr}, and hypertension is associated with changes in the retinal vessels~\cite{wong2004hypertensive}.
+Automated segmentation of the vessel tree is a building block for measuring such changes~\cite{abramoff2010retinal}, and
+many methods have been proposed for it~\cite{fraz2012survey}.
+
+The vessels at the ends of the tree are a few pixels wide and have low contrast. In the training masks used here,
+centreline points with a local vessel radius below 3~pixels at 2048 $\times$ 2048 make up \ShareThin\% of the vessel
+centreline. Such vessels contain few pixels, so pixel-overlap scores such as the Dice coefficient~\cite{dice1945}, which
+weight every pixel equally, change little when many of them are missed. Validation guidelines therefore recommend metrics
+that match the property of interest~\cite{maierhein2024metrics,reinke2024pitfalls}, such as clDice for tubular
+structures~\cite{shit2021cldice}.
+
+Two kinds of method are often proposed for fine vessels. One adds modules such as attention
+gates~\cite{oktay2018attention} and multi-scale blocks~\cite{yu2016dilated,liu2022msunet,cao2023mfaunet} to the
+U-Net~\cite{ronneberger2015unet}, a convolutional neural network (CNN); the other fine-tunes the Segment Anything Model
+(SAM)~\cite{kirillov2023sam}, which fails on vessels when used zero-shot~\cite{shi2023samzeroshot,qiu2023learnable}. Whether either helps thin vessels is hard to judge from published
+results, which come from different protocols and are often summarized with overall accuracy or
+Dice~\cite{liu2022msunet,cao2023mfaunet}; variation between training runs alone can change the outcome of a
+comparison~\cite{bouthillier2021variance}. On FIVES~\cite{jin2022fives}, earlier work compared
+architectures~\cite{fadugba2024benchmark} and input resolutions~\cite{amarnath2026resolution}; the present study
+combines thin-vessel metrics with a factorial design, several training seeds, an analysis of threshold choice and a
+SAM configuration matched to the CNNs' output grid.
+
+Resolution conditions the questions. At the 512 $\times$ 512 input of our CNNs, a thin vessel is at most about one pixel
+wide, whereas SAM's decoder predicts a 256 $\times$ 256 grid, so each of its output pixels covers 8 $\times$ 8 pixels of the
+original image. Within this setting we asked three questions. (1) Do attention gates and multi-scale blocks improve
+thin-vessel segmentation when everything else is held fixed? (2) Does a fine-tuned SAM offer an advantage, and how do a
+whole-image configuration and a tiled configuration with the CNNs' output grid differ? (3) Do overlap metrics reveal the
+differences between these methods?
+
+The study makes five contributions:
+\begin{itemize}
+\item An audit of FIVES, confirmed on the official release, which found duplicate images with different masks, empty masks, one eye in both
+the training and test sets, annotations outside the eye and burned-in text, and a grouped split that accounts for them.
+\item A 2 $\times$ 2 ablation of attention gates and multi-scale blocks on a fixed U-Net backbone, with three training seeds
+per model and identical data, training and stopping rules.
+\item Prompt-free fine-tuning of SAM on whole images and on full-resolution tiles whose combined output matches the CNNs'
+grid, with a check of the tile seams.
+\item Evaluation at full resolution with centreline recall by vessel width, clDice and normalized surface Dice, and
+mask-resampling references for each output grid.
+\item Separate reporting of training-seed and image-level variability, an analysis of threshold sensitivity, and analysis
+decisions recorded in a public commit before the test set was used.
+\end{itemize}

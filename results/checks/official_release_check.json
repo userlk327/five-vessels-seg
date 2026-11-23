@@ -1,0 +1,112 @@
+{
+ "source": "figshare article 19688169 v1 (doi:10.6084/m9.figshare.19688169.v1), one RAR5 archive",
+ "archive_md5": "789c80dd5376a82063e27fa49192bac9",
+ "archive_bytes": 1764974308,
+ "n_png": 1600,
+ "by_kind": {
+  "image": 800,
+  "mask": 800
+ },
+ "ids_match_hf_copy": true,
+ "hf_ids_missing_in_official": [],
+ "bytes_equal_hf": {
+  "image": 800,
+  "mask": 0
+ },
+ "pixels_equal_hf": {
+  "image": 800,
+  "mask": 800
+ },
+ "pixels_equal_hf_note": "masks compared after reducing the official masks (3 identical colour channels, some with a fully opaque alpha channel) to one channel, as stored in the copy",
+ "official_mask_channels": {
+  "rgb": 790,
+  "rgba_opaque": 10
+ },
+ "findings_official": {
+  "byte_identical_image_groups": [
+   {
+    "images": [
+     "train_132_A",
+     "train_39_A"
+    ],
+    "masks_byte_identical": false,
+    "mask_dice_full_image": 0.8777
+   },
+   {
+    "images": [
+     "train_118_A",
+     "train_34_A"
+    ],
+    "masks_byte_identical": false,
+    "mask_dice_full_image": 0.9822
+   },
+   {
+    "images": [
+     "train_121_A",
+     "train_61_A"
+    ],
+    "masks_byte_identical": false,
+    "mask_dice_full_image": 0.9779
+   },
+   {
+    "images": [
+     "train_53_A",
+     "train_97_A"
+    ],
+    "masks_byte_identical": false,
+    "mask_dice_full_image": 0.9601
+   },
+   {
+    "images": [
+     "test_32_A",
+     "test_48_A"
+    ],
+    "masks_byte_identical": false,
+    "mask_dice_full_image": 0.9932
+   },
+   {
+    "images": [
+     "train_134_A",
+     "train_55_A"
+    ],
+    "masks_byte_identical": false,
+    "mask_dice_full_image": 0.9697
+   }
+  ],
+  "n_byte_identical_image_groups": 6,
+  "empty_masks": [
+   "train_447_G",
+   "train_448_G"
+  ],
+  "byte_identical_mask_groups": [
+   [
+    "test_22_A",
+    "test_23_A"
+   ],
+   [
+    "train_447_G",
+    "train_448_G"
+   ]
+  ],
+  "mask_values": [
+   0,
+   255
+  ],
+  "same_eye_pair": {
+   "images": [
+    "train_174_D",
+    "test_54_D"
+   ],
+   "mask_dice_full_image": 0.9993
+  }
+ },
+ "environment": {
+  "time": "2026-11-23T10:36:41-06:00",
+  "host": "c2125.swan.hcc.unl.edu",
+  "slurm_job_id": "19076386",
+  "git": {
+   "commit": "c008d8384f9a3513056e3b4c030f3e9698dddb7f",
+   "dirty": true
+  }
+ }
+}

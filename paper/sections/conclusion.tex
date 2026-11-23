@@ -1,0 +1,13 @@
+% sections/conclusion.tex
+We compared attention gates, multi-scale blocks and fine-tuned SAM for thin retinal vessels on FIVES under one protocol,
+with three training seeds per model. (1) Neither module improved thin-vessel segmentation: attention gates had no
+consistent effect, multi-scale blocks slightly lowered thin-vessel recall (overlapping training-seed variability) while
+raising its precision, and the four CNNs were effectively tied on Dice. (2) Fine-tuned SAM offered no
+robust advantage: tiled SAM's small average gain in thin-vessel recall, within training-seed variability, largely
+disappeared at matched precision (post hoc) and came with lower Dice and boundary accuracy in every seed and much higher
+inference cost, and whole-image SAM had lower thin-vessel recall in every seed. (3) Overlap metrics did not reveal the
+thin-vessel differences: Dice differences were small, did not track thin-vessel recall and ranked the two SAM
+configurations in the opposite order, and checkpoint selection by validation Dice did not control thin-vessel recall
+across seeds. When methods are compared on thin vessels, reporting width-stratified metrics, comparisons at matched
+precision, several seeds and threshold sensitivity is advisable. For this dataset, input resolution, target choice and
+module designs, no configuration clearly improved thin-vessel segmentation over a plain U-Net, and Dice did not show this.

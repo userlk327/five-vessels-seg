@@ -1,0 +1,217 @@
+% sections/methods.tex -- fixed settings typed after checking docs/protocol.md, the configs and the code; measured values
+% are macros. Procedural detail is in sections/supp_methods.tex (S1 Appendix, part A).
+\subsection*{Study design}
+All models were trained and evaluated with one protocol (Fig~\ref{fig:pipeline}). Four CNNs formed a 2 $\times$ 2 design in which attention gates and multi-scale blocks were switched on or off on a fixed
+U-Net backbone. SAM was fine-tuned in two configurations: on whole images reduced to 1024 $\times$ 1024 and on four
+full-resolution tiles, with an inference-only variant that used overlapping tiles. Each trained model had three seeds,
+and all predictions were scored at 2048 $\times$ 2048 inside a field-of-view (FOV) mask at a threshold chosen
+on the validation set. Zero-shot SAM with point prompts from the ground truth was a separate experiment.
+
+\begin{figure}[!h]
+\figpreview{figures/fig_pipeline.pdf}
+\caption{\CapPipeline}
+\label{fig:pipeline}
+\end{figure}
+
+\subsection*{Data, audit and split}
+This is a retrospective analysis of a public dataset. FIVES~\cite{jin2022fives} contains colour fundus photographs of
+2048 $\times$ 2048 pixels taken with a Topcon TRC-NW8 camera (50$^\circ$ field of view) between 2016 and 2021 at one
+hospital, the Second Affiliated Hospital of Zhejiang University, from 573 patients (mean age 48 years, standard
+deviation 19.87; 469 images from female and 331 from male subjects; all Asian), with 200 images each of age-related
+macular degeneration (AMD), diabetic retinopathy (DR), glaucoma and normal eyes. Every image has a pixelwise vessel
+annotation made by trained medical staff and verified by ophthalmologists, which we used as the reference standard without
+editing~\cite{jin2022fives}. We used the copy on the Hugging Face hub (\texttt{tyluan/FIVES}; CC BY 4.0~\cite{jin2022fivesdata});
+all images were RGB and all masks binary. The
+official split has \NTrainOfficial{} training and \NTestOfficial{} test images (\NTestPerCategory{} per category); the
+sample size was fixed by the dataset. No other dataset was used.
+
+Before any model was trained, we checked all images and masks of this copy for exact and near duplicates, empty masks,
+annotations outside the eye and identifying marks (Table~\ref{tab:data}, Fig~\ref{fig:audit}; procedures and parameters in
+\nameref{si:appendix}). A later check showed that the copy is identical to the official release on figshare, so the
+findings apply to FIVES itself. Many images carry burned-in text outside the eye that may contain fragments of patient
+names; it was compared only as binary patterns and never read (Ethics statement). Three training images were excluded: two very dark images with empty masks, and one
+showing the same eye as a test image.
+
+FIVES provides no patient identifiers. To keep duplicate and possibly same-patient images together, we grouped
+byte-identical files (\NGroupPairsIdentical{} pairs), images with an identical marking pattern and consecutive numbers
+(\NGroupPairsAdjacent{} pairs), and isolated pairs of images with an identical marking pattern (\NGroupPairsIsolated{}
+pairs): \NGroups{} groups containing \NGroupedImages{} images. The remaining \NTrainVal{} official training images were
+split into \NTrain{} training and \NVal{} validation images, \NValPerCategory{} per category, with groups assigned whole
+(seed \SplitSeed{}); no group crosses the split. The official test set was not changed.
+
+\input{tables/data}
+
+\begin{figure}[!h]
+\figpreview{figures/fig_audit_raster.png}
+\caption{\CapAudit}
+\label{fig:audit}
+\end{figure}
+
+\subsection*{Preprocessing and training targets}
+Contrast was enhanced with CLAHE (contrast-limited adaptive histogram equalization)~\cite{zuiderveld1994clahe} on the
+lightness channel of the LAB colour space at full resolution (clip limit 2.0, 8 $\times$ 8 tiles), keeping three channels.
+For the CNNs and whole-image SAM the enhanced images were reduced by area averaging to 512 $\times$ 512 and
+1024 $\times$ 1024. CNN inputs were normalized with the per-channel mean and standard deviation of the training images;
+SAM inputs used only SAM's own normalization. Training images and masks were flipped horizontally and vertically (each with
+probability 0.5) and rotated by a random multiple of 90$^\circ$.
+
+Reducing a mask to the training resolution either removes thin vessels or widens them. In a comparison on 30 training
+masks made before any model was trained (\nameref{si:resize}), block averaging without a threshold kept the most
+information (Dice \ResizeFiveSoftDice{} at 512, against \ResizeFiveAreaHalfDice{} with a threshold of 0.5) without widening
+vessels (precision \ResizeFiveSoftPrec, against \ResizeFiveMaxpoolPrec{} for max-pooling). We therefore trained the CNNs on
+these soft masks at 512 and whole-image SAM on soft masks at 1024. In a soft mask a thin vessel is stored as a value below
+0.5, so its recovery depends on the threshold (thin-vessel recall of the soft 512 mask: \ResizeFiveSoftThin{} at 0.5,
+\ResizeFiveSoftQuarterThin{} at 0.25). Tiled SAM was trained on full-resolution tiles, whose masks are binary.
+
+The CNNs work at 512 $\times$ 512. A pilot with the U-Net at 1024 $\times$ 1024 used a rule fixed before its result was seen:
+all CNNs would move to 1024 only if validation thin-vessel recall rose by at least 0.05 while validation Dice fell by at most
+0.005. Thin-vessel recall rose by \PilotThinGain{} (Dice \PilotDiceGain), so the CNNs stayed at 512 (\nameref{si:pilot}).
+
+\subsection*{Models}
+\emph{CNNs.} The baseline U-Net~\cite{ronneberger2015unet} has four down-sampling and four up-sampling levels with 64 to
+1024 channels; each block applies two 3 $\times$ 3 convolutions with batch normalization and ReLU, followed by
+2 $\times$ 2 max-pooling in the encoder and 2 $\times$ 2 transposed convolution in the decoder, and a 1 $\times$ 1
+convolution produces the logits (\UNetParams{} parameters). The variants keep this backbone (Table~\ref{tab:models}).
+Additive \emph{attention gates}~\cite{oktay2018attention} multiply each of the four skip connections by coefficients
+computed from the skip features and the decoder features one level coarser (definition in \nameref{si:appendix}, A10).
+The \emph{multi-scale block} replaces the second 3 $\times$ 3 convolution
+of all nine blocks with three parallel 3 $\times$ 3 convolutions with dilation 1, 2 and 4~\cite{yu2016dilated}, whose
+output channels are split rather than tripled (for 64 channels: 22, 21 and 21), concatenated and fused by batch
+normalization, ReLU, a 1 $\times$ 1 convolution, batch normalization and ReLU. Attention gates add \AttParamsPct\% to the
+parameters, multi-scale blocks \MSParamsPct\% and both \MSAttParamsPct\%. With the same seed, the Attention U-Net starts
+from the U-Net's backbone weights.
+
+\input{tables/models}
+
+\emph{Fine-tuned SAM.} We started from the released weights of SAM with the ViT-B image
+encoder~\cite{kirillov2023sam,dosovitskiy2021vit} (\OracleParams{} parameters). Following the LoRA placement of SAMed~\cite{zhang2023samed}, rank-4 LoRA~\cite{hu2022lora} was added to the query and value projections of all 12 encoder blocks; the LoRA layers and the
+mask decoder were trained (\SAMTiledParamsTrainable{} parameters) and everything else was frozen. Unlike SAMed, we kept the
+prompt encoder frozen and gave no prompts (implementation and gradient
+check in \nameref{si:appendix}). \emph{Whole-image SAM} receives the enhanced image at 1024 $\times$ 1024; its 256 $\times$ 256
+decoder logits are enlarged to 1024 by SAM's post-processing and compared with the soft 1024 masks. \emph{Tiled SAM}
+receives the four non-overlapping 1024 $\times$ 1024 tiles of the full-resolution image; each tile's logits, enlarged to
+1024, are compared with its binary mask, and at inference the four 256 $\times$ 256 logit grids are joined into one
+512 $\times$ 512 grid, the grid of the CNNs. A tiled epoch covers the same image content as a CNN epoch in four times as
+many optimizer steps.
+
+On the validation set, the non-overlapping tiles left a discontinuity along the tile borders (\nameref{si:seam}). We kept
+the tiled models unchanged as the main SAM and added inference with \emph{overlapping tiles}: nine 1024 $\times$ 1024
+tiles at a stride of 512 pixels, whose logits are combined as a weighted average with triangular weights, normalized by
+the sum of the weights at each pixel.
+
+\emph{Zero-shot SAM with oracle prompts.} As a separate experiment, the unmodified SAM received $K$ positive and $K$
+negative points sampled from each image's own ground truth ($K \in \{5, 10, 20\}$ and threshold chosen on validation;
+\nameref{si:appendix}). Because the prompts use every image's ground truth, it is reported separately
+(\nameref{si:oracle}).
+
+\subsection*{Training}
+The loss was the sum of binary cross-entropy on the logits and a soft Dice loss $1 - (2\sum p t + 1)/(\sum p + \sum t + 1)$
+per image on the sigmoid outputs $p$ and targets $t$, computed in single precision and applied to soft targets as they
+are. Optimization used Adam~\cite{kingma2015adam} with a learning rate of $10^{-4}$ and batches of four images (SAM: two
+accumulated micro-batches of two) with mixed precision~\cite{micikevicius2018mixed}, for at most 150 epochs, stopping after
+20 epochs without improvement of the validation Dice and keeping the best checkpoint. Validation Dice was computed as the
+test data are scored: maps enlarged to 2048 $\times$ 2048, threshold 0.5, original masks, inside the FOV. Each model was
+trained with seeds 0, 1 and 2, which set the initial weights, the image order and the augmentation, on one NVIDIA L40S
+GPU per run (\nameref{si:runs}); seeds are reported separately, and no ensembling was used. A check before training
+showed that this loss drives soft targets towards 0 or 1: at its optimum a target of 0.25, the value of a one-pixel vessel at 512, becomes about \LossOptQuarter{} (\nameref{si:appendix}).
+
+\subsection*{Evaluation}
+Every metric was computed per image inside an FOV mask: the union of a circle fitted to the eye boundary and the bright eye
+region (\nameref{si:appendix}), which includes dim rims and excludes the burned-in text. The FOV covered
+\FOVShareMin\%--\FOVShareMax\% of an image. Probability maps were enlarged bilinearly to
+2048 $\times$ 2048 and thresholded. For each run the threshold was chosen on the validation set from 0.05 to 0.95 in steps of
+0.05 as the value with the highest mean Dice (ties: the lowest) and applied to that run's test predictions. As a secondary
+analysis decided before test evaluation, every run was also scored at a fixed threshold of 0.5, and thin-vessel recall was
+recorded at every grid threshold.
+
+With $P$ and $G$ the predicted and ground-truth vessel sets inside the FOV, we report Dice, intersection over union (IoU),
+precision and recall,
+\begin{equation}
+\mathrm{Dice} = \frac{2\lvert P \cap G\rvert}{\lvert P\rvert + \lvert G\rvert},\quad
+\mathrm{IoU} = \frac{\lvert P \cap G\rvert}{\lvert P \cup G\rvert},\quad
+\mathrm{precision} = \frac{\lvert P \cap G\rvert}{\lvert P\rvert},\quad
+\mathrm{recall} = \frac{\lvert P \cap G\rvert}{\lvert G\rvert}.
+\end{equation}
+For thin vessels we used centreline recall by vessel width. The ground truth was skeletonized~\cite{vanderwalt2014skimage,zhang1984thinning}
+and each skeleton point $s$ received the local radius $r(s)$, the Euclidean distance transform of the ground truth at
+$s$~\cite{virtanen2020scipy}. Points with $r < 3$ pixels were thin, $3 \le r \le 7$ medium and $r > 7$ thick (the cut-offs
+of a recent preprint~\cite{amarnath2026resolution}). In the training masks \ShareThin\% of skeleton points were thin, \ShareMed\% medium and \ShareThick\% thick. The recall
+of class $c$ is the fraction of its skeleton points $S_c$ inside the prediction dilated by one pixel ($3 \times 3$ square
+$B_1$),
+\begin{equation}
+R_c = \frac{\lvert \{ s \in S_c : s \in P \oplus B_1 \} \rvert}{\lvert S_c \rvert};
+\end{equation}
+as a sensitivity check the classes were also formed with cut-offs of 4 and 8 pixels. With $S_P$ and $S_G$ the skeletons of
+the two masks, clDice~\cite{shit2021cldice} is
+\begin{equation}
+\mathrm{clDice} = \frac{2\,T_{\mathrm{prec}}\,T_{\mathrm{sens}}}{T_{\mathrm{prec}} + T_{\mathrm{sens}}},\quad
+T_{\mathrm{prec}} = \frac{\lvert S_P \cap G\rvert}{\lvert S_P\rvert},\quad
+T_{\mathrm{sens}} = \frac{\lvert S_G \cap P\rvert}{\lvert S_G\rvert}.
+\end{equation}
+Boundary accuracy was measured with normalized surface Dice (NSD)~\cite{nikolov2021nsd} in a boundary-pixel approximation,
+with $\partial M$ a mask minus its $3 \times 3$ erosion and $(\partial M)_\tau$ the pixels within $\tau = 2$ pixels of it:
+\begin{equation}
+\mathrm{NSD} = \frac{\lvert \partial P \cap (\partial G)_\tau\rvert + \lvert \partial G \cap (\partial P)_\tau\rvert}
+{\lvert \partial P\rvert + \lvert \partial G\rvert}.
+\end{equation}
+Skeletons, boundaries and radii were computed on the full masks and then restricted to the FOV, so the FOV border creates
+no artificial vessel ends; a ratio with an empty denominator was 1 if both sets were empty and 0 otherwise. As
+image-derived vessel measures we computed vessel density (vessel pixels per FOV pixel) and the fractal
+dimension~\cite{liew2008fractal}, here by box counting with boxes of 2--512 pixels, for prediction and ground truth with
+the same FOV.
+
+\emph{Mask-resampling references.} Each ground truth was reduced to soft masks at 512 $\times$ 512 (the CNN and tiled-SAM
+grid) and at 256 $\times$ 256 (the whole-image SAM decoder grid, enlarged to 1024 as SAM does), enlarged back to 2048 and
+scored with the same threshold rule. These references measure what resizing alone loses. They are not upper bounds: a
+model's logits are enlarged before the sigmoid and are not constrained to block averages.
+
+\subsection*{Statistical analysis}
+Model-level results are the mean $\pm$ standard deviation across the three seeds of each seed's mean over the
+\NTestImages{} test images, and describe training-seed variability. We call a difference consistent across seeds when every
+seed of one model lies on the same side of every seed of the other; with three seeds this describes the runs evaluated, not
+general robustness. Complete separation of three runs from three is the most extreme of 20 equally likely arrangements, so it corresponds to
+an exact one-sided permutation p-value of 0.05, and failing to reach it is weak evidence that an effect is absent. The seeds
+of the CNNs are coupled (the same seed gives the same image order and augmentation, and the same backbone initialization
+for a model and its attention variant); only the post hoc analyses treat them as paired. Image-level analyses averaged each image's
+metric over a model's seeds first. Each automatic model was compared with the U-Net by a two-sided paired Wilcoxon signed-rank test~\cite{wilcoxon1945,virtanen2020scipy} with Holm
+correction~\cite{holm1979} within each metric across the six comparisons. For the 2 $\times$ 2 design we computed per image
+the attention main effect (mean of Attention U-Net $-$ U-Net and Multi-Scale Attention U-Net $-$ Multi-Scale U-Net), the
+multi-scale main effect (analogous) and the interaction (Multi-Scale Attention U-Net $-$ Multi-Scale U-Net $-$ Attention
+U-Net $+$ U-Net), with 95\% percentile bootstrap confidence intervals (CIs)~\cite{efron1979bootstrap} from 10,000 resamples of
+the test images. Image-level tests and intervals do not include training-seed variability, so we report both kinds of
+variability and give effect sizes rather than p-values alone. The threshold rules (validation-selected as primary, fixed 0.5 as secondary) were fixed before test evaluation; no single
+primary metric was designated, thin-vessel recall being the focus named in the study objectives, and Holm correction was
+applied within each metric only. Results by disease category are descriptive; vessel measures
+were compared with the ground truth by the mean difference, Bland--Altman limits of agreement~\cite{bland1986} and Pearson
+correlation. Reporting follows the CLAIM 2024 checklist~\cite{tejani2024claim,mongan2020claim} (\nameref{si:claim}).
+
+\subsection*{Analysis decisions and later additions}
+The split, preprocessing, targets, loss, stopping rule, FOV scoring, metric definitions, width cut-offs, threshold rule,
+fixed-threshold secondary analysis, resolution rule and statistical analysis were decided and recorded before test
+evaluation, in a public commit made before any test prediction (\texttt{0ee73608db87db9e0b6f2ff46d29f2faa75fd1dc}). Three
+additions came later. The tile-seam check and the overlapping-tile variant were decided on validation data after that
+commit but before any SAM test prediction. After the first test evaluation, the two SAM configurations, which until then had
+one seed, were trained with seeds 1 and 2 using unchanged configurations, so that seed variability could be estimated as for
+the CNNs, and overlapping-tile inference was run for them; the CNNs had three seeds from the start. As first observed, the
+seed-0 tiled SAM exceeded the three-seed U-Net mean in thin-vessel recall by \SAMTiledSeedAThinMinusUNet. The
+annotation-agreement analysis below was added during writing. Each configuration predicted the test set once, without
+test-time augmentation or post-processing.
+
+During revision, after the main test evaluation, we added post hoc analyses that re-scored saved probability maps or
+re-analysed saved results, without new predictions or test-set choices (\nameref{si:appendix}, A9): width-stratified
+centreline precision, classing each predicted centreline pixel by its own predicted width; thin-vessel recall at matched
+precision, with each run's threshold set on validation to match the U-Net's validation precision; clDice and NSD at 0.5;
+a thin class without skeleton spurs; bootstrap intervals resampling clusters of possibly same-patient test images and,
+jointly, training seeds; and a comparison with the official release.
+
+\subsection*{Agreement between two available annotations of the same image}
+For the \AgreeNPairs{} pairs of byte-identical image files with different masks (\AgreeNTrain{} training, \AgreeNTest{}
+test; all AMD), each mask was scored against the other with the metrics above in both directions and the two values were
+averaged. This post hoc descriptive analysis uses labels only; as the dataset does not say who drew the masks, it measures
+agreement between two available annotations, not inter-rater agreement.
+
+\subsection*{Computational cost and software}
+Inference time, operations and peak memory were measured for the seed-0 models on one L40S with one image per call over
+the test images (details in \nameref{si:appendix}); training time and memory are those of the seed-0 runs. The analysis used
+Python 3.11, PyTorch 2.14.1 (CUDA 12.6)~\cite{paszke2019pytorch}, segment-anything 1.0, NumPy 2.4.6, SciPy
+1.17.1~\cite{virtanen2020scipy}, scikit-image 0.26.0~\cite{vanderwalt2014skimage}, OpenCV 5.1.0 and pandas 3.1.1.

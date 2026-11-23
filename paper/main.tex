@@ -1,0 +1,177 @@
+% main.tex -- working manuscript (no venue chosen yet). Format: PLOS LaTeX template v3.8 (Apr 2026),
+% kept as the working format; venue-only packaging is deferred until a venue is chosen.
+%
+% Built from the PLOS template's preamble with no template package removed (a PLOS rule).
+% Two PLOS rules are handled at submission time, not while drafting:
+%   * PLOS needs ONE .tex file (no \input). While drafting, the sections, numbers.tex and
+%     tables/*.tex are kept in separate files; a flattening script (Step 5) writes
+%     main_submission.tex with everything inlined and the bibliography pasted in.
+%   * PLOS wants NO graphics in the manuscript: figures are uploaded as separate TIFF/EPS files.
+%     \showfigurestrue shows previews in the Overleaf draft; set \showfiguresfalse to submit.
+% For the MELBA fallback, the same sections/ files are wrapped by a MELBA-template main file.
+
+\documentclass[10pt,letterpaper]{article}
+\usepackage[top=0.85in,left=2.75in,footskip=0.75in]{geometry}
+
+% amsmath and amssymb packages, useful for mathematical formulas and symbols
+\usepackage{amsmath,amssymb}
+
+% Use adjustwidth environment to exceed column width (see example table in text)
+\usepackage{changepage}
+
+% textcomp package and marvosym package for additional characters
+\usepackage{textcomp,marvosym}
+
+% cite package, to clean up citations in the main text. Do not remove.
+\usepackage{cite}
+
+% Use nameref to cite supporting information files (see Supporting Information section for more info)
+\usepackage{nameref,hyperref}
+
+% line numbers
+\usepackage[right]{lineno}
+
+% ligatures disabled
+\usepackage[nopatch=eqnum]{microtype}
+\DisableLigatures[f]{encoding = *, family = * }
+
+% color can be used to apply background shading to table cells only
+\usepackage[table]{xcolor}
+
+% array package and thick rules for tables
+\usepackage{array}
+
+% create "+" rule type for thick vertical lines
+\newcolumntype{+}{!{\vrule width 2pt}}
+
+% create \thickcline for thick horizontal lines of variable length
+\newlength\savedwidth
+\newcommand\thickcline[1]{%
+  \noalign{\global\savedwidth\arrayrulewidth\global\arrayrulewidth 2pt}%
+  \cline{#1}%
+  \noalign{\vskip\arrayrulewidth}%
+  \noalign{\global\arrayrulewidth\savedwidth}%
+}
+
+% \thickhline command for thick horizontal lines that span the table
+\newcommand\thickhline{\noalign{\global\savedwidth\arrayrulewidth\global\arrayrulewidth 2pt}%
+\hline
+\noalign{\global\arrayrulewidth\savedwidth}}
+
+% Double spacing (PLOS submission guidelines: manuscripts double-spaced)
+\usepackage{setspace}
+\doublespacing
+
+% Text layout
+\raggedright
+\setlength{\parindent}{0.5cm}
+\textwidth 5.25in
+\textheight 8.75in
+
+% Bold the 'Figure #' in the caption and separate it from the title/caption with a period
+% Captions will be left justified
+\usepackage[aboveskip=1pt,labelfont=bf,labelsep=period,justification=raggedright,singlelinecheck=off]{caption}
+\renewcommand{\figurename}{Fig}
+
+% Please use the included `plos2025.bst` as your BibTeX style
+\bibliographystyle{plos2025}
+
+% Remove brackets from numbering in List of References
+\makeatletter
+\renewcommand{\@biblabel}[1]{\quad#1.}
+\makeatother
+
+% Header and Footer with logo
+\usepackage{lastpage,fancyhdr,graphicx}
+\usepackage{epstopdf}
+\pagestyle{fancy}
+\fancyhf{}
+\rfoot{\thepage/\pageref{LastPage}}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrule}{\hrule height 2pt \vspace{2mm}}
+\fancyheadoffset[L]{2.25in}
+\fancyfootoffset[L]{2.25in}
+\lfoot{\today}
+
+%% Include all user-defined macros below
+
+% Draft-only figure previews (PLOS: no graphics in the submitted manuscript)
+\newif\ifshowfigures
+\showfigurestrue
+\newcommand{\figpreview}[2][\linewidth]{\ifshowfigures\includegraphics[width=#1]{#2}\fi}
+
+% Measured values and figure captions: generated from the result files (never typed by hand)
+\input{numbers}
+\input{captions}
+
+%% END MACROS SECTION
+
+\begin{document}
+\vspace*{0.2in}
+
+% Title must be 250 characters or less; sentence case.
+\begin{flushleft}
+{\Large
+\textbf{Attention gates, multi-scale blocks and fine-tuned SAM for thin retinal vessels: a multi-seed evaluation on FIVES}
+}
+\newline
+% Short title (approved): Attention, multi-scale blocks and fine-tuned SAM for thin retinal vessels
+\\
+% [TODO: author order]
+Lalit Kharel\textsuperscript{1},
+Carter Wald\textsuperscript{1},
+Peyton Nelson\textsuperscript{1},
+Jacob Dimmitt\textsuperscript{1}
+\\
+\bigskip
+\textbf{1} [TODO: department], University of Nebraska--Lincoln, Lincoln, Nebraska, United States of America
+\\
+\bigskip
+
+* [TODO: corresponding author name and email]
+
+\end{flushleft}
+
+% Abstract: at most 300 words, no citations (PLOS ONE). Unstructured.
+\section*{Abstract}
+\input{sections/abstract}
+
+\clearpage
+\newgeometry{top=0.85in,left=1in,right=1in,footskip=0.75in}
+\linenumbers
+
+\section*{Introduction}
+\input{sections/introduction}
+
+\section*{Related work}
+\input{sections/related}
+
+\section*{Materials and methods}
+\input{sections/methods}
+
+\section*{Results}
+\input{sections/results}
+
+\section*{Discussion}
+\input{sections/discussion}
+
+\section*{Conclusion}
+\input{sections/conclusion}
+
+\section*{Declarations}
+\input{sections/declarations}
+
+\section*{Supporting information}
+\input{sections/supporting}
+
+% PLOS: funding, competing interests, data availability and author contributions are entered in
+% the submission system (sections/declarations.tex holds their text). The AI-use disclosure
+% must be in the article body: in a Methods subsection or here in the Acknowledgments.
+\section*{Acknowledgments}
+\input{sections/acknowledgments}
+
+\nolinenumbers
+
+\bibliography{refs}
+
+\end{document}

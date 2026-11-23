@@ -156,9 +156,11 @@ models · 13 final test evaluation · 14 known limitations.
 - **Excluded from training and validation** (`data.split.exclude` in `configs/base.yaml`;
   label `excluded` in `splits.csv`):
   - `train_447_G` and `train_448_G`: both ground-truth masks are completely empty
-    (all 0) although the images show vessels, and the two masks are byte-identical on
-    near-identical images. An empty target would teach "no vessels" on a real fundus
-    image.
+    (all 0), and the two masks are byte-identical on near-identical images. An empty target
+    would teach "no vessels" on a real fundus image. *Correction (2026-11-23, revision 2):*
+    this entry first said "although the images show vessels". Contrast-stretched, both very
+    dark images show the optic disc, but the vessels are barely discernible under the
+    compression artefacts; the exclusion rests on the empty masks alone.
   - `train_174_D`: the same eye as `test_54_D` (practically identical vessel masks,
     vessel-layout IoU 0.997, `results/checks/mask_similar_pairs.csv`). It is removed
     from training so that no test image is also seen in training. The test set is
@@ -1063,6 +1065,17 @@ models · 13 final test evaluation · 14 known limitations.
   - **Dice:** **no meaningful effect for either** (main effects within ±0.0006).
   - Source files: `results/tables/test_ablation_effects.csv`,
     `test_ablation_effects_fixed_t0.5.csv`, `results/eval/<run>/seed<s>/test_metrics.csv`.
+- **Post hoc descriptive analysis, added during manuscript writing (2026-11-22; user
+  decision): agreement between two available annotations of the same image.**
+  - Uses labels only: no model predictions, and no earlier result changes.
+  - FIVES has 6 byte-identical image files with two different masks (5 in the official
+    training set, 1 in test; all category A; data audit, §14). The dataset does not say who
+    drew the masks, so this is not called inter-rater agreement.
+  - Each mask is scored against the other with the evaluation metrics and settings
+    (2048, inside the FOV, `src.metrics.compute_all`), in both directions; each pair's
+    value is the mean of the two directions. n = 6, so the result is descriptive only.
+  - `python -m src.agreement` → `results/tables/annotation_agreement.csv`,
+    `annotation_agreement_directions.csv`, `results/checks/annotation_agreement_info.json`.
 - **Cost table** (`python -m src.benchmark`, one GPU job on the training GPU type, after
   all test predictions):
   - **Inference time:** batch 1 (one image per call) over the 200 test images, after 10
@@ -1152,3 +1165,68 @@ models · 13 final test evaluation · 14 known limitations.
 - **Cost numbers** come from one benchmark job on one L40S (seed-0 checkpoints) and from
   the seed-0 training runs.
 - **Single dataset.** All results are on FIVES; there is no external validation.
+
+## 15. Post hoc analyses after the referee report *(manuscript revision, 2026-11-23)*
+All four were decided by the user after the internal referee report (decisions D2, D4, D7, D9),
+**after the main test evaluation**. None predicts anything again, selects anything on the test
+set or changes an existing result; each is labelled post hoc in the manuscript.
+
+- **D2: precision-type and operating-point checks** (`src/posthoc.py score`, then `tables`;
+  `tests/test_posthoc.py`). The saved probability maps (val and test, 7 configurations × 3
+  seeds) are re-scored at 2048 inside the FOV:
+  - fine threshold sweep 0.01–0.99 (step 0.01), same metrics as the main sweep
+    (`<split>_sweep_fine.csv`; checked against the 0.05-grid sweep);
+  - **width-stratified centreline precision**: the mirror of the recall. Skeleton of the
+    binary prediction inside the FOV; each predicted skeleton pixel classed by the
+    prediction's own EDT radius (thin < 3, medium 3–7, thick > 7 px); precision = share of a
+    class's predicted skeleton pixels within 1 px (3 × 3 dilation) of a GT vessel pixel. A
+    class with no predicted skeleton pixels in an image is NaN for that image;
+  - **clDice and NSD at the fixed 0.5** (the main analysis has them only at the selected
+    thresholds);
+  - **spur-pruned thin class**: terminal skeleton branches (end point at one end, junction
+    at the other) whose pixel count is ≤ 1.5 × the largest EDT radius along the branch + 2 px
+    are removed (one pass) before width classing, for the GT skeleton (recall) and the
+    predicted skeleton (precision). A first rule (≤ R + 2 px) was replaced before any real
+    data were scored because synthetic medial-axis spurs reach R + bump height (unit test);
+  - **matched operating point**: per run, the fine-grid threshold whose mean **val**
+    precision is closest to a target (ties: lower threshold), applied to test. Primary
+    target: the U-Net's mean val precision at its val-selected thresholds (mean over its 3
+    seeds); secondary targets 0.90 and 0.95.
+- **D4: other resampling schemes** (`src/posthoc.py tables` → `posthoc_stats.csv`), for each
+  model vs the U-Net and the 2 × 2 effects, at the selected thresholds, at 0.5 and at matched
+  precision; 10,000 replicates, percentile 95% intervals:
+  - image bootstrap as in the main analysis (reproduces its intervals; checked);
+  - cluster bootstrap over possibly same-patient test clusters, built with the split rules
+    on test–test pairs plus identical masks (`results/checks/test_groups.csv`, ids only);
+  - seed × cluster bootstrap: clusters as above and, in the same replicate, each model's
+    three seeds resampled with replacement (jointly for the four CNNs, whose seed s is
+    coupled; independently for SAM vs the U-Net);
+  - seed-paired values: the statistic from seed s of every model, s = 0, 1, 2.
+- **D7: official release** (`src/official_check.py`). The figshare release (article
+  19688169 v1, one RAR5 archive, MD5 789c80dd5376a82063e27fa49192bac9 as listed by
+  figshare) was downloaded to `$WORK/FIVES_official/`, its 1600 PNG files were extracted
+  (p7zip 16.02, HCC module) and compared with the Hugging Face copy by SHA-256 and, where
+  the bytes differed, by decoded pixels; the audit findings were re-derived from the
+  official files. Images were only hashed and compared as arrays.
+- **D9: audit figure panel B** gets a contrast-stretched inset (green channel, 1st–99.5th
+  percentile) of a 768 × 768 window at the FOV centre, checked to lie inside the FOV.
+- **Results (2026-11-23; jobs 19075869, 19076386):** every re-scored value at the selected
+  thresholds and every 0.05-grid sweep value equals the main analysis (max difference 0;
+  `results/checks/posthoc_consistency_{val,test}.json`), and the image bootstrap reproduces the
+  main ablation intervals (max difference 2.5e-17). Matched precision (target 0.9256): tiled
+  SAM − U-Net thin recall +0.0036 (selected thresholds: +0.0267); multi-scale effect −0.0156;
+  whole-image SAM −0.0675. Thin-vessel precision 0.711–0.768 for all models. Pruning removes
+  6.7% of the GT thin centreline. 170 test clusters (30 of two images). Official release: 800/800
+  images byte-identical, 800/800 masks pixel-identical after channel reduction (790 RGB, 10 RGBA
+  with alpha 255); findings unchanged. Full numbers: `results/tables/posthoc_*.csv`,
+  `posthoc_info.json`.
+- **Not run (user decision):** D1 (resolution-matched CNN control; the one-seed 1024 pilot
+  is discussed as suggestive evidence only), D3 (attention-coefficient statistics), D5
+  (extended SAM training, learning-rate check), D6 (training-target sensitivity). They are
+  limitations and future work in the manuscript.
+- **D8 (privacy, repository):** per-image marking locations (`image_qa.csv` columns
+  `marking_regions`, `marking_y0/y1/x0/x1`, `topleft_y1/x1`) and the marking review sheets
+  moved to the git-ignored `results/checks/private/` (`src/data.py`: `write_qa`, `load_qa`);
+  `phase1_checks.json` keeps only aggregate region counts. The public repository keeps image
+  ids and pattern-similarity scores (`split_groups.csv`, `marking_pairs.csv`,
+  `same_patient_pairs.json`, `test_groups.csv`), needed to reproduce the grouped split.

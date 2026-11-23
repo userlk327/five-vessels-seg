@@ -1,0 +1,100 @@
+% supplement.tex -- S1 Appendix: supporting tables and figures (same macros and captions as the manuscript).
+% Order follows first citation in the manuscript (see sections/supporting.tex).
+\documentclass[10pt,letterpaper]{article}
+\usepackage[top=0.85in,left=1in,right=1in,footskip=0.75in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{changepage}
+\usepackage{textcomp,marvosym}
+\usepackage[table]{xcolor}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{nameref,hyperref}
+\usepackage{cite}
+\usepackage[aboveskip=1pt,labelfont=bf,labelsep=period,justification=raggedright,singlelinecheck=off]{caption}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\DeclareCaptionLabelFormat{si}{#2 #1}            % "S1 Table.", "S1 Fig." (PLOS style)
+\captionsetup[table]{labelformat=si}
+\captionsetup[figure]{labelformat=si}
+\renewcommand{\figurename}{Fig}
+\newcommand{\sitab}[1]{\ref{#1}~Table}         % "S1 Table" for references inside the appendix
+\raggedright
+\newlength\savedwidth
+\newcommand\thickhline{\noalign{\global\savedwidth\arrayrulewidth\global\arrayrulewidth 2pt}%
+\hline
+\noalign{\global\arrayrulewidth\savedwidth}}
+\newif\ifshowfigures
+\showfigurestrue
+\newcommand{\figpreview}[2][\linewidth]{\ifshowfigures\includegraphics[width=#1]{#2}\fi}
+\input{numbers}
+\input{captions}
+
+\begin{document}
+{\Large\bf S1 Appendix. Supplementary methods, tables and figures}
+
+\medskip
+Supporting information for: Attention gates, multi-scale blocks and fine-tuned SAM for thin retinal vessels: a
+multi-seed evaluation on FIVES. Every number is generated from the saved result files.
+
+\input{sections/supp_methods}
+
+\clearpage
+\section*{B. Supplementary tables and figures}
+
+\input{tables/si_resize}
+\input{tables/si_pilot}
+\input{tables/si_seam}
+\input{tables/oracle}
+\input{tables/si_runs}
+\input{tables/si_overlap}
+\input{tables/si_imagelevel}
+\input{tables/si_width}
+\input{tables/si_simple}
+\input{tables/si_fixed}
+\input{tables/si_disease}
+\input{tables/si_agreement}
+\input{tables/si_vessel}
+\input{tables/si_matched}
+\input{tables/si_precision}
+\input{tables/si_stats}
+
+\clearpage
+\begin{figure}[!h]
+\figpreview{figures/fig_training.pdf}
+\caption{\CapTraining}
+\end{figure}
+
+\begin{figure}[!h]
+\figpreview{figures/fig_threshold_val.pdf}
+\caption{\CapThresholdVal}
+\end{figure}
+
+\begin{figure}[!h]
+\figpreview{figures/fig_si_qualitative_raster.png}
+\caption{\CapSiQualitative}
+\end{figure}
+
+\begin{figure}[!h]
+\figpreview{figures/fig_disease.pdf}
+\caption{\CapDisease}
+\end{figure}
+
+\begin{figure}[!h]
+\figpreview{figures/fig_bland_altman.pdf}
+\caption{\CapBlandAltman}
+\end{figure}
+
+\begin{figure}[!h]
+\figpreview[0.65\linewidth]{figures/fig_cost.pdf}
+\caption{\CapCost}
+\end{figure}
+
+\begin{figure}[!h]
+\figpreview{figures/fig_precision_thin.pdf}
+\caption{\CapPrecisionThin}
+\end{figure}
+
+\bibliographystyle{plos2025}
+\bibliography{refs}
+
+\end{document}

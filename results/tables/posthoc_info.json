@@ -1,0 +1,29 @@
+{
+ "unet_mean_val_precision_target": 0.925559230518504,
+ "spur_pruning_rule": "terminal branch length <= 1.5 x max radius + 2.0 px",
+ "gt_pruning": {
+  "share_thin_skeleton_removed": 0.06734369982604438,
+  "share_medium_skeleton_removed": 0.0076908878081877186,
+  "share_thick_skeleton_removed": 0.003984042410774102
+ },
+ "n_boot": 10000,
+ "n_test_clusters": 170,
+ "n_test_images_in_multi_image_clusters": 60,
+ "n_multi_image_clusters": 30,
+ "largest_cluster": 2,
+ "check_image_bootstrap_vs_main_ablation_max_abs_diff": 2.5207700510287978e-17,
+ "checks": {
+  "selected/dice/attention": 4.2825985813177425e-18,
+  "selected/cl_recall_thin/attention": 3.469446951953614e-18,
+  "selected/dice/multi-scale": 6.071532165918825e-18,
+  "selected/cl_recall_thin/multi-scale": 3.469446951953614e-18,
+  "selected/dice/interaction": 1.2847795743953228e-17,
+  "selected/cl_recall_thin/interaction": 1.3877787807814457e-17,
+  "fixed_0.5/dice/attention": 4.851804721872632e-18,
+  "fixed_0.5/cl_recall_thin/attention": 3.469446951953614e-18,
+  "fixed_0.5/dice/multi-scale": 6.900777421280785e-18,
+  "fixed_0.5/cl_recall_thin/multi-scale": 3.469446951953614e-18,
+  "fixed_0.5/dice/interaction": 2.5207700510287978e-17,
+  "fixed_0.5/cl_recall_thin/interaction": 6.938893903907228e-18
+ }
+}

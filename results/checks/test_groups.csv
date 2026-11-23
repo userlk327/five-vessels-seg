@@ -1,0 +1,201 @@
+image_id,cluster,cluster_size,reasons
+test_1_A,t000,1,
+test_2_A,t001,1,
+test_3_A,t002,1,
+test_4_A,t003,1,
+test_5_A,t004,1,
+test_6_A,t005,1,
+test_7_A,t006,1,
+test_8_A,t007,1,
+test_9_A,t008,1,
+test_10_A,t009,1,
+test_11_A,t010,1,
+test_12_A,t011,1,
+test_13_A,t012,1,
+test_14_A,t013,2,identical marking (IoU >= 0.8) + adjacent numbers
+test_15_A,t013,2,identical marking (IoU >= 0.8) + adjacent numbers
+test_16_A,t014,1,
+test_17_A,t015,1,
+test_18_A,t016,1,
+test_19_A,t017,1,
+test_20_A,t018,1,
+test_21_A,t019,1,
+test_22_A,t020,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair; identical mask"
+test_23_A,t020,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair; identical mask"
+test_24_A,t021,1,
+test_25_A,t022,1,
+test_26_A,t023,1,
+test_27_A,t024,1,
+test_28_A,t025,1,
+test_29_A,t026,1,
+test_30_A,t027,1,
+test_31_A,t028,1,
+test_32_A,t029,2,"identical image file; identical marking (IoU >= 0.8), isolated pair"
+test_48_A,t029,2,"identical image file; identical marking (IoU >= 0.8), isolated pair"
+test_33_A,t030,1,
+test_34_A,t031,1,
+test_35_A,t032,1,
+test_36_A,t033,1,
+test_37_A,t034,1,
+test_38_A,t035,1,
+test_39_A,t036,1,
+test_40_A,t037,1,
+test_41_A,t038,1,
+test_42_A,t039,1,
+test_43_A,t040,1,
+test_44_A,t041,1,
+test_45_A,t042,1,
+test_46_A,t043,1,
+test_47_A,t044,1,
+test_49_A,t045,1,
+test_50_A,t046,1,
+test_51_D,t047,1,
+test_52_D,t048,1,
+test_53_D,t049,1,
+test_54_D,t050,1,
+test_55_D,t051,1,
+test_56_D,t052,1,
+test_57_D,t053,1,
+test_58_D,t054,1,
+test_59_D,t055,1,
+test_60_D,t056,1,
+test_61_D,t057,1,
+test_62_D,t058,1,
+test_63_D,t059,1,
+test_64_D,t060,1,
+test_65_D,t061,2,identical marking (IoU >= 0.8) + adjacent numbers
+test_66_D,t061,2,identical marking (IoU >= 0.8) + adjacent numbers
+test_67_D,t062,1,
+test_68_D,t063,1,
+test_69_D,t064,1,
+test_70_D,t065,1,
+test_71_D,t066,1,
+test_72_D,t067,1,
+test_73_D,t068,1,
+test_74_D,t069,1,
+test_75_D,t070,1,
+test_76_D,t071,1,
+test_77_D,t072,1,
+test_78_D,t073,1,
+test_79_D,t074,1,
+test_80_D,t075,1,
+test_81_D,t076,1,
+test_82_D,t077,1,
+test_83_D,t078,1,
+test_84_D,t079,2,identical marking (IoU >= 0.8) + adjacent numbers
+test_85_D,t079,2,identical marking (IoU >= 0.8) + adjacent numbers
+test_86_D,t080,1,
+test_87_D,t081,1,
+test_88_D,t082,1,
+test_89_D,t083,1,
+test_90_D,t084,1,
+test_91_D,t085,1,
+test_92_D,t086,1,
+test_93_D,t087,1,
+test_94_D,t088,1,
+test_95_D,t089,1,
+test_96_D,t090,1,
+test_97_D,t091,1,
+test_98_D,t092,1,
+test_99_D,t093,1,
+test_100_D,t094,1,
+test_101_G,t095,2,identical marking (IoU >= 0.8) + adjacent numbers
+test_102_G,t095,2,identical marking (IoU >= 0.8) + adjacent numbers
+test_103_G,t096,1,
+test_104_G,t097,1,
+test_105_G,t098,1,
+test_106_G,t099,1,
+test_107_G,t100,1,
+test_108_G,t101,1,
+test_109_G,t102,1,
+test_110_G,t103,1,
+test_111_G,t104,1,
+test_112_G,t105,1,
+test_113_G,t106,1,
+test_114_G,t107,1,
+test_115_G,t108,1,
+test_116_G,t109,1,
+test_117_G,t110,1,
+test_118_G,t111,1,
+test_119_G,t112,1,
+test_120_G,t113,1,
+test_121_G,t114,1,
+test_122_G,t115,2,identical marking (IoU >= 0.8) + adjacent numbers
+test_123_G,t115,2,identical marking (IoU >= 0.8) + adjacent numbers
+test_124_G,t116,1,
+test_125_G,t117,1,
+test_126_G,t118,2,identical marking (IoU >= 0.8) + adjacent numbers
+test_127_G,t118,2,identical marking (IoU >= 0.8) + adjacent numbers
+test_128_G,t119,1,
+test_129_G,t120,1,
+test_130_G,t121,1,
+test_131_G,t122,1,
+test_132_G,t123,1,
+test_133_G,t124,1,
+test_134_G,t125,1,
+test_135_G,t126,1,
+test_136_G,t127,1,
+test_137_G,t128,1,
+test_138_G,t129,1,
+test_139_G,t130,1,
+test_140_G,t131,1,
+test_141_G,t132,1,
+test_142_G,t133,1,
+test_143_G,t134,1,
+test_144_G,t135,1,
+test_145_G,t136,1,
+test_146_G,t137,1,
+test_147_G,t138,1,
+test_148_G,t139,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_149_G,t139,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_150_G,t140,1,
+test_151_N,t141,1,
+test_152_N,t142,1,
+test_153_N,t143,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_154_N,t143,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_155_N,t144,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_156_N,t144,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_157_N,t145,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_158_N,t145,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_159_N,t146,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_160_N,t146,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_161_N,t147,2,identical marking (IoU >= 0.8) + adjacent numbers
+test_162_N,t147,2,identical marking (IoU >= 0.8) + adjacent numbers
+test_163_N,t148,2,identical marking (IoU >= 0.8) + adjacent numbers
+test_164_N,t148,2,identical marking (IoU >= 0.8) + adjacent numbers
+test_165_N,t149,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_166_N,t149,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_167_N,t150,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_168_N,t150,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_169_N,t151,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_170_N,t151,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_171_N,t152,2,identical marking (IoU >= 0.8) + adjacent numbers
+test_172_N,t152,2,identical marking (IoU >= 0.8) + adjacent numbers
+test_173_N,t153,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_174_N,t153,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_175_N,t154,2,identical marking (IoU >= 0.8) + adjacent numbers
+test_176_N,t154,2,identical marking (IoU >= 0.8) + adjacent numbers
+test_177_N,t155,2,identical marking (IoU >= 0.8) + adjacent numbers
+test_178_N,t155,2,identical marking (IoU >= 0.8) + adjacent numbers
+test_179_N,t156,1,
+test_180_N,t157,1,
+test_181_N,t158,1,
+test_182_N,t159,1,
+test_183_N,t160,1,
+test_184_N,t161,1,
+test_185_N,t162,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_186_N,t162,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_187_N,t163,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_188_N,t163,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_189_N,t164,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_190_N,t164,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_191_N,t165,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_192_N,t165,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_193_N,t166,2,identical marking (IoU >= 0.8) + adjacent numbers
+test_194_N,t166,2,identical marking (IoU >= 0.8) + adjacent numbers
+test_195_N,t167,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_196_N,t167,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_197_N,t168,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_198_N,t168,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_199_N,t169,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"
+test_200_N,t169,2,"identical marking (IoU >= 0.8) + adjacent numbers; identical marking (IoU >= 0.8), isolated pair"

@@ -382,7 +382,15 @@ examples, vessel-radius histogram).
 - **Test set:** two test pairs are duplicates or near-duplicates, so the 200 test images
   are not fully independent.
 - **Data source:** the Hugging Face mirror of FIVES (`tyluan/FIVES`), not the official
-  figshare release. No other dataset was used, so there is no external validation.
+  figshare release. A post hoc check (2026-11-23, `src/official_check.py`,
+  `results/checks/official_release_check.json`) found the mirror identical to the release:
+  800/800 images byte-identical, 800/800 masks pixel-identical (the release stores three
+  identical colour channels, ten masks with an opaque alpha channel). No other dataset was
+  used, so there is no external validation.
+- **Post hoc analyses after the referee report** (`docs/protocol.md` §15,
+  `results/tables/posthoc_*.csv`): added after the main test evaluation, no new predictions.
+  At matched validation precision the tiled-SAM thin-recall advantage shrinks from +0.027 to
+  +0.004; the multi-scale decrease persists (−0.016).
 - **Training length:** tiled SAM seeds 1 and 2, all three whole-image SAM seeds and
   Multi-Scale U-Net seed 1 reached the 150-epoch cap.
 - **Tile seams:** the main tiled SAM stitches four non-overlapping tiles, which leaves a

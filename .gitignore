@@ -39,3 +39,14 @@ __pycache__/
 
 # ---- SLURM logs written into the project folder by mistake ----
 slurm-*.out
+
+# ---- Burned-in markings: per-image locations and review sheets stay local (decision D8) ----
+/results/checks/private/
+# private drafts (not for the public repository)
+/paper/review/email_*.md
+# Overleaf upload package (rebuilt from paper/; not versioned)
+/paper/overleaf_upload.zip
+# Large per-image fine threshold sweeps (72 MB; regenerate with python -m src.posthoc score)
+/results/eval/*/seed*/*_sweep_fine.csv
+# Internal review documents (referee report, response, email draft): local only
+/paper/review/
