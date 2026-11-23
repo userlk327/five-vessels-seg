@@ -4,7 +4,14 @@ Every protocol decision, written down when it is made. One protocol applies to a
 models (CLAUDE.md, Rule 4); any unavoidable difference between models is listed in
 the "Differences between models" section.
 
-Status: Phase 1 complete. Sections marked *(Phase N)* are filled in during that phase.
+Status: **complete (Phases 0–7, 2026-11-22).** Sections marked *(Phase N)* were written
+during that phase. Results and their limitations: [`results/README.md`](../results/README.md).
+Draft Methods and Results text for the report: [`docs/report_draft.md`](report_draft.md).
+
+Contents: 1 compute · 2 reproducibility · 3 checkpointing · 4 mixed precision ·
+5 data source · 6 split · 7 preprocessing · 8 training-mask resizing · 9 metrics ·
+10 evaluation and thresholds · 11 training settings and runs · 12 differences between
+models · 13 final test evaluation · 14 known limitations.
 
 ---
 
@@ -559,8 +566,67 @@ Status: Phase 1 complete. Sections marked *(Phase N)* are filled in during that 
     - **Decision: all four CNNs stay at `cnn_resolution: 512`.**
     - The 1024 run (`unet_r1024`) is a documented pilot only and is not part of the
       model comparison.
+- **All trained runs, as run** (`results/tables/val_runs.csv`, `val_sam_runs.csv`; val
+  metrics at each run's own val-selected threshold, mean over the 120 val images). The
+  overlapping-tile variant has no runs of its own: it reuses the three tiled-SAM models.
+
+  | Model | Seed | Epochs run | Best epoch | Val threshold | s/epoch (median) | Training h | Val Dice | Val thin recall |
+  |---|---|---|---|---|---|---|---|---|
+  | U-Net | 0 | 141 | 120 | 0.55 | 11.0 | 0.43 | 0.9142 | 0.5548 |
+  | U-Net | 1 | 117 | 96 | 0.45 | 11.1 | 0.36 | 0.9139 | 0.5809 |
+  | U-Net | 2 | 69 | 48 | 0.55 | 11.1 | 0.21 | 0.9130 | 0.5369 |
+  | Attention U-Net | 0 | 121 | 100 | 0.45 | 12.2 | 0.41 | 0.9140 | 0.5875 |
+  | Attention U-Net | 1 | 117 | 96 | 0.45 | 12.3 | 0.40 | 0.9146 | 0.5642 |
+  | Attention U-Net | 2 | 69 | 48 | 0.55 | 12.3 | 0.24 | 0.9129 | 0.5433 |
+  | Multi-Scale U-Net | 0 | 96 | 75 | 0.60 | 16.9 | 0.45 | 0.9149 | 0.5528 |
+  | Multi-Scale U-Net | 1 | 150 | 130 | 0.55 | 17.0 | 0.71 | 0.9145 | 0.5295 |
+  | Multi-Scale U-Net | 2 | 106 | 85 | 0.55 | 16.9 | 0.50 | 0.9146 | 0.5220 |
+  | Multi-Scale Attention U-Net | 0 | 82 | 61 | 0.45 | 18.1 | 0.41 | 0.9128 | 0.5381 |
+  | Multi-Scale Attention U-Net | 1 | 105 | 84 | 0.45 | 18.3 | 0.53 | 0.9134 | 0.5532 |
+  | Multi-Scale Attention U-Net | 2 | 106 | 85 | 0.55 | 18.3 | 0.54 | 0.9145 | 0.5323 |
+  | SAM LoRA, tiled (main SAM) | 0 | 124 | 103 | 0.55 | 266.6 | 9.18 | 0.9053 | 0.5974 |
+  | SAM LoRA, tiled (main SAM) | 1 | 150 | 149 | 0.45 | 267.1 | 11.18 | 0.9071 | 0.5580 |
+  | SAM LoRA, tiled (main SAM) | 2 | 150 | 138 | 0.45 | 266.4 | 11.10 | 0.9063 | 0.6234 |
+  | SAM LoRA, whole image | 0 | 150 | 143 | 0.50 | 68.7 | 2.86 | 0.9124 | 0.4889 |
+  | SAM LoRA, whole image | 1 | 150 | 149 | 0.50 | 81.9 | 3.42 | 0.9124 | 0.4907 |
+  | SAM LoRA, whole image | 2 | 150 | 145 | 0.50 | 83.3 | 3.47 | 0.9124 | 0.4834 |
+
+  - Early stopping (patience 20) ended every CNN run except Multi-Scale U-Net seed 1,
+    which reached the 150-epoch cap. U-Net and Attention U-Net seed 2 both stopped after
+    69 epochs (best epoch 48).
+  - Tiled SAM seeds 1 and 2 and all three whole-image SAM seeds reached the cap.
+  - The cost table uses the seed-0 runs; later seeds partly ran next to other jobs or on
+    another partition (§12, §13).
 
 ## 12. Differences between models *(Phases 3-5)*
+
+- **Summary (Phase 7).** Everything not listed here is identical for every trained model:
+  the split file, CLAHE preprocessing, augmentation (flips and 90° rotations, training
+  only), loss (BCE + soft Dice, equal weights, float32), optimizer (Adam, learning rate
+  1e-4), effective batch 4, early stopping (patience 20 on val Dice at 2048, threshold
+  0.5, inside the FOV), at most 150 epochs, fp16 mixed precision, seeds 0–2, the
+  threshold rule (chosen on val per run), and scoring at 2048 against the original masks
+  inside the FOV. Every model was trained and timed on NVIDIA L40S GPUs.
+
+  | | 4 CNNs | SAM LoRA, tiled (main SAM) | Overlapping-tile inference | SAM LoRA, whole image | SAM zero-shot, oracle prompts |
+  |---|---|---|---|---|---|
+  | Change vs U-Net | attention gates and/or multi-scale blocks (2×2 ablation) | different model (SAM ViT-B) | same models as tiled | different model (SAM ViT-B) | different model (SAM ViT-B) |
+  | Network input | CLAHE image area-resized to `cnn_resolution` 512 | four native 1024×1024 crops of the 2048 CLAHE image | nine native 1024 crops, stride 512 | CLAHE image area-resized to 1024 | as whole image |
+  | Input normalization | per-channel mean/std of the training split | SAM's own | SAM's own | SAM's own | SAM's own |
+  | Training target | soft mask at 512 | binary mask crop at native resolution (no resizing) | – | soft mask at 1024 | none (no training) |
+  | Loss computed on | 512 logits | 256 decoder logits ×4 → 1024, per tile | – | 256 decoder logits ×4 → 1024 | – |
+  | Trainable parameters | all (31.0–33.8 M) | LoRA rank 4 (q, v) + mask decoder: 4.2 M of 93.9 M | – | as tiled | 0 |
+  | Batch of 4 | 4 images | micro-batch 2 × accumulation 2 (tiles) | – | micro-batch 2 × accumulation 2 | – |
+  | Optimizer steps per epoch | 120 | 477 (4 tiles per image) | – | 120 | – |
+  | Prompts | – | none | none | none | 5 positive + 5 negative points from the image's own GT |
+  | Saved probability map | 512 | 512 (4 decoder grids stitched) | 512 (tent-blended logits) | 1024 (from the 256 decoder grid) | 1024 (from 256) |
+  | Mask-resampling reference (context) | `reference_soft_512` | `reference_soft_512` | `reference_soft_512` | `reference_soft_256` | `reference_soft_256` |
+  | Reported | main tables | main tables | sensitivity row | main tables (secondary SAM) | separate table, never ranked |
+
+  - The oracle experiment uses ground-truth information from every image it segments,
+    test images included (the exception in CLAUDE.md Rule 3).
+  - Whole-image SAM seeds 1 and 2 and the overlap inference for seeds 1 and 2 ran on the
+    shared `gpu` partition (still L40S) instead of `ltarunl` (§13).
 
 - **The 2×2 ablation, models 1–4** (`src/models/blocks.py`; Phase 4 design,
   **approved by the user**: paper-style attention gates, and the split-channel
@@ -986,6 +1052,17 @@ Status: Phase 1 complete. Sections marked *(Phase N)* are filled in during that 
   - Source files: `results/eval/<run>/seed<s>/{val,test}_metrics.csv`,
     `results/train/<run>/seed<s>/summary.json`, `results/tables/test_main.csv`,
     `test_wilcoxon.csv`, `thin_recall_vs_threshold.csv`.
+- **How to word the 2×2 ablation result (wording agreed with the user, parallel to the
+  SAM wording):**
+  - **Multi-scale:** a modest average decrease in thin recall (−0.021 at val-selected
+    thresholds, −0.013 at 0.5), **consistent in direction across threshold rules but
+    overlapping training-seed variability.** Per-seed test thin recall: Multi-Scale U-Net
+    0.533 / 0.517 / 0.511; U-Net 0.544 / 0.565 / 0.520.
+  - **Attention:** **no consistent effect on thin recall** (+0.005 at val-selected
+    thresholds, −0.015 at 0.5).
+  - **Dice:** **no meaningful effect for either** (main effects within ±0.0006).
+  - Source files: `results/tables/test_ablation_effects.csv`,
+    `test_ablation_effects_fixed_t0.5.csv`, `results/eval/<run>/seed<s>/test_metrics.csv`.
 - **Cost table** (`python -m src.benchmark`, one GPU job on the training GPU type, after
   all test predictions):
   - **Inference time:** batch 1 (one image per call) over the 200 test images, after 10
@@ -1049,3 +1126,29 @@ Status: Phase 1 complete. Sections marked *(Phase N)* are filled in during that 
   one, so it may still have been improving slowly.
 - **Whole-image SAM reached the 150-epoch cap** with all three seeds (best epochs 143,
   149, 145), so it may still have been improving slowly (§12, §13).
+- **Image-level statistics.** The Wilcoxon tests and the ablation bootstrap CIs resample
+  the 200 test images (after averaging each image over seeds). They do not include
+  training-seed variability, which for thin-vessel recall (seed sd 0.003–0.031) is
+  similar in size to most between-model differences.
+- **Threshold dependence.** Thin-vessel recall depends strongly on the operating
+  threshold, and val-Dice threshold selection moves it. On test, the attention main
+  effect on thin recall is +0.005 at the val-selected thresholds and −0.015 at a fixed
+  0.5 (`test_ablation_effects*.csv`). Both analyses are reported.
+- **Checkpoint selection by val Dice** does not control thin-vessel recall: runs with
+  near-identical best val Dice differ in val thin recall by up to 0.065 (tiled SAM, §13).
+- **Evaluation region.** CLAUDE.md asks for overlap metrics over all pixels; every metric
+  here is computed inside the evaluation FOV instead (decided after Phase 1, §9), because
+  of annotation lines outside the eye. Prediction and ground truth always share the FOV.
+- **Boundary metric.** NSD is a boundary-pixel approximation of normalized surface Dice
+  (§9).
+- **Image-derived vessel measures.** Vessel density and fractal dimension are computed
+  from the masks for comparison only. Their clinical validity is not tested here.
+- **Oracle-prompted SAM** uses prompts taken from each image's ground truth, so it is not
+  comparable to the automatic models.
+- **Resolution.** The CNNs and tiled SAM output 512×512 maps (`cnn_resolution` 512);
+  whole-image SAM takes a 1024 input and outputs a 256 grid. The 512 resampling reference
+  keeps 0.916 of test thin-vessel centreline and the 256 reference 0.400 (context only,
+  not upper bounds).
+- **Cost numbers** come from one benchmark job on one L40S (seed-0 checkpoints) and from
+  the seed-0 training runs.
+- **Single dataset.** All results are on FIVES; there is no external validation.
